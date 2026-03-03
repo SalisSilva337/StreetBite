@@ -93,6 +93,10 @@
   opacity: 0.7;
   cursor: pointer;
 }
+.interactionsButton button:hover {
+  
+  cursor: pointer;
+}
 .topPageSection {
   display: flex;
   flex-direction: column;

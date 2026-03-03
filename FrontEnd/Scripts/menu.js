@@ -27,7 +27,6 @@ createItem.addEventListener("click", () => {
     modalContent.style.animation = "gridReverseAnim .5s";
     setTimeout(() => {
       modalSection.style.display = "none";
-      clearModalInputs(); // Clear inputs on close
     }, 500);
   });
 
@@ -35,7 +34,6 @@ createItem.addEventListener("click", () => {
     modalContent.style.animation = "gridReverseAnim .5s";
     setTimeout(() => {
       modalSection.style.display = "none";
-      clearModalInputs(); // Clear inputs on close
     }, 500);
   });
 
