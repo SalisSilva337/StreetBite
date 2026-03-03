@@ -61,7 +61,7 @@ createItem.addEventListener("click", () => {
         console.log(data);
       });
 
-    window.location.reload();
+    window.loadPage("menu");
   });
 });
 
@@ -104,21 +104,21 @@ fetch("http://localhost:8080/api/v1/produtos", optionsGET)
       productPrice.textContent = "R$" + data[index].preco;
 
       if (productCategory.textContent == "BEBIDA") {
-        itemImage.src = "../../Imgs/images/eachCategory/bebida.jpg";
+        itemImage.src = "../Imgs/images/eachCategory/bebida.jpg";
       } else if (productCategory.textContent == "ACOMPANHAMENTO") {
-        itemImage.src = "../../Imgs/images/eachCategory/acompanhamento.jpg";
+        itemImage.src = "../Imgs/images/eachCategory/acompanhamento.jpg";
       } else if (productCategory.textContent == "LANCHE") {
-        itemImage.src = "../../Imgs/images/eachCategory/lanche.jpg";
+        itemImage.src = "../Imgs/images/eachCategory/lanche.jpg";
       } else if (productCategory.textContent == "COMBO") {
-        itemImage.src = "../../Imgs/images/eachCategory/combo.jpg";
+        itemImage.src = "../Imgs/images/eachCategory/combo.jpg";
       }
 
       // itemImage.src = imgArea.querySelector("img")
       //   ? imgArea.querySelector("img").src
       //   : "";
-      editImg.src = "../../Imgs/icons/editIcon.svg";
+      editImg.src = "../Imgs/icons/editIcon.svg";
 
-      deleteImg.src = "../../Imgs/icons/deleteIcon.svg";
+      deleteImg.src = "../Imgs/icons/deleteIcon.svg";
       grid.appendChild(productName);
       itemImageDiv.appendChild(itemImage);
       grid.appendChild(itemImageDiv);

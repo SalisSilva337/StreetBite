@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snackin' Back</title>
     <link rel="stylesheet" href="../Styles/stackinBack.css" />
+    <link rel="stylesheet" href="../Styles/home.css" />
+    <link rel="stylesheet" href="../Styles/menu.css" />
+    <link rel="stylesheet" href="../Styles/requests.css" />
+    <link rel="stylesheet" href="../Styles/createNewOrder.css" />
+    <link rel="stylesheet" href="../Styles/settings.css" />
     <script src="../Scripts/stackinBack.js" defer></script>
     <link
       rel="shortcut icon"
@@ -28,8 +33,20 @@
           </button>
         </div>
       </aside>
-      <iframe class="iframe" src="Iframes/home.html" frameborder="0"></iframe>
+      <div class="contentArea" id="contentArea"></div>
     </section>
+
+    <!-- VLibras -->
+    <div vw class="enabled">
+      <div vw-access-button class="active"></div>
+      <div vw-plugin-wrapper>
+        <div class="vw-plugin-top-wrapper"></div>
+      </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+      new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
   </body>
   
 </html>

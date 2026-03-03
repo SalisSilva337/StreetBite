@@ -229,16 +229,16 @@ fetch("http://localhost:8080/api/v1/produtos", optionsGET)
       productName.textContent = data[index].nome;
       productCategory.textContent = data[index].categoria;
       if (productCategory.textContent == "BEBIDA") {
-        productImg.src = "../../Imgs/images/eachCategory/bebida.jpg";
+        productImg.src = "../Imgs/images/eachCategory/bebida.jpg";
       }
       if (productCategory.textContent == "COMBO") {
-        productImg.src = "../../Imgs/images/eachCategory/combo.jpg";
+        productImg.src = "../Imgs/images/eachCategory/combo.jpg";
       }
       if (productCategory.textContent == "ACOMPANHAMENTO") {
-        productImg.src = "../../Imgs/images/eachCategory/acompanhamento.jpg";
+        productImg.src = "../Imgs/images/eachCategory/acompanhamento.jpg";
       }
       if (productCategory.textContent == "LANCHE") {
-        productImg.src = "../../Imgs/images/eachCategory/lanche.jpg";
+        productImg.src = "../Imgs/images/eachCategory/lanche.jpg";
       }
       productPrice.textContent = "R$" + data[index].preco;
       let cutProductName = productName.textContent.slice(0, 10) + "...";
@@ -247,7 +247,7 @@ fetch("http://localhost:8080/api/v1/produtos", optionsGET)
       itemImage.appendChild(productImg);
 
       let cartImg = document.createElement("img");
-      cartImg.src = "../../Imgs/icons/shoppingCartIcon.svg";
+      cartImg.src = "../Imgs/icons/shoppingCartIcon.svg";
       addToCart.appendChild(cartImg);
 
       subButton.textContent = "-";

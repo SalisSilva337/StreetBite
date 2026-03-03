@@ -78,14 +78,14 @@ fetch("http://localhost:8080/api/v1/comandas", optionsGET)
         orderItemsPrice.textContent = "Valor: R$" + item.precoUnitario;
         orderItemsQuantity.textContent = "Quantidade: " + item.quantidade;
         if (orderItemsCategory.textContent == "BEBIDA") {
-          orderItemsImg.src = "../../Imgs/images/eachCategory/bebida.jpg";
+          orderItemsImg.src = "../Imgs/images/eachCategory/bebida.jpg";
         } else if (orderItemsCategory.textContent == "ACOMPANHAMENTO") {
           orderItemsImg.src =
-            "../../Imgs/images/eachCategory/acompanhamento.jpg";
+            "../Imgs/images/eachCategory/acompanhamento.jpg";
         } else if (orderItemsCategory.textContent == "LANCHE") {
-          orderItemsImg.src = "../../Imgs/images/eachCategory/lanche.jpg";
+          orderItemsImg.src = "../Imgs/images/eachCategory/lanche.jpg";
         } else if (orderItemsCategory.textContent == "COMBO") {
-          orderItemsImg.src = "../../Imgs/images/eachCategory/combo.jpg";
+          orderItemsImg.src = "../Imgs/images/eachCategory/combo.jpg";
         }
         orderItemsTable.classList.add("orderItemsTable");
 
@@ -110,7 +110,7 @@ fetch("http://localhost:8080/api/v1/comandas", optionsGET)
       orderDoneButton.id = "orderDone";
 
       const checkIcon = document.createElement("img");
-      checkIcon.src = "../../Imgs/icons/checkIcon.svg";
+      checkIcon.src = "../Imgs/icons/checkIcon.svg";
       checkIcon.alt = "";
       orderDoneButton.appendChild(checkIcon);
       orderPreparingButtonsDiv.appendChild(orderDoneButton);
@@ -120,7 +120,7 @@ fetch("http://localhost:8080/api/v1/comandas", optionsGET)
       orderDeleteButton.id = "orderDelete";
 
       const deleteIcon = document.createElement("img");
-      deleteIcon.src = "../../Imgs/icons/deleteIcon.svg";
+      deleteIcon.src = "../Imgs/icons/deleteIcon.svg";
       deleteIcon.alt = "";
       orderDeleteButton.appendChild(deleteIcon);
       orderPreparingButtonsDiv.appendChild(orderDeleteButton);
