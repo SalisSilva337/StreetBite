@@ -1,16 +1,16 @@
-# SNACKIN´ BACK
+# StreetBite
 ![image](https://github.com/user-attachments/assets/073b8f18-db29-43ea-a774-2a151cc8b1d0)
 
 ![screenshot](https://github.com/user-attachments/assets/9a492e36-0f9f-4d44-9cbe-26047e3f5bba)
 
-`SENAI AL` `TÉCNICO EM INFORMÁTICA PARA WEB`
+`CESMAC AL` `SISTEMAS DE INFORMAÇÃO`
 
 ## INTEGRANTES:
 - Salis Silva
-- Leonardo Messias
-- Cayo Rafael
-- Dalton Alex
-- Albertho Pedro
+- José Lucas
+- Pedro Correia
+- Pedro Leão
+- Julia Cavalcante
 
 ## OBJETIVO:
 Facilitar a gestão de Food Trucks, oferecendo uma plataforma simples e eficiente para o controle de vendas, cardápio, pedidos e clientes. Ajudando a otimizar operações e melhorar a experiência do cliente.
