@@ -26,4 +26,4 @@ Entre no "SnackinBackApplication.java" e clique em Run (Rodar) no canto superior
 
 ## DOCUMENTAÇÃO:
 - [Documentação de Contexto](https://drive.google.com/file/d/1i7cvJ9N9pWvz6rzsD6tSsUfalnOabutx/view?usp=drive_link)
-- [Design da Aplicação](https://www.figma.com/design/wMjJRfzRLtDNESzJPqU6oh/Projeto-Food-Truck?node-id=55-2&node-type=canvas&t=rwFLJp51MdB3ENBw-0](https://www.figma.com/design/uAC8odd4ScmFf9QTPhL8t1/StreetBite?node-id=0-1&p=f&t=Hr3nVETTd1u2AIGM-0)
+- [Design da Aplicação](https://www.figma.com/design/uAC8odd4ScmFf9QTPhL8t1/StreetBite?node-id=0-1&p=f&t=Hr3nVETTd1u2AIGM-0)
