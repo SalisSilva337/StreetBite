@@ -2,7 +2,7 @@
 
 <img width="809" height="556" alt="image" src="https://github.com/user-attachments/assets/d9c34a62-2fa2-4ed5-8693-92da47d1b335" />
 
-<img width="804" height="552" alt="image" src="https://github.com/user-attachments/assets/7702b872-32b5-4bce-a2e5-6c739d1d864b" />
+<img width="804" height="556" alt="image" src="https://github.com/user-attachments/assets/7702b872-32b5-4bce-a2e5-6c739d1d864b" />
 
 
 `CESMAC AL` `SISTEMAS DE INFORMAÇÃO`
