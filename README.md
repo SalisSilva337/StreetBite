@@ -1,7 +1,9 @@
 # StreetBite
-![image](https://github.com/user-attachments/assets/073b8f18-db29-43ea-a774-2a151cc8b1d0)
 
-![screenshot](https://github.com/user-attachments/assets/9a492e36-0f9f-4d44-9cbe-26047e3f5bba)
+<img width="809" height="556" alt="image" src="https://github.com/user-attachments/assets/d9c34a62-2fa2-4ed5-8693-92da47d1b335" />
+
+<img width="804" height="552" alt="image" src="https://github.com/user-attachments/assets/7702b872-32b5-4bce-a2e5-6c739d1d864b" />
+
 
 `CESMAC AL` `SISTEMAS DE INFORMAÇÃO`
 
