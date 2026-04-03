@@ -1,22 +1,23 @@
 using StreetBite.Core.Abstractions;
+using StreetBite.Core.Enums;
 using StreetBite.Core.Models;
 
 namespace StreetBite.Api.Views.Requests;
 
 public sealed record ComandaUpdateRequest(
-    string Status,
-    string MetodoDePagamento) : IValidation
+    EComandaStatus Status,
+    EMetodoPagamento MetodoDePagamento) : IValidation
 {
     public Result Validate()
     {
-        if (string.IsNullOrWhiteSpace(Status))
+        if (!Enum.IsDefined(Status))
         {
-            return Result.Fail("Status da comanda deve ser informado.");
+            return Result.Fail("Status da comanda inválido.");
         }
 
-        if (string.IsNullOrWhiteSpace(MetodoDePagamento))
+        if (!Enum.IsDefined(MetodoDePagamento))
         {
-            return Result.Fail("Método de pagamento deve ser informado.");
+            return Result.Fail("Método de pagamento inválido.");
         }
 
         return Result.Ok();

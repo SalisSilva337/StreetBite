@@ -13,7 +13,7 @@ Este guia explica quais ferramentas usar, como subir a stack completa com Docker
 ### Para desenvolvimento do FrontEnd fora do Docker
 
 - **Node.js**
-- **npx** para executar o servidor estático `http-server`
+- **npm** para instalar dependências e executar o servidor Vite
 
 ### Opcional
 
@@ -34,7 +34,7 @@ Isso sobe:
 |---|---|---|
 | `db` | `5432` | PostgreSQL com volume persistente |
 | `api` | `5109` | API .NET 10 |
-| `frontend` | `3000` | FrontEnd estático |
+| `frontend` | `3000` | FrontEnd servido pelo Vite |
 
 ### Acessos úteis
 
@@ -77,7 +77,8 @@ FrontEnd:
 
 ```bash
 cd FrontEnd
-npx http-server -o landPage.html -p 3000 -a 0.0.0.0
+npm install
+npm run dev
 ```
 
 O `Api/src/StreetBite.Api/appsettings.json` já usa:
@@ -105,7 +106,8 @@ dotnet run --project src/StreetBite.Api/StreetBite.Api.csproj
 
 ```bash
 cd FrontEnd
-npx http-server -o landPage.html -p 3000 -a 0.0.0.0
+npm install
+npm run dev
 ```
 
 ## 4. Quando usar cada opção

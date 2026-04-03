@@ -6,6 +6,13 @@ import {
   serializeProductCategory,
 } from "./productCategories.js";
 
+const EDIT_ICON_URL = new URL("../Imgs/icons/editIcon.svg", import.meta.url)
+  .href;
+const DELETE_ICON_URL = new URL(
+  "../Imgs/icons/deleteIcon.svg",
+  import.meta.url,
+).href;
+
 (() => {
   const api = new ApiService();
 
@@ -33,7 +40,7 @@ import {
 
   function resetWizardForm() {
     inputName.value = "";
-    selectCategory.value = "Lanche";
+    selectCategory.value = "3";
     inputPrice.value = "";
     inputDesc.value = "";
     imageImg.src = "";
@@ -47,7 +54,9 @@ import {
       wizardTitle.textContent = "Assistente de Edição de Item";
       wizardSubtitle.textContent = "Atualize os dados do item selecionado.";
       inputName.value = produto.nome ?? "";
-      selectCategory.value = normalizeProductCategory(produto.categoria) || "Lanche";
+      selectCategory.value = String(
+        serializeProductCategory(produto.categoria) ?? 3,
+      );
       inputPrice.value = produto.preco ?? "";
       inputDesc.value = produto.descricao ?? "";
       wizardNext.textContent = "Salvar Edição";
@@ -102,10 +111,10 @@ import {
       itemImage.src = getProductCategoryImage(produto.categoria, produto.nome);
       itemImage.alt = `Imagem do item ${productName.textContent}`;
 
-      editImg.src = "../Imgs/icons/editIcon.svg";
+      editImg.src = EDIT_ICON_URL;
       editImg.alt = "Editar item";
 
-      deleteImg.src = "../Imgs/icons/deleteIcon.svg";
+      deleteImg.src = DELETE_ICON_URL;
       deleteImg.alt = "Excluir item";
       editButton.setAttribute(
         "aria-label",

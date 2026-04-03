@@ -1,8 +1,10 @@
+using StreetBite.Core.Enums;
+
 namespace StreetBite.Api.Views.DTOs;
 
 public sealed record ItemViewDTO(
     int Id,
     string ProdutoNome,
-    string Categoria,
+    ECategorias Categoria,
     int Quantidade,
     decimal PrecoUnitario);

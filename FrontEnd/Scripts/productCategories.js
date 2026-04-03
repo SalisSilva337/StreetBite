@@ -1,86 +1,64 @@
-const PRODUCT_CATEGORY_LABELS = [
-  "Acompanhamento",
-  "Bebida",
-  "Combo",
-  "Lanche",
-];
+import {
+  PRODUCT_CATEGORY_OPTIONS,
+  getEnumByValue,
+  normalizeEnumValue,
+} from './enumMappings.js';
 
-const PRODUCT_CATEGORY_IMAGES = {
-  Acompanhamento: "../Imgs/images/eachCategory/acompanhamento.jpg",
-  Bebida: "../Imgs/images/eachCategory/bebida.jpg",
-  Combo: "../Imgs/images/eachCategory/combo.jpg",
-  Lanche: "../Imgs/images/eachCategory/lanche.jpg",
-};
-
-const PRODUCT_CATEGORY_LOOKUP = new Map(
-  PRODUCT_CATEGORY_LABELS.map((label, value) => [
-    label.toUpperCase(),
-    { label, value },
-  ]),
-);
+const BIG_SB_IMAGE_URL = new URL(
+  "../Imgs/images/items/bigSB.png",
+  import.meta.url,
+).href;
+const BIG_SB_BACON_IMAGE_URL = new URL(
+  "../Imgs/images/items/bigSBbacon.png",
+  import.meta.url,
+).href;
+const BIG_SB_CHEDDAR_IMAGE_URL = new URL(
+  "../Imgs/images/items/bigSBCheddar.png",
+  import.meta.url,
+).href;
+const CHEESE_CLASSIC_IMAGE_URL = new URL(
+  "../Imgs/images/items/cheeseClassic.png",
+  import.meta.url,
+).href;
 
 function normalizeProductCategory(category) {
-  if (category == null || category === "") {
-    return "";
-  }
-
-  if (typeof category === "number" && PRODUCT_CATEGORY_LABELS[category]) {
-    return PRODUCT_CATEGORY_LABELS[category];
-  }
-
-  const numericCategory = Number(category);
-  if (
-    Number.isInteger(numericCategory) &&
-    PRODUCT_CATEGORY_LABELS[numericCategory]
-  ) {
-    return PRODUCT_CATEGORY_LABELS[numericCategory];
-  }
-
-  const normalizedCategory = String(category).trim().toUpperCase();
-  return PRODUCT_CATEGORY_LOOKUP.get(normalizedCategory)?.label ?? String(category).trim();
+  return (
+    getEnumByValue(PRODUCT_CATEGORY_OPTIONS, category)?.getDescription() ?? ''
+  );
 }
 
 function serializeProductCategory(category) {
-  if (category == null || category === "") {
+  const value = normalizeEnumValue(category, PRODUCT_CATEGORY_OPTIONS);
+  if (typeof value === 'number') {
+    return value;
+  }
+
+  if (category == null || category === '') {
     return category;
-  }
-
-  if (typeof category === "number" && PRODUCT_CATEGORY_LABELS[category]) {
-    return category;
-  }
-
-  const numericCategory = Number(category);
-  if (
-    Number.isInteger(numericCategory) &&
-    PRODUCT_CATEGORY_LABELS[numericCategory]
-  ) {
-    return numericCategory;
-  }
-
-  const normalizedCategory = String(category).trim().toUpperCase();
-  const entry = PRODUCT_CATEGORY_LOOKUP.get(normalizedCategory);
-  if (entry) {
-    return entry.value;
   }
 
   throw new Error(`Categoria de produto inválida: ${category}`);
 }
 
-function getProductCategoryImage(category, nome = "") {
-  const normalizedName = String(nome || "").trim().toLowerCase();
-  if (normalizedName === "big sb") return "../Imgs/images/items/bigSB";
-  if (normalizedName === "big sb bacon")
-    return "../Imgs/images/items/bigSBbacon";
-  if (normalizedName === "big sb cheddar")
-    return "../Imgs/images/items/bigSBCheddar";
-  if (normalizedName === "classic sb")
-    return "../Imgs/images/items/cheeseClassic";
+function getProductCategoryImage(category, nome = '') {
+  const normalizedName = String(nome || '')
+    .trim()
+    .toLowerCase();
+  if (normalizedName === 'big sb') return BIG_SB_IMAGE_URL;
+  if (normalizedName === 'big sb bacon')
+    return BIG_SB_BACON_IMAGE_URL;
+  if (normalizedName === 'big sb cheddar')
+    return BIG_SB_CHEDDAR_IMAGE_URL;
+  if (normalizedName === 'classic sb') return CHEESE_CLASSIC_IMAGE_URL;
 
-  const normalizedCategory = normalizeProductCategory(category);
-  return PRODUCT_CATEGORY_IMAGES[normalizedCategory] ?? PRODUCT_CATEGORY_IMAGES.Lanche;
+  return (
+    getEnumByValue(PRODUCT_CATEGORY_OPTIONS, category)?.getImage() ??
+    PRODUCT_CATEGORY_OPTIONS[3].getImage()
+  );
 }
 
 export {
+  PRODUCT_CATEGORY_OPTIONS,
   getProductCategoryImage,
   normalizeProductCategory,
   serializeProductCategory,

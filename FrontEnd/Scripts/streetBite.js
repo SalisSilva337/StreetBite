@@ -17,6 +17,7 @@ const quickCreateOrderButton = document.querySelector("#quickCreateOrder");
 const floatingActionButtons = document.querySelector("#floatingActionButtons");
 
 const THEME_STORAGE_KEY = "streetbite-theme";
+const PAGE_SCRIPT_CACHE_PARAM = "sb_page_load";
 
 function applyTheme(theme) {
   const normalizedTheme = theme === "dark" ? "dark" : "light";
@@ -77,27 +78,15 @@ applyTheme(getCurrentTheme());
 const pages = {
   home: {
     html: "Iframes/home.html",
-    script: "../Scripts/home.js",
-    module: false,
-    css: "../Styles/home.css",
   },
   menu: {
     html: "Iframes/menu.html",
-    script: "../Scripts/menu.js",
-    module: true,
-    css: "../Styles/menu.css",
   },
   requests: {
     html: "Iframes/requests.html",
-    script: "../Scripts/requests.js",
-    module: true,
-    css: "../Styles/requests.css",
   },
   settings: {
     html: "Iframes/settings.html",
-    script: "../Scripts/settings.js",
-    module: false,
-    css: "../Styles/settings.css",
   },
 };
 
@@ -116,7 +105,7 @@ const pageToSidebarButton = {
   settings: settingsButton,
 };
 
-let currentPageScript = null;
+let currentPageAssets = [];
 
 function isMobileViewport() {
   return window.matchMedia("(max-width: 768px)").matches;
@@ -159,6 +148,86 @@ function updateSidebarActive(pageKey) {
   activeButton?.classList.add("is-active");
 }
 
+function clearPageAssets() {
+  currentPageAssets.forEach((asset) => asset.remove());
+  currentPageAssets = [];
+}
+
+function resolveUrl(value, baseUrl) {
+  if (!value) return value;
+
+  const normalizedValue = value.trim();
+  if (
+    !normalizedValue ||
+    normalizedValue.startsWith("#") ||
+    normalizedValue.startsWith("data:") ||
+    normalizedValue.startsWith("mailto:") ||
+    normalizedValue.startsWith("tel:") ||
+    normalizedValue.startsWith("javascript:")
+  ) {
+    return value;
+  }
+
+  return new URL(normalizedValue, baseUrl).href;
+}
+
+function resolveBodyAssetUrls(doc, baseUrl) {
+  doc.body.querySelectorAll("[src]").forEach((element) => {
+    const source = element.getAttribute("src");
+    if (source) {
+      element.setAttribute("src", resolveUrl(source, baseUrl));
+    }
+  });
+
+  doc.body.querySelectorAll("[href]").forEach((element) => {
+    const href = element.getAttribute("href");
+    if (href) {
+      element.setAttribute("href", resolveUrl(href, baseUrl));
+    }
+  });
+}
+
+function appendCacheBuster(assetUrl) {
+  const resolvedUrl = new URL(assetUrl);
+  resolvedUrl.searchParams.set(PAGE_SCRIPT_CACHE_PARAM, Date.now().toString());
+  return resolvedUrl.href;
+}
+
+function injectPageAssets(doc, baseUrl) {
+  clearPageAssets();
+
+  const headAssets = doc.head.querySelectorAll(
+    'link[rel="stylesheet"], script[src]',
+  );
+
+  headAssets.forEach((asset) => {
+    const tagName = asset.tagName.toLowerCase();
+    const clonedAsset = document.createElement(tagName);
+
+    Array.from(asset.attributes).forEach((attribute) => {
+      let value = attribute.value;
+
+      if (attribute.name === "href" || attribute.name === "src") {
+        value = resolveUrl(attribute.value, baseUrl);
+      }
+
+      if (tagName === "script" && attribute.name === "src") {
+        value = appendCacheBuster(value);
+      }
+
+      clonedAsset.setAttribute(attribute.name, value);
+    });
+
+    clonedAsset.dataset.pageAsset = "true";
+    if (tagName === "script") {
+      document.body.appendChild(clonedAsset);
+    } else {
+      document.head.appendChild(clonedAsset);
+    }
+    currentPageAssets.push(clonedAsset);
+  });
+}
+
 async function loadPage(pageKey) {
   const page = pages[pageKey];
   if (!page) return;
@@ -171,33 +240,17 @@ async function loadPage(pageKey) {
 
   try {
     const response = await fetch(page.html);
+    if (!response.ok) {
+      throw new Error(`Não foi possível carregar ${page.html}.`);
+    }
+
     const html = await response.text();
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
+    resolveBodyAssetUrls(doc, response.url);
+    injectPageAssets(doc, response.url);
     contentArea.innerHTML = doc.body.innerHTML;
-
-    // Swap page-specific CSS
-    const pageCSSLink = document.getElementById("pageCSS");
-    if (pageCSSLink && page.css) {
-      pageCSSLink.href = page.css;
-    }
-
-    // Remove previous injected page script
-    if (currentPageScript) {
-      currentPageScript.remove();
-      currentPageScript = null;
-    }
-
-    // Inject page script if defined
-    if (page.script) {
-      const script = document.createElement("script");
-      // Cache-bust so module scripts re-execute on each tab switch
-      script.src = page.script + "?t=" + Date.now();
-      if (page.module) script.type = "module";
-      document.body.appendChild(script);
-      currentPageScript = script;
-    }
   } finally {
     loadingProgress.finish(loadingToken);
   }

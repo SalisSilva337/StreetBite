@@ -1,7 +1,22 @@
 import ApiService from "./service.js";
 import loadingProgress from "./components/loadingProgress.js";
 import snackbar from "./components/snackbar.js";
-import { getProductCategoryImage } from "./productCategories.js";
+import {
+  getProductCategoryImage,
+  normalizeProductCategory,
+} from "./productCategories.js";
+import {
+  getEnumByValue,
+  ORDER_STATUS_OPTIONS,
+  PAYMENT_METHOD_OPTIONS,
+} from "./enumMappings.js";
+
+const CHECK_ICON_URL = new URL("../Imgs/icons/checkIcon.svg", import.meta.url)
+  .href;
+const DELETE_ICON_URL = new URL(
+  "../Imgs/icons/deleteIcon.svg",
+  import.meta.url,
+).href;
 
 (() => {
   const api = new ApiService();
@@ -33,6 +48,7 @@ import { getProductCategoryImage } from "./productCategories.js";
   let currentStep = 1;
   let products = [];
   let cartItems = [];
+  let orders = [];
 
   function formatCurrency(value) {
     return Number(value).toFixed(2);
@@ -117,6 +133,14 @@ import { getProductCategoryImage } from "./productCategories.js";
     return comanda?.comandaId ?? comanda?.id ?? comanda?.ComandaId ?? null;
   }
 
+  function resolveOrderStatus(order) {
+    return getEnumByValue(ORDER_STATUS_OPTIONS, order?.status ?? order?.Status);
+  }
+
+  function getOrderStatusPresentation(status) {
+    return status ?? ORDER_STATUS_OPTIONS[0];
+  }
+
   async function fillProductOptions() {
     if (products.length) return;
 
@@ -173,8 +197,8 @@ import { getProductCategoryImage } from "./productCategories.js";
       }
 
       await api.updateComanda(comandaId, {
-        status: "Pendente",
-        metodoDePagamento: orderPayment.value,
+        status: ORDER_STATUS_OPTIONS[0].value,
+        metodoDePagamento: Number(orderPayment.value),
       });
 
       snackbar.success("Pedido criado com sucesso.");
@@ -189,17 +213,21 @@ import { getProductCategoryImage } from "./productCategories.js";
   async function loadOrders() {
     try {
       const data = await api.getComandas();
-      renderOrders(Array.isArray(data) ? data : []);
+      orders = Array.isArray(data) ? data : [];
+      renderOrders();
     } catch (error) {
       console.error("Erro ao carregar pedidos:", error);
       snackbar.error(error.message || "Não foi possível carregar os pedidos.");
     }
   }
 
-  function renderOrders(orders) {
+  function renderOrders() {
     gridSection.innerHTML = "";
 
     orders.forEach((order) => {
+      const orderId = resolveComandaId(order);
+      const statusInfo = getOrderStatusPresentation(resolveOrderStatus(order));
+
       const card = document.createElement("article");
       card.className = "grid orderCard";
 
@@ -218,7 +246,12 @@ import { getProductCategoryImage } from "./productCategories.js";
 
       const headerPayment = document.createElement("div");
       headerPayment.className = "orderHeaderField";
-      headerPayment.innerHTML = `<span class="orderHeaderLabel">Pagamento</span><strong>${order.metodoDePagamento}</strong>`;
+      headerPayment.innerHTML = `<span class="orderHeaderLabel">Pagamento</span><strong>${
+        getEnumByValue(
+          PAYMENT_METHOD_OPTIONS,
+          order.metodoDePagamento,
+        )?.getDescription() ?? ""
+      }</strong>`;
 
       const headerCode = document.createElement("div");
       headerCode.className = "orderHeaderField orderHeaderFieldCode";
@@ -261,14 +294,17 @@ import { getProductCategoryImage } from "./productCategories.js";
 
         const itemImage = document.createElement("img");
         itemImage.className = "orderItemImage";
-        itemImage.src = getProductCategoryImage(item.categoria, item.produtoNome);
+        itemImage.src = getProductCategoryImage(
+          item.categoria,
+          item.produtoNome,
+        );
         itemImage.alt = `Imagem do item ${item.produtoNome}`;
 
         const itemInfo = document.createElement("div");
         itemInfo.className = "orderItemInfo";
         itemInfo.innerHTML = `
           <h4>${item.produtoNome}</h4>
-          <p>Categoria: ${item.categoria}</p>
+          <p>Categoria: ${normalizeProductCategory(item.categoria)}</p>
           <p>Valor: R$${item.precoUnitario}</p>
           <p>Quantidade: ${item.quantidade}</p>
         `;
@@ -289,46 +325,88 @@ import { getProductCategoryImage } from "./productCategories.js";
 
       const status = document.createElement("h2");
       status.className = "preparingOrder";
-      status.textContent = "Pedido sendo preparado...";
-
-      const actions = document.createElement("div");
-      actions.className = "orderPreparingButtonsDiv";
-
-      const orderDoneButton = document.createElement("button");
-      orderDoneButton.className = "orderPreparingButtons";
-      orderDoneButton.type = "button";
-      orderDoneButton.setAttribute(
-        "aria-label",
-        "Marcar pedido como concluído",
-      );
-      orderDoneButton.innerHTML = `<img src="../Imgs/icons/checkIcon.svg" alt="Concluir pedido" />`;
-
-      const orderDeleteButton = document.createElement("button");
-      orderDeleteButton.className = "orderPreparingButtons";
-      orderDeleteButton.type = "button";
-      orderDeleteButton.setAttribute("aria-label", "Cancelar pedido");
-      orderDeleteButton.innerHTML = `<img src="../Imgs/icons/deleteIcon.svg" alt="Cancelar pedido" />`;
-
-      orderDoneButton.addEventListener("click", () => {
-        status.textContent = "Pedido concluído";
-        status.classList.add("statusDone");
-        actions.remove();
-        snackbar.success("Pedido marcado como concluído.");
-      });
-
-      orderDeleteButton.addEventListener("click", () => {
-        status.textContent = "Pedido cancelado";
-        status.classList.add("statusCanceled");
-        actions.remove();
-        snackbar.warning("Pedido cancelado.");
-      });
-
-      actions.appendChild(orderDoneButton);
-      actions.appendChild(orderDeleteButton);
+      status.textContent = statusInfo.getDescription();
+      if (statusInfo.className) {
+        status.classList.add(statusInfo.className);
+      }
 
       actionsPanel.appendChild(customer);
       actionsPanel.appendChild(status);
-      actionsPanel.appendChild(actions);
+
+      if (statusInfo.showActions) {
+        const actions = document.createElement("div");
+        actions.className = "orderPreparingButtonsDiv";
+
+        const orderDoneButton = document.createElement("button");
+        orderDoneButton.className = "orderPreparingButtons";
+        orderDoneButton.type = "button";
+        orderDoneButton.setAttribute(
+          "aria-label",
+          "Marcar pedido como concluído",
+        );
+        orderDoneButton.innerHTML = `<img src="${CHECK_ICON_URL}" alt="Concluir pedido" />`;
+
+        const orderDeleteButton = document.createElement("button");
+        orderDeleteButton.className = "orderPreparingButtons";
+        orderDeleteButton.type = "button";
+        orderDeleteButton.setAttribute("aria-label", "Cancelar pedido");
+        orderDeleteButton.innerHTML = `<img src="${DELETE_ICON_URL}" alt="Cancelar pedido" />`;
+
+        orderDoneButton.addEventListener("click", async () => {
+          if (!orderId) {
+            snackbar.error("Não foi possível identificar o pedido.");
+            return;
+          }
+
+          orderDoneButton.disabled = true;
+          orderDeleteButton.disabled = true;
+
+          try {
+            await api.confirmComanda(orderId);
+            order.status = ORDER_STATUS_OPTIONS[2].value;
+            order.Status = ORDER_STATUS_OPTIONS[2].value;
+            renderOrders();
+            snackbar.success("Pedido marcado como concluído.");
+          } catch (error) {
+            console.error("Erro ao confirmar pedido:", error);
+            snackbar.error(
+              error.message || "Não foi possível confirmar o pedido.",
+            );
+            orderDoneButton.disabled = false;
+            orderDeleteButton.disabled = false;
+          }
+        });
+
+        orderDeleteButton.addEventListener("click", async () => {
+          if (!orderId) {
+            snackbar.error("Não foi possível identificar o pedido.");
+            return;
+          }
+
+          orderDoneButton.disabled = true;
+          orderDeleteButton.disabled = true;
+
+          try {
+            await api.deleteComanda(orderId);
+            orders = orders.filter(
+              (currentOrder) => resolveComandaId(currentOrder) !== orderId,
+            );
+            renderOrders();
+            snackbar.warning("Pedido cancelado.");
+          } catch (error) {
+            console.error("Erro ao cancelar pedido:", error);
+            snackbar.error(
+              error.message || "Não foi possível cancelar o pedido.",
+            );
+            orderDoneButton.disabled = false;
+            orderDeleteButton.disabled = false;
+          }
+        });
+
+        actions.appendChild(orderDoneButton);
+        actions.appendChild(orderDeleteButton);
+        actionsPanel.appendChild(actions);
+      }
 
       body.appendChild(itemsPanel);
       body.appendChild(actionsPanel);
@@ -464,7 +542,10 @@ import { getProductCategoryImage } from "./productCategories.js";
       categoria: selectedProduct.categoria,
       quantidade: quantity,
       precoUnitario: Number(selectedProduct.preco),
-      image: getProductCategoryImage(selectedProduct.categoria, selectedProduct.nome),
+      image: getProductCategoryImage(
+        selectedProduct.categoria,
+        selectedProduct.nome,
+      ),
     });
 
     renderCart();

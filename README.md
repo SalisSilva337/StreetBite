@@ -75,7 +75,8 @@ FrontEnd:
 
 ```bash
 cd FrontEnd
-npx http-server -o landPage.html -p 3000 -a 0.0.0.0
+npm install
+npm run dev
 ```
 
 ## Capturas de tela

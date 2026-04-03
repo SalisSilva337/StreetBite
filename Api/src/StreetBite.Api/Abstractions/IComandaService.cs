@@ -17,6 +17,10 @@ public interface IComandaService
         ComandaUpdateRequest request,
         CancellationToken cancellationToken = default);
 
+    Task<Result> ConfirmComandaAsync(
+        long id,
+        CancellationToken cancellationToken = default);
+
     Task<Result> DeleteComandaAsync(long id, CancellationToken cancellationToken = default);
 
     Task<Result<ItemViewDTO>> AddItemAsync(ItemRequest request, CancellationToken cancellationToken = default);

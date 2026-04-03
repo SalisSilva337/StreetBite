@@ -11,7 +11,7 @@ Frontend web do StreetBite, feito com **HTML5**, **CSS3** e **JavaScript vanilla
 | JavaScript ES Modules | Lógica da aplicação |
 | Fetch API | Comunicação com o backend |
 | Prettier 3.8.1 | Formatação |
-| http-server | Servidor estático no Docker |
+| Vite 6 | Dev server e build |
 
 ## Estrutura
 
@@ -112,7 +112,8 @@ docker compose up --build
 
 ```bash
 cd FrontEnd
-npx http-server -o landPage.html -p 3000 -a 0.0.0.0
+npm install
+npm run dev
 ```
 
 ## Formatação

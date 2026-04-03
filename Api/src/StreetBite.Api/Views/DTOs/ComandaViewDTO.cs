@@ -1,3 +1,5 @@
+using StreetBite.Core.Enums;
+
 namespace StreetBite.Api.Views.DTOs;
 
 public sealed record ComandaViewDTO(
@@ -5,6 +7,6 @@ public sealed record ComandaViewDTO(
     List<ItemViewDTO> Items,
     string CodigoDoPedido,
     decimal Subtotal,
-    string Status,
+    EComandaStatus Status,
     DateTime PedidoCriadoEm,
-    string MetodoDePagamento);
+    EMetodoPagamento MetodoDePagamento);

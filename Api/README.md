@@ -131,6 +131,7 @@ Result<T> -> ApiResponse<T>
 | GET | `/api/v1/comandas/{id}` |
 | POST | `/api/v1/comandas` |
 | PATCH | `/api/v1/comandas/{id}` |
+| PATCH | `/api/v1/comandas/{id}/confirmar` |
 | DELETE | `/api/v1/comandas/{id}` |
 | POST | `/api/v1/comandas/item` |
 | GET | `/api/v1/comandas/item/{id}` |

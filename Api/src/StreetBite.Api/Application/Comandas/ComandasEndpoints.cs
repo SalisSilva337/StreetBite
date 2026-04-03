@@ -19,6 +19,7 @@ public static class ComandasEndpoints
         group.MapGet("", ListarComandas);
         group.MapGet("/{id:long}", ObterComandaPorId);
         group.MapPatch("/{id:long}", AtualizarComanda);
+        group.MapPatch("/{id:long}/confirmar", ConfirmarComanda);
         group.MapDelete("/{id:long}", RemoverComanda);
 
         group.MapPost("/item", AdicionarItem);
@@ -69,6 +70,15 @@ public static class ComandasEndpoints
         CancellationToken cancellationToken)
     {
         var result = await comandaService.UpdateComandaAsync(id, request, cancellationToken);
+        return result.ToHttpResult();
+    }
+
+    private static async Task<IResult> ConfirmarComanda(
+        IComandaService comandaService,
+        long id,
+        CancellationToken cancellationToken)
+    {
+        var result = await comandaService.ConfirmComandaAsync(id, cancellationToken);
         return result.ToHttpResult();
     }
 
