@@ -284,27 +284,44 @@ h6 {
 .orderPreparingButtonsDiv {
   display: flex;
   gap: 10px;
-  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
 }
 .orderPreparingButtons {
-  width: 42px;
+  min-width: 120px;
   height: 42px;
-  background-color: var(--primary);
+  background-color: var(--secondary-soft);
+  color: var(--secondary);
   border: 0;
   border-radius: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: 0.3s;
-  color: var(--card);
 }
 .orderPreparingButtons:hover {
   cursor: pointer;
-  background-color: var(--secondary-soft);
-  color: var(--secondary);
+  background-color: var(--border);
 }
-.orderPreparingButtons img {
-  width: 30px;
+
+.orderPreparingButtons:focus-visible,
+.wizardButton:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 55%, white);
+  outline-offset: 2px;
+}
+
+.orderPreparingButtons.is-secondary {
+  margin-right: auto;
+}
+
+.orderPreparingButtons.is-primary {
+  background-color: var(--primary);
+  color: var(--card);
+  font-weight: 700;
+}
+
+.orderPreparingButtons.is-primary:hover {
+  background-color: var(--button-color);
 }
 .preparingOrder {
   background-color: var(--secondary-soft);
@@ -480,9 +497,22 @@ h6 {
 
 .wizardFooter {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   gap: 10px;
   margin-top: 20px;
+}
+
+.wizardFooterLeft,
+.wizardFooterRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wizardFooterRight {
+  justify-content: flex-end;
+  margin-left: auto;
 }
 
 .wizardButton {
@@ -504,6 +534,7 @@ h6 {
 .wizardButton.is-primary {
   background: var(--primary);
   color: var(--card);
+  font-weight: 700;
 }
 
 .wizardButton.is-primary:hover {
@@ -624,12 +655,29 @@ h6 {
 
   .wizardFooter {
     flex-wrap: wrap;
-    justify-content: stretch;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .wizardButton {
-    flex: 1 1 100%;
-    width: 100%;
+    flex: 0 0 auto;
+  }
+
+  .wizardFooterLeft,
+  .wizardFooterRight {
+    width: auto;
+  }
+
+  .wizardFooterRight {
+    flex: 1 1 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+
+  .wizardFooterLeft {
+    flex: 0 0 auto;
   }
 }
 

@@ -11,13 +11,6 @@ import {
   PAYMENT_METHOD_OPTIONS,
 } from "./enumMappings.js";
 
-const CHECK_ICON_URL = new URL("../Imgs/icons/checkIcon.svg", import.meta.url)
-  .href;
-const DELETE_ICON_URL = new URL(
-  "../Imgs/icons/deleteIcon.svg",
-  import.meta.url,
-).href;
-
 (() => {
   const api = new ApiService();
 
@@ -25,6 +18,7 @@ const DELETE_ICON_URL = new URL(
   const openOrderWizard = document.querySelector("#openOrderWizard");
 
   const wizardSection = document.querySelector("#orderWizard");
+  const wizardStepItems = document.querySelector("#orderWizardStepItems");
   const wizardStepLocal = document.querySelector("#orderWizardStepLocal");
   const wizardStepDetails = document.querySelector("#orderWizardStepDetails");
   const wizardBack = document.querySelector("#orderWizardBack");
@@ -70,10 +64,11 @@ const DELETE_ICON_URL = new URL(
 
   function showWizardStep(step) {
     currentStep = step;
-    wizardStepLocal.classList.toggle("hidden", step !== 1);
-    wizardStepDetails.classList.toggle("hidden", step !== 2);
+    wizardStepItems.classList.toggle("hidden", step !== 1);
+    wizardStepLocal.classList.toggle("hidden", step !== 2);
+    wizardStepDetails.classList.toggle("hidden", step !== 3);
     wizardBack.disabled = step === 1;
-    wizardNext.textContent = step === 1 ? "Próximo >" : "Criar Pedido";
+    wizardNext.textContent = step === 3 ? "Criar Pedido" : "Próximo";
   }
 
   function renderCart() {
@@ -337,20 +332,20 @@ const DELETE_ICON_URL = new URL(
         const actions = document.createElement("div");
         actions.className = "orderPreparingButtonsDiv";
 
+        const orderDeleteButton = document.createElement("button");
+        orderDeleteButton.className = "orderPreparingButtons is-secondary";
+        orderDeleteButton.type = "button";
+        orderDeleteButton.setAttribute("aria-label", "Cancelar pedido");
+        orderDeleteButton.textContent = "Cancelar";
+
         const orderDoneButton = document.createElement("button");
-        orderDoneButton.className = "orderPreparingButtons";
+        orderDoneButton.className = "orderPreparingButtons is-primary";
         orderDoneButton.type = "button";
         orderDoneButton.setAttribute(
           "aria-label",
           "Marcar pedido como concluído",
         );
-        orderDoneButton.innerHTML = `<img src="${CHECK_ICON_URL}" alt="Concluir pedido" />`;
-
-        const orderDeleteButton = document.createElement("button");
-        orderDeleteButton.className = "orderPreparingButtons";
-        orderDeleteButton.type = "button";
-        orderDeleteButton.setAttribute("aria-label", "Cancelar pedido");
-        orderDeleteButton.innerHTML = `<img src="${DELETE_ICON_URL}" alt="Cancelar pedido" />`;
+        orderDoneButton.textContent = "Confirmar";
 
         orderDoneButton.addEventListener("click", async () => {
           if (!orderId) {
@@ -403,8 +398,8 @@ const DELETE_ICON_URL = new URL(
           }
         });
 
-        actions.appendChild(orderDoneButton);
         actions.appendChild(orderDeleteButton);
+        actions.appendChild(orderDoneButton);
         actionsPanel.appendChild(actions);
       }
 
@@ -452,20 +447,27 @@ const DELETE_ICON_URL = new URL(
   });
 
   wizardBack.addEventListener("click", () => {
-    if (currentStep === 2) {
-      showWizardStep(1);
-      return;
+    if (currentStep > 1) {
+      showWizardStep(currentStep - 1);
     }
-    closeWizard();
   });
 
   wizardNext.addEventListener("click", () => {
     if (currentStep === 1) {
+      if (!cartItems.length) {
+        snackbar.warning("Adicione pelo menos um item para continuar.");
+        return;
+      }
+      showWizardStep(2);
+      return;
+    }
+
+    if (currentStep === 2) {
       if (!orderType.value) {
         snackbar.warning("Selecione o tipo de atendimento para continuar.");
         return;
       }
-      showWizardStep(2);
+      showWizardStep(3);
       return;
     }
 

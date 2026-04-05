@@ -41,7 +41,7 @@
                 pedidos.
               </p>
             </div>
-            <p class="wizardVisualStep">2 passos para concluir</p>
+            <p class="wizardVisualStep">3 passos para concluir</p>
           </aside>
 
           <div class="wizardMain">
@@ -50,13 +50,62 @@
                 Assistente de Criação de Pedido
               </h2>
               <p class="wizardSubtitle" id="orderWizardSubtitle">
-                Selecione o local e adicione os dados do pedido.
+                Monte os itens, informe o atendimento e finalize os dados.
               </p>
             </header>
 
             <section class="wizardBody">
-              <div class="wizardStep" id="orderWizardStepLocal">
-                <h3 class="wizardStepTitle">Passo 1: Seleção de Local</h3>
+              <div class="wizardStep" id="orderWizardStepItems">
+                <h3 class="wizardStepTitle">Passo 1: Adicionar Itens</h3>
+                <div class="wizardFieldGroup">
+                  <label class="wizardFieldLabel" for="orderProduct"
+                    >Item do cardápio</label
+                  >
+                  <select
+                    class="wizardField"
+                    id="orderProduct"
+                    aria-label="Item do cardápio"
+                  >
+                    <option value="" hidden>--- Selecione ---</option>
+                  </select>
+                </div>
+
+                <div class="wizardFieldGroup">
+                  <label class="wizardFieldLabel" for="orderQuantity"
+                    >Quantidade</label
+                  >
+                  <input
+                    class="wizardField"
+                    id="orderQuantity"
+                    type="number"
+                    min="1"
+                    value="1"
+                    aria-label="Quantidade do item"
+                  />
+                </div>
+
+                <div class="wizardFieldGroup">
+                  <button
+                    class="wizardButton is-secondary"
+                    id="addOrderItem"
+                    type="button"
+                    aria-label="Adicionar item ao pedido"
+                  >
+                    Adicionar item
+                  </button>
+                </div>
+
+                <div class="wizardFieldGroup">
+                  <label class="wizardFieldLabel">Resumo do pedido</label>
+                  <div class="orderCart" id="orderCart"></div>
+                  <div class="orderSubtotal" id="orderSubtotal">
+                    Subtotal: R$0.00
+                  </div>
+                </div>
+              </div>
+
+              <div class="wizardStep hidden" id="orderWizardStepLocal">
+                <h3 class="wizardStepTitle">Passo 2: Tipo de Atendimento</h3>
                 <div class="wizardFieldGroup">
                   <label class="wizardFieldLabel" for="orderType"
                     >Tipo de atendimento</label
@@ -74,7 +123,7 @@
               </div>
 
               <div class="wizardStep hidden" id="orderWizardStepDetails">
-                <h3 class="wizardStepTitle">Passo 2: Dados e Itens</h3>
+                <h3 class="wizardStepTitle">Passo 3: Dados do Cliente</h3>
 
                 <div class="wizardGrid">
                   <div>
@@ -152,59 +201,22 @@
                       </select>
                     </div>
                   </div>
-
-                  <div>
-                    <div class="wizardFieldGroup">
-                      <label class="wizardFieldLabel" for="orderProduct"
-                        >Item do cardápio</label
-                      >
-                      <select
-                        class="wizardField"
-                        id="orderProduct"
-                        aria-label="Item do cardápio"
-                      >
-                        <option value="" hidden>--- Selecione ---</option>
-                      </select>
-                    </div>
-
-                    <div class="wizardFieldGroup">
-                      <label class="wizardFieldLabel" for="orderQuantity"
-                        >Quantidade</label
-                      >
-                      <input
-                        class="wizardField"
-                        id="orderQuantity"
-                        type="number"
-                        min="1"
-                        value="1"
-                        aria-label="Quantidade do item"
-                      />
-                    </div>
-
-                    <div class="wizardFieldGroup">
-                      <button
-                        class="wizardButton is-secondary"
-                        id="addOrderItem"
-                        type="button"
-                        aria-label="Adicionar item ao pedido"
-                      >
-                        Adicionar item
-                      </button>
-                    </div>
-
-                    <div class="wizardFieldGroup">
-                      <label class="wizardFieldLabel">Resumo do pedido</label>
-                      <div class="orderCart" id="orderCart"></div>
-                      <div class="orderSubtotal" id="orderSubtotal">
-                        Subtotal: R$0.00
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </section>
 
             <footer class="wizardFooter">
+              <div class="wizardFooterLeft">
+                <button
+                  class="wizardButton is-secondary"
+                  id="orderWizardCancel"
+                  type="button"
+                  aria-label="Cancelar criação do pedido"
+                >
+                  Cancelar
+                </button>
+              </div>
+              <div class="wizardFooterRight">
               <button
                 class="wizardButton is-secondary"
                 id="orderWizardBack"
@@ -219,16 +231,9 @@
                 type="button"
                 aria-label="Ir para o próximo passo"
               >
-                Próximo &gt;
+                Próximo
               </button>
-              <button
-                class="wizardButton is-secondary"
-                id="orderWizardCancel"
-                type="button"
-                aria-label="Cancelar criação do pedido"
-              >
-                Cancelar
-              </button>
+              </div>
             </footer>
           </div>
         </div>
