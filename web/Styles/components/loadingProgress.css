@@ -131,3 +131,10 @@
     animation-duration: 2.4s;
   }
 }
+
+:root[data-theme="dark"] .sbLoadingProgress,
+:root[data-theme="dark"] .sbLoadingProgress *,
+:root[data-theme="dark"] .sbLoadingProgress *::before,
+:root[data-theme="dark"] .sbLoadingProgress *::after {
+  color: #fff !important;
+}

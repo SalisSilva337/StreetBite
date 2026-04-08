@@ -142,6 +142,13 @@ body {
   color: var(--text);
 }
 
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] body *,
+:root[data-theme="dark"] body *::before,
+:root[data-theme="dark"] body *::after {
+  color: #fff !important;
+}
+
 :where(button, a, [role="button"], input, select, textarea):focus-visible {
   outline: 3px solid var(--secondary);
   outline-offset: 2px;

@@ -136,6 +136,16 @@ import {
     return status ?? ORDER_STATUS_OPTIONS[0];
   }
 
+  function resolveCustomerName(order) {
+    return (
+      order?.cliente?.nome ??
+      order?.clienteNome ??
+      order?.nomeCliente ??
+      order?.Cliente?.nome ??
+      "Cliente"
+    );
+  }
+
   async function fillProductOptions() {
     if (products.length) return;
 
@@ -222,12 +232,17 @@ import {
     orders.forEach((order) => {
       const orderId = resolveComandaId(order);
       const statusInfo = getOrderStatusPresentation(resolveOrderStatus(order));
+      const customerName = resolveCustomerName(order);
 
       const card = document.createElement("article");
       card.className = "grid orderCard";
 
       const header = document.createElement("header");
       header.className = "orderCardHeader";
+
+      const headerCustomer = document.createElement("div");
+      headerCustomer.className = "orderHeaderField";
+      headerCustomer.innerHTML = `<span class="orderHeaderLabel">Cliente</span><strong>${customerName}</strong>`;
 
       const headerDate = document.createElement("div");
       headerDate.className = "orderHeaderField";
@@ -261,6 +276,7 @@ import {
         <span class="orderExpandIcon" aria-hidden="true">▾</span>
       `;
 
+      header.appendChild(headerCustomer);
       header.appendChild(headerDate);
       header.appendChild(headerTotal);
       header.appendChild(headerPayment);
@@ -314,10 +330,6 @@ import {
       const actionsPanel = document.createElement("aside");
       actionsPanel.className = "orderActionsPanel";
 
-      const customer = document.createElement("p");
-      customer.className = "orderCustomer";
-      customer.textContent = "Cliente: Cliente";
-
       const status = document.createElement("h2");
       status.className = "preparingOrder";
       status.textContent = statusInfo.getDescription();
@@ -325,7 +337,6 @@ import {
         status.classList.add(statusInfo.className);
       }
 
-      actionsPanel.appendChild(customer);
       actionsPanel.appendChild(status);
 
       if (statusInfo.showActions) {

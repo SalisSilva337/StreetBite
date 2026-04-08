@@ -171,3 +171,10 @@
     opacity: 1;
   }
 }
+
+:root[data-theme="dark"] .sbSnackbarRoot,
+:root[data-theme="dark"] .sbSnackbarRoot *,
+:root[data-theme="dark"] .sbSnackbarRoot *::before,
+:root[data-theme="dark"] .sbSnackbarRoot *::after {
+  color: #fff !important;
+}

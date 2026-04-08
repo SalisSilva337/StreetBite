@@ -13,6 +13,7 @@
   --danger: #c1121f;
   --success: #2a9d8f;
   --button-color: #af303b;
+  --order-grid-accent: #eb3345;
 }
 
 :root[data-theme="dark"] {
@@ -27,7 +28,8 @@
   --border: #314152;
   --danger: #ff5d6a;
   --success: #4cc9a6;
-  --button-color: #ee646e;
+  --button-color: #af303b;
+  --order-grid-accent: #eb3345;
 }
 
 .main,
@@ -123,12 +125,12 @@ h6 {
 }
 
 .orderCardHeader {
-  background: var(--secondary-soft);
+  background: var(--order-grid-accent);
   display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr 1.2fr auto;
+  grid-template-columns: 1.1fr 1.25fr 0.9fr 0.95fr 1.1fr auto;
   gap: 12px;
   padding: 14px 18px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgb(255 255 255 / 18%);
   align-items: end;
 }
 
@@ -139,14 +141,14 @@ h6 {
 }
 
 .orderHeaderLabel {
-  color: var(--text-light);
+  color: rgb(255 255 255 / 78%);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 
 .orderHeaderField strong {
-  color: var(--text);
+  color: #fff;
   font-size: 16px;
   font-weight: 600;
 }
@@ -160,7 +162,7 @@ h6 {
   align-self: center;
   border: 1px solid var(--border);
   background: var(--card);
-  color: var(--secondary);
+  color: var(--text);
   border-radius: 8px;
   min-height: 38px;
   padding: 0 12px;
@@ -173,6 +175,16 @@ h6 {
 .orderExpandButton:hover {
   cursor: pointer;
   background: var(--secondary-soft);
+}
+
+:root[data-theme="dark"] .orderExpandButton {
+  border: 1px solid rgb(255 255 255 / 24%);
+  background: rgb(20 34 53 / 70%);
+  color: #d8e8ff;
+}
+
+:root[data-theme="dark"] .orderExpandButton:hover {
+  background: rgb(20 34 53 / 92%);
 }
 
 .orderExpandIcon {
@@ -347,6 +359,14 @@ h6 {
   color: #821212;
 }
 
+:root[data-theme="dark"] .preparingOrder.statusDone {
+  color: #355b00 !important;
+}
+
+:root[data-theme="dark"] .preparingOrder.statusCanceled {
+  color: #821212 !important;
+}
+
 .wizardSection {
   display: none;
   position: fixed;
@@ -394,7 +414,7 @@ h6 {
 }
 
 .wizardVisual {
-  background: linear-gradient(165deg, var(--secondary) 0%, var(--primary) 100%);
+  background: #e63946;
   color: var(--card);
   padding: 30px 24px;
   display: flex;
@@ -702,4 +722,11 @@ h6 {
 body {
   background-color: var(--background);
   color: var(--text);
+}
+
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] body *,
+:root[data-theme="dark"] body *::before,
+:root[data-theme="dark"] body *::after {
+  color: #fff !important;
 }

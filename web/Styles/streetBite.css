@@ -6,14 +6,13 @@
   --background: #f8f9fa;
   --card: #ffffff;
   --text: #212529;
-  --text-light: #6C757D;
-  --secondary-soft: #E9EEF5;
-  --primary-soft: #FDECEE;
-  --border: #DCE3EA;
-  --danger: #C1121F;
-  --success: #2A9D8F;
-  --button-color: #AF303B;
-  
+  --text-light: #6c757d;
+  --secondary-soft: #e9eef5;
+  --primary-soft: #fdecee;
+  --border: #dce3ea;
+  --danger: #c1121f;
+  --success: #2a9d8f;
+  --button-color: #af303b;
 }
 
 :root[data-theme="dark"] {
@@ -28,7 +27,7 @@
   --border: #314152;
   --danger: #ff5d6a;
   --success: #4cc9a6;
-  --button-color: #e63946;
+  --button-color: #af303b;
 }
 
 * {
@@ -201,7 +200,9 @@ body {
   transform: translateX(-50%) translateY(8px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
   gap: 14px;
   align-items: center;
 }
@@ -224,7 +225,9 @@ body {
   box-shadow: 0 10px 18px rgb(0, 0, 0, 0.2);
   cursor: pointer;
   padding: 0 14px;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .mobileQuickAction:hover {
@@ -258,8 +261,6 @@ body {
   overflow-y: auto;
 }
 
-
-
 @media only screen and (max-width: 768px) {
   .floatingActionButtons {
     right: 16px;
@@ -288,7 +289,6 @@ body {
     box-shadow: 0 10px 26px rgb(0, 0, 0, 0.16);
     overflow: visible;
   }
-  
 
   .logo {
     display: none;
@@ -335,7 +335,7 @@ body {
     min-width: 48px;
     border-radius: 50%;
     background-color: var(--button-color);
-    color: white; 
+    color: white;
     transform: none;
     box-shadow: 0 6px 14px rgb(175, 48, 59, 0.28);
     display: inline-flex;
@@ -353,8 +353,7 @@ body {
   .mobileActionButton:hover,
   .mobileActionButton[aria-expanded="true"] {
     background-color: var(--secondary-soft);
-    color: var(--text)
-    
+    color: var(--text);
   }
 
   .mobileQuickActions {
@@ -405,4 +404,11 @@ body {
     margin: 0 !important;
     z-index: auto !important;
   }
+}
+
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] body *,
+:root[data-theme="dark"] body *::before,
+:root[data-theme="dark"] body *::after {
+  color: #fff !important;
 }

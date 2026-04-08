@@ -1,10 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:wght@100..900&display=swap");
 
 :root {
   --primary: #e63946;
   --secondary: #1d3557;
   --background: #f8f9fa;
   --card: #ffffff;
+  --on-primary: #ffffff;
+  --on-primary-muted: rgb(255 255 255 / 88%);
   --text: #212529;
   --text-light: #6c757d;
   --secondary-soft: #e9eef5;
@@ -13,13 +15,16 @@
   --danger: #c1121f;
   --success: #2a9d8f;
   --button-color: #af303b;
+  --carousel-items-per-view: 3;
 }
 
-:root[data-theme='dark'] {
+:root[data-theme="dark"] {
   --primary: #e63946;
   --secondary: #8fb3d9;
   --background: #10151c;
   --card: #1a222d;
+  --on-primary: #f8fbff;
+  --on-primary-muted: rgb(248 251 255 / 92%);
   --text: #e9ecef;
   --text-light: #aeb8c2;
   --secondary-soft: #263243;
@@ -27,14 +32,14 @@
   --border: #314152;
   --danger: #ff5d6a;
   --success: #4cc9a6;
-  --button-color: #ee646e;
+  --button-color: #af303b;
 }
 
 .main,
 .main *,
 .wizardSection,
 .wizardSection * {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   box-sizing: border-box;
 }
 
@@ -44,12 +49,19 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Poppin', 'Poppins', sans-serif;
+  font-family: "Poppin", "Poppins", sans-serif;
 }
 
 body {
   background-color: var(--background);
   color: var(--text);
+}
+
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] body *,
+:root[data-theme="dark"] body *::before,
+:root[data-theme="dark"] body *::after {
+  color: #fff !important;
 }
 
 .main {
@@ -65,7 +77,7 @@ body {
   font-size: 30px;
 }
 
-.main h2 {
+.labelSection h2 {
   font-size: 20px;
   font-weight: 400;
 }
@@ -97,7 +109,7 @@ body {
   width: 160px;
   border: 0;
   height: 48px;
-  color: var(--card);
+  color: var(--on-primary);
   font-size: 15px;
   font-weight: 500;
   line-height: 1;
@@ -117,10 +129,104 @@ body {
 
 .gridSection {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.gridSectionEmpty {
+  color: var(--text-light);
+  font-size: 1rem;
+  margin-top: -24px;
+}
+
+.categoryCarousel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.categoryHeader {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: 1fr auto;
+  column-gap: 14px;
+  row-gap: 6px;
+  align-items: center;
+}
+
+.categoryTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.categoryCounter {
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+.carouselNav {
+  display: flex;
+  gap: 10px;
+  grid-row: 1 / span 2;
+  grid-column: 2;
+}
+
+.carouselNavButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--secondary);
+  font-size: 28px;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 3px;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.carouselNavButton:hover:not(:disabled) {
+  cursor: pointer;
+  transform: translateY(-1px);
+  background: var(--secondary-soft);
+  border-color: var(--secondary-soft);
+}
+
+.carouselNavButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.carouselViewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.carouselTrack {
+  display: flex;
+  width: 100%;
+  transition: transform 0.32s ease;
+}
+
+.carouselPage {
+  flex: 0 0 100%;
+  min-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--carousel-items-per-view), minmax(0, 1fr));
   gap: 24px;
   align-items: start;
+}
+
+.carouselPage .grid {
+  max-width: 100%;
 }
 
 .grid {
@@ -137,7 +243,7 @@ body {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-  color: var(--card);
+  color: var(--on-primary);
   box-shadow: 0 12px 28px rgb(0 0 0 / 10%);
   justify-self: center;
   align-self: start;
@@ -192,17 +298,19 @@ body {
   border-radius: 5px;
 }
 
-.productName {
+.grid .productName {
   font-size: 1.8rem;
   font-weight: 700;
   text-align: center;
   line-height: 1.1;
+  color: var(--on-primary);
 }
 
 .productPrice {
   font-size: 1.6rem;
   font-weight: 700;
   text-align: center;
+  color: var(--on-primary);
 }
 
 .productCategory {
@@ -210,7 +318,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 88%);
+  color: var(--on-primary-muted);
   background: rgb(255 255 255 / 14%);
   border: 1px solid rgb(255 255 255 / 22%);
   border-radius: 999px;
@@ -230,23 +338,32 @@ body {
   flex: 0 1 180px;
   min-width: 150px;
   justify-content: center;
-  background: var(--secondary-soft);
-  color: var(--secondary);
+  background: #0d6efd;
+  color: #fff;
   border-color: transparent;
   font-weight: 600;
   white-space: nowrap;
+  box-shadow: 0 6px 14px rgb(0 0 0 / 16%);
 }
 
 .gridEditButton:hover {
-  background: var(--card);
-  color: var(--secondary);
+  background: #0b5ed7;
+  color: #fff;
+  box-shadow: 0 8px 18px rgb(0 0 0 / 20%);
 }
 
 .gridDeleteButton {
   width: 44px;
   min-width: 44px;
   padding: 0;
-  background: rgb(255 255 255 / 12%);
+  background: #c1121f;
+  border-color: rgb(255 255 255 / 18%);
+  box-shadow: 0 6px 14px rgb(0 0 0 / 16%);
+}
+
+.gridDeleteButton:hover {
+  background: #a10f1a;
+  box-shadow: 0 8px 18px rgb(0 0 0 / 20%);
 }
 
 .gridActions .editButton img {
@@ -256,9 +373,11 @@ body {
   display: block;
 }
 
+.gridEditButton img,
 .gridDeleteButton img {
   width: 18px;
   height: 18px;
+  filter: brightness(0) invert(1);
 }
 
 .productDescription {
@@ -277,6 +396,7 @@ body {
   gap: 12px;
   font-weight: 600;
   font-size: 14px;
+  color: var(--on-primary);
 }
 
 .productDescription summary::-webkit-details-marker {
@@ -284,7 +404,7 @@ body {
 }
 
 .productDescription summary::after {
-  content: '▾';
+  content: "▾";
   transition: transform 0.2s ease;
 }
 
@@ -296,7 +416,7 @@ body {
   margin-top: 10px;
   font-size: 14px;
   line-height: 1.45;
-  color: rgb(255 255 255 / 92%);
+  color: var(--on-primary-muted);
 }
 
 .productDescription:not([open]) .productDescriptionText {
@@ -333,7 +453,7 @@ body {
 }
 
 .wizardVisual {
-  background: linear-gradient(165deg, var(--secondary) 0%, var(--primary) 100%);
+  background: #e63946;
   color: var(--card);
   padding: 30px 24px;
   display: flex;
@@ -529,6 +649,10 @@ body {
 }
 
 @media only screen and (max-width: 1150px) {
+  :root {
+    --carousel-items-per-view: 2;
+  }
+
   .contentArea {
     margin-bottom: 150px;
   }
@@ -586,12 +710,27 @@ body {
 }
 
 @media only screen and (max-width: 640px) {
+  :root {
+    --carousel-items-per-view: 1;
+  }
+
   .wizardSection {
     padding: 10px;
   }
 
-  .gridSection {
+  .categoryHeader {
     grid-template-columns: 1fr;
+  }
+
+  .carouselNav {
+    grid-row: auto;
+    grid-column: 1;
+    justify-content: flex-start;
+    margin-top: 2px;
+  }
+
+  .categoryTitle {
+    font-size: 1.45rem;
   }
 
   .wizardMain {

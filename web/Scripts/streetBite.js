@@ -189,7 +189,8 @@ function resolveBodyAssetUrls(doc, baseUrl) {
 
 function appendCacheBuster(assetUrl) {
   const resolvedUrl = new URL(assetUrl);
-  resolvedUrl.searchParams.set(PAGE_SCRIPT_CACHE_PARAM, Date.now().toString());
+  // Use URL fragment to avoid server-side 404 on unknown query params for JS modules.
+  resolvedUrl.hash = `${PAGE_SCRIPT_CACHE_PARAM}=${Date.now().toString()}`;
   return resolvedUrl.href;
 }
 
