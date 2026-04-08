@@ -1,7 +1,8 @@
 # StreetBite
 
 <div align="center">
-  <img src="./FrontEnd/Imgs/images/StreetBite-logo.png" alt="Logo do StreetBite" width="180" />
+  <img width="500" height="500" alt="StreetBite-logo" src="https://github.com/user-attachments/assets/fbae3ebc-d67a-4292-bc96-09c2b5000216" />
+
 
   <h1>StreetBite</h1>
   <p>Plataforma web para gestão de food trucks, com cardápio, comandas e pedidos em um único fluxo.</p>
