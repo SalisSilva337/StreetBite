@@ -98,6 +98,14 @@ public sealed class ProductService(StreetBiteDbContext dbContext) : IProductServ
         if (!await dbContext.Produtos.AnyAsync(x => x.Id == id, cancellationToken))
             return Result.Fail("Produto não encontrado.", System.Net.HttpStatusCode.NotFound);
 
+        var produtoEmPedido = await dbContext.Itens.AnyAsync(x => x.Produto != null && x.Produto.Id == id, cancellationToken);
+        if (produtoEmPedido)
+        {
+            return Result.Fail(
+                "Não é possível remover este produto porque ele já está incluso em um pedido.",
+                System.Net.HttpStatusCode.Conflict);
+        }
+
         await dbContext.Produtos
             .Where(x => x.Id == id)
             .ExecuteDeleteAsync(cancellationToken: cancellationToken);

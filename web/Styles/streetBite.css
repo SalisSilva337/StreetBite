@@ -1,0 +1,414 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:wght@100..900&display=swap");
+
+:root {
+  --primary: #e63946;
+  --secondary: #1d3557;
+  --background: #f8f9fa;
+  --card: #ffffff;
+  --text: #212529;
+  --text-light: #6c757d;
+  --secondary-soft: #e9eef5;
+  --primary-soft: #fdecee;
+  --border: #dce3ea;
+  --danger: #c1121f;
+  --success: #2a9d8f;
+  --button-color: #af303b;
+}
+
+:root[data-theme="dark"] {
+  --primary: #e63946;
+  --secondary: #8fb3d9;
+  --background: #10151c;
+  --card: #1a222d;
+  --text: #e9ecef;
+  --text-light: #aeb8c2;
+  --secondary-soft: #263243;
+  --primary-soft: #3a2327;
+  --border: #314152;
+  --danger: #ff5d6a;
+  --success: #4cc9a6;
+  --button-color: #af303b;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Inter", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Poppin", "Poppins", sans-serif;
+}
+body {
+  background-color: var(--background);
+  color: var(--text);
+  overflow: hidden;
+}
+.logo {
+  display: flex;
+  height: 200px;
+  width: 200px;
+  transition: 0.3;
+}
+.mainSection {
+  display: flex;
+  flex-direction: row;
+}
+.sideBar {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  background-color: var(--card);
+  height: 100vh;
+  gap: 10px;
+  align-items: center;
+  border-right: 1px solid var(--border);
+  transition: 0.5s all;
+  position: relative;
+}
+.buttonsNav {
+  width: 90%;
+  margin: 10px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.navBarButtons {
+  width: 100%;
+  height: 44px;
+  background-color: var(--button-color);
+  border-radius: 5px;
+  border: 0;
+  box-shadow: 1px 1px 10px rgb(0, 0, 0, 0.1);
+  transition: 0.3s all;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--card);
+  text-decoration: none;
+}
+
+.navLabel {
+  display: inline;
+}
+
+.navIcon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+.homeIcon {
+  mask-image: url("../Imgs/icons/homeIcon.svg");
+  -webkit-mask-image: url("../Imgs/icons/homeIcon.svg");
+}
+
+.menuIcon {
+  mask-image: url("../Imgs/icons/menuIcon.svg");
+  -webkit-mask-image: url("../Imgs/icons/menuIcon.svg");
+}
+
+.orderIcon {
+  mask-image: url("../Imgs/icons/orderIcon.svg");
+  -webkit-mask-image: url("../Imgs/icons/orderIcon.svg");
+}
+
+.settingsIcon {
+  mask-image: url("../Imgs/icons/settingsIcon.svg");
+  -webkit-mask-image: url("../Imgs/icons/settingsIcon.svg");
+}
+
+.themeIconButton {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: 0;
+  background-color: var(--button-color);
+  color: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 1px 1px 10px rgb(0, 0, 0, 0.1);
+  transition: 0.3s all;
+  position: static;
+}
+
+.floatingActionButtons {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 30;
+}
+
+.themeIconButton:hover {
+  background-color: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.themeIconGlyph {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.mobileActionButton,
+.mobileQuickActions {
+  display: none;
+}
+
+.mobileActionButton {
+  border: 0;
+  cursor: pointer;
+}
+
+.mobileActionButtonGlyph {
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 300;
+}
+
+.mobileQuickActions {
+  position: absolute;
+  left: 50%;
+  bottom: 74px;
+  transform: translateX(-50%) translateY(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  gap: 14px;
+  align-items: center;
+}
+
+.mobileQuickActions.is-open {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.mobileQuickAction {
+  min-width: 110px;
+  height: 46px;
+  border: 0;
+  border-radius: 10px;
+  background-color: var(--button-color);
+  color: var(--card);
+  font-size: 22px;
+  font-weight: 500;
+  box-shadow: 0 10px 18px rgb(0, 0, 0, 0.2);
+  cursor: pointer;
+  padding: 0 14px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.mobileQuickAction:hover {
+  background-color: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.navBarButtons:hover {
+  cursor: pointer;
+  background-color: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.navBarButtons.is-active {
+  background-color: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+:where(button, [role="button"], input, select, textarea, a):focus-visible {
+  outline: 3px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+.sideBar h1 {
+  margin: 30px;
+  font-weight: 400;
+}
+.contentArea {
+  height: 100vh;
+  width: 100vw;
+  overflow-y: auto;
+}
+
+@media only screen and (max-width: 768px) {
+  .floatingActionButtons {
+    right: 16px;
+    bottom: 106px;
+  }
+
+  .asw-menu-btn {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    margin: 0 !important;
+    z-index: auto !important;
+  }
+  .sideBar {
+    position: fixed;
+    z-index: 10;
+    justify-content: center;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    height: 74px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 26px rgb(0, 0, 0, 0.16);
+    overflow: visible;
+  }
+
+  .logo {
+    display: none;
+  }
+
+  .buttonsNav {
+    width: 100%;
+    margin: 0;
+    padding: 8px 12px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    justify-items: center;
+    gap: 0;
+  }
+
+  .navBarButtons {
+    height: 46px;
+    width: 46px;
+    min-width: 46px;
+    border-radius: 14px;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    box-shadow: none;
+    color: var(--text-light);
+    overflow: hidden;
+  }
+
+  .navLabel {
+    display: none;
+  }
+
+  .navBarButtons .navIcon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mobileActionButton {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 50%;
+    background-color: var(--button-color);
+    color: white;
+    transform: none;
+    box-shadow: 0 6px 14px rgb(175, 48, 59, 0.28);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.1s all;
+  }
+
+  .navBarButtons:hover,
+  .navBarButtons.is-active {
+    background-color: var(--secondary-soft);
+    color: var(--secondary);
+  }
+
+  .mobileActionButton:hover,
+  .mobileActionButton[aria-expanded="true"] {
+    background-color: var(--secondary-soft);
+    color: var(--text);
+  }
+
+  .mobileQuickActions {
+    display: inline-flex;
+    bottom: 86px;
+    z-index: 25;
+  }
+
+  .themeIconButton {
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    position: static;
+  }
+
+  [vw-access-button] {
+    position: fixed !important;
+    left: auto !important;
+    /* right: 16px !important; */
+    bottom: 168px !important;
+    transform: none !important;
+    margin: 0 !important;
+    z-index: 2 !important;
+  }
+
+  .contentArea {
+    padding-bottom: 98px;
+    box-sizing: border-box;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .mobileActionButton,
+  .mobileQuickActions {
+    display: none !important;
+  }
+
+  /* .themeIconButton {
+    position: static;
+    transform: scale(0.8);
+  } */
+
+  .asw-menu-btn {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    margin: 0 !important;
+    z-index: auto !important;
+  }
+}
+
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] body *,
+:root[data-theme="dark"] body *::before,
+:root[data-theme="dark"] body *::after {
+  color: #fff !important;
+}

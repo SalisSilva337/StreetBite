@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="Styles/landPage.css" />
+    <title>StreetBite - Recuperar senha</title>
+    <link
+      rel="shortcut icon"
+      href="Imgs/images/favcon.png"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <main class="auth-shell">
+      <article class="auth-card auth-card--recovery" data-store-recovery-root>
+        <div class="auth-header">
+          <p class="auth-kicker">Recuperação de acesso</p>
+          <h1 class="auth-title">Esqueci minha senha</h1>
+          <p class="auth-description">
+            Informe o número de contato da loja. Se ele existir no cadastro,
+            você poderá criar uma nova senha na etapa seguinte.
+          </p>
+        </div>
+
+        <div
+          class="auth-status"
+          data-auth-status
+          role="status"
+          aria-live="polite"
+        ></div>
+
+        <form class="auth-form auth-steps" data-recovery-lookup novalidate>
+          <label class="auth-field">
+            <span class="field-label">Número de contato</span>
+            <input
+              class="field-input"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              placeholder="(00) 00000-0000"
+              data-recovery-contact
+            />
+          </label>
+
+          <div class="auth-actions">
+            <button class="auth-button" type="submit">Continuar</button>
+          </div>
+        </form>
+
+        <form
+          class="auth-form auth-steps hidden"
+          data-recovery-reset
+          novalidate
+        >
+          <p class="auth-description">
+            Conta localizada para o número
+            <strong data-recovery-contact-summary></strong>.
+          </p>
+
+          <label class="auth-field">
+            <span class="field-label">Nova senha</span>
+            <input
+              class="field-input"
+              type="password"
+              autocomplete="new-password"
+              placeholder="Digite a nova senha"
+              data-recovery-password
+            />
+          </label>
+
+          <label class="auth-field">
+            <span class="field-label">Confirme a nova senha</span>
+            <input
+              class="field-input"
+              type="password"
+              autocomplete="new-password"
+              placeholder="Confirme a nova senha"
+              data-recovery-confirm-password
+            />
+          </label>
+
+          <div class="auth-actions auth-actions--split">
+            <a class="auth-link" href="landPage.html">Voltar</a>
+            <button class="auth-button" type="submit">Salvar nova senha</button>
+          </div>
+        </form>
+      </article>
+    </main>
+
+    <script type="module">
+      import { initializeRecoveryPage } from "./Scripts/storeAuth.js";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initializeRecoveryPage();
+      });
+    </script>
+  </body>
+</html>

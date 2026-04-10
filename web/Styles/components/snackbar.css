@@ -1,0 +1,180 @@
+.sbSnackbarRoot {
+  position: fixed;
+  left: 50%;
+  right: auto;
+  top: 18px;
+  bottom: auto;
+  transform: translateX(-50%);
+  z-index: 10000;
+  width: min(92vw, 360px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.sbSnackbar {
+  position: relative;
+  display: grid;
+  grid-template-columns: 12px 38px minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 66px;
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 18%);
+  overflow: hidden;
+  pointer-events: auto;
+  transform: translateY(12px);
+  opacity: 0;
+  animation: sbSnackbarEnter 0.25s ease forwards;
+}
+
+.sbSnackbar.is-leaving {
+  animation: sbSnackbarLeave 0.2s ease forwards;
+}
+
+.sbSnackbar__accent {
+  height: 100%;
+  width: 100%;
+  grid-column: 1;
+}
+
+.sbSnackbar__icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.sbSnackbar__body {
+  min-width: 0;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sbSnackbar__message {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.sbSnackbar__close,
+.sbSnackbar__action {
+  border: 0;
+  border-radius: 8px;
+  height: 34px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--secondary-soft);
+  color: var(--secondary);
+  transition: filter 0.2s ease;
+}
+
+.sbSnackbar__close {
+  margin-right: 10px;
+}
+
+.sbSnackbar__close:hover,
+.sbSnackbar__action:hover {
+  cursor: pointer;
+  filter: brightness(0.95);
+}
+
+.sbSnackbar--success .sbSnackbar__accent {
+  background: #2a9d8f;
+}
+
+.sbSnackbar--success .sbSnackbar__icon {
+  background: rgb(42 157 143 / 14%);
+  color: #2a9d8f;
+}
+
+.sbSnackbar--error .sbSnackbar__accent {
+  background: #c1121f;
+}
+
+.sbSnackbar--error .sbSnackbar__icon {
+  background: rgb(193 18 31 / 14%);
+  color: #c1121f;
+}
+
+.sbSnackbar--warning .sbSnackbar__accent {
+  background: #e67e22;
+}
+
+.sbSnackbar--warning .sbSnackbar__icon {
+  background: rgb(230 126 34 / 16%);
+  color: #b45f15;
+}
+
+.sbSnackbar--info .sbSnackbar__accent {
+  background: var(--secondary);
+}
+
+.sbSnackbar--info .sbSnackbar__icon {
+  background: rgb(29 53 87 / 14%);
+  color: var(--secondary);
+}
+
+@keyframes sbSnackbarEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sbSnackbarLeave {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (max-width: 720px) {
+  .sbSnackbarRoot {
+    left: 12px;
+    right: 12px;
+    top: 12px;
+    bottom: auto;
+    transform: none;
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sbSnackbar,
+  .sbSnackbar.is-leaving {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
+:root[data-theme="dark"] .sbSnackbarRoot,
+:root[data-theme="dark"] .sbSnackbarRoot *,
+:root[data-theme="dark"] .sbSnackbarRoot *::before,
+:root[data-theme="dark"] .sbSnackbarRoot *::after {
+  color: #fff !important;
+}

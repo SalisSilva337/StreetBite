@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../../Styles/pedidos.css" />
+    <script src="../../Scripts/pedidos.js" type="module"></script>
+  </head>
+  <body>
+    <main class="main">
+      <section class="labelSection">
+        <div>
+          <h1>Pedidos</h1>
+          <h2>Lista de Pedidos</h2>
+        </div>
+        <nav>
+          <button
+            class="createOrder"
+            id="openOrderWizard"
+            type="button"
+            aria-label="Criar novo pedido"
+          >
+            Criar novo Pedido
+          </button>
+        </nav>
+      </section>
+      <section class="gridSection"></section>
+
+      <section
+        class="wizardSection"
+        id="orderWizard"
+        aria-label="Assistente de criação de pedido"
+      >
+        <div class="wizardContainer">
+          <aside class="wizardVisual" aria-hidden="true">
+            <div>
+              <h3 class="wizardVisualTitle">StreetBite Orders</h3>
+              <p>
+                Crie um novo pedido em um fluxo guiado sem sair da tela de
+                pedidos.
+              </p>
+            </div>
+            <p class="wizardVisualStep">3 passos para concluir</p>
+          </aside>
+
+          <div class="wizardMain">
+            <header class="wizardHeader">
+              <h2 class="wizardTitle" id="orderWizardTitle">
+                Assistente de Criação de Pedido
+              </h2>
+              <p class="wizardSubtitle" id="orderWizardSubtitle">
+                Monte os itens, informe o atendimento e finalize os dados.
+              </p>
+            </header>
+
+            <section class="wizardBody">
+              <div class="wizardStep" id="orderWizardStepItems">
+                <h3 class="wizardStepTitle">Passo 1: Adicionar Itens</h3>
+                <div class="wizardFieldGroup">
+                  <label class="wizardFieldLabel" for="orderProduct"
+                    >Item do cardápio</label
+                  >
+                  <select
+                    class="wizardField"
+                    id="orderProduct"
+                    aria-label="Item do cardápio"
+                  >
+                    <option value="" hidden>--- Selecione ---</option>
+                  </select>
+                </div>
+
+                <div class="wizardFieldGroup">
+                  <label class="wizardFieldLabel" for="orderQuantity"
+                    >Quantidade</label
+                  >
+                  <input
+                    class="wizardField"
+                    id="orderQuantity"
+                    type="number"
+                    min="1"
+                    value="1"
+                    aria-label="Quantidade do item"
+                  />
+                </div>
+
+                <div class="wizardFieldGroup">
+                  <button
+                    class="wizardButton is-secondary"
+                    id="addOrderItem"
+                    type="button"
+                    aria-label="Adicionar item ao pedido"
+                  >
+                    Adicionar item
+                  </button>
+                </div>
+
+                <div class="wizardFieldGroup">
+                  <label class="wizardFieldLabel">Resumo do pedido</label>
+                  <div class="orderCart" id="orderCart"></div>
+                  <div class="orderSubtotal" id="orderSubtotal">
+                    Subtotal: R$0.00
+                  </div>
+                </div>
+              </div>
+
+              <div class="wizardStep hidden" id="orderWizardStepLocal">
+                <h3 class="wizardStepTitle">Passo 2: Tipo de Atendimento</h3>
+                <div class="wizardFieldGroup">
+                  <label class="wizardFieldLabel" for="orderType"
+                    >Tipo de atendimento</label
+                  >
+                  <select
+                    class="wizardField"
+                    id="orderType"
+                    aria-label="Tipo de atendimento"
+                  >
+                    <option value="" hidden>--- Selecione ---</option>
+                    <option value="delivery">Delivery</option>
+                    <option value="retirada">Retirada/Comer no Local</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="wizardStep hidden" id="orderWizardStepDetails">
+                <h3 class="wizardStepTitle">Passo 3: Dados do Cliente</h3>
+
+                <div class="wizardGrid">
+                  <div>
+                    <div class="wizardFieldGroup">
+                      <label class="wizardFieldLabel" for="orderClientName"
+                        >Nome do cliente</label
+                      >
+                      <input
+                        class="wizardField"
+                        id="orderClientName"
+                        type="text"
+                        aria-label="Nome do cliente"
+                      />
+                    </div>
+
+                    <div class="wizardFieldGroup">
+                      <label class="wizardFieldLabel" for="orderPhone"
+                        >Telefone</label
+                      >
+                      <input
+                        class="wizardField"
+                        id="orderPhone"
+                        type="text"
+                        aria-label="Telefone do cliente"
+                      />
+                    </div>
+
+                    <div class="wizardFieldGroup" id="addressGroup">
+                      <label class="wizardFieldLabel" for="orderCep">CEP</label>
+                      <input
+                        class="wizardField"
+                        id="orderCep"
+                        type="text"
+                        aria-label="CEP"
+                      />
+                      <input
+                        class="wizardField"
+                        id="orderDistrict"
+                        type="text"
+                        placeholder="Bairro"
+                        disabled
+                        aria-label="Bairro"
+                      />
+                      <input
+                        class="wizardField"
+                        id="orderStreet"
+                        type="text"
+                        placeholder="Rua"
+                        disabled
+                        aria-label="Rua"
+                      />
+                      <input
+                        class="wizardField"
+                        id="orderNumber"
+                        type="text"
+                        placeholder="Número"
+                        aria-label="Número do endereço"
+                      />
+                    </div>
+
+                    <div class="wizardFieldGroup">
+                      <label class="wizardFieldLabel" for="orderPayment"
+                        >Método de pagamento</label
+                      >
+                      <select
+                        class="wizardField"
+                        id="orderPayment"
+                        aria-label="Método de pagamento"
+                      >
+                        <option value="" hidden>--- Selecione ---</option>
+                        <option value="3">PIX</option>
+                        <option value="0">Crédito</option>
+                        <option value="1">Débito</option>
+                        <option value="2">Dinheiro</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <footer class="wizardFooter">
+              <div class="wizardFooterLeft">
+                <button
+                  class="wizardButton is-secondary"
+                  id="orderWizardCancel"
+                  type="button"
+                  aria-label="Cancelar criação do pedido"
+                >
+                  Cancelar
+                </button>
+              </div>
+              <div class="wizardFooterRight">
+              <button
+                class="wizardButton is-secondary"
+                id="orderWizardBack"
+                type="button"
+                aria-label="Voltar para o passo anterior"
+              >
+                Voltar
+              </button>
+              <button
+                class="wizardButton is-primary"
+                id="orderWizardNext"
+                type="button"
+                aria-label="Ir para o próximo passo"
+              >
+                Próximo
+              </button>
+              </div>
+            </footer>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

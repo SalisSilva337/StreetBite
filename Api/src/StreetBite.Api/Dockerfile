@@ -2,6 +2,9 @@
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine3.23 AS base
+# Add kerberos libraries for authentication
+USER root
+RUN apk add --no-cache krb5-libs
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080

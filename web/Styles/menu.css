@@ -1,0 +1,747 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:wght@100..900&display=swap");
+
+:root {
+  --primary: #e63946;
+  --secondary: #1d3557;
+  --background: #f8f9fa;
+  --card: #ffffff;
+  --on-primary: #ffffff;
+  --on-primary-muted: rgb(255 255 255 / 88%);
+  --text: #212529;
+  --text-light: #6c757d;
+  --secondary-soft: #e9eef5;
+  --primary-soft: #fdecee;
+  --border: #dce3ea;
+  --danger: #c1121f;
+  --success: #2a9d8f;
+  --button-color: #af303b;
+  --carousel-items-per-view: 3;
+}
+
+:root[data-theme="dark"] {
+  --primary: #e63946;
+  --secondary: #8fb3d9;
+  --background: #10151c;
+  --card: #1a222d;
+  --on-primary: #f8fbff;
+  --on-primary-muted: rgb(248 251 255 / 92%);
+  --text: #e9ecef;
+  --text-light: #aeb8c2;
+  --secondary-soft: #263243;
+  --primary-soft: #3a2327;
+  --border: #314152;
+  --danger: #ff5d6a;
+  --success: #4cc9a6;
+  --button-color: #af303b;
+}
+
+.main,
+.main *,
+.wizardSection,
+.wizardSection * {
+  font-family: "Inter", sans-serif;
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Poppin", "Poppins", sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+}
+
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] body *,
+:root[data-theme="dark"] body *::before,
+:root[data-theme="dark"] body *::after {
+  color: #fff !important;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 20px;
+  margin-top: 50px;
+  gap: 80px;
+}
+
+.main h1 {
+  font-size: 30px;
+}
+
+.labelSection h2 {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.labelSection {
+  display: flex;
+  flex-direction: row;
+}
+
+.labelSection div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.labelSection nav {
+  margin-left: auto;
+}
+
+.main nav {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.main nav button {
+  background-color: var(--button-color);
+  border-radius: 5px;
+  width: 160px;
+  border: 0;
+  height: 48px;
+  color: var(--on-primary);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0 16px;
+  box-sizing: border-box;
+  transition:
+    background-color 0.24s ease,
+    transform 0.2s ease,
+    box-shadow 0.24s ease;
+}
+
+.main nav button:hover {
+  cursor: pointer;
+  background-color: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.gridSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.gridSectionEmpty {
+  color: var(--text-light);
+  font-size: 1rem;
+  margin-top: -24px;
+}
+
+.categoryCarousel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.categoryHeader {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 14px;
+  row-gap: 6px;
+  align-items: center;
+}
+
+.categoryTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.categoryCounter {
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+.carouselNav {
+  display: flex;
+  gap: 10px;
+  grid-row: 1 / span 2;
+  grid-column: 2;
+}
+
+.carouselNavButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--secondary);
+  font-size: 28px;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 3px;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.carouselNavButton:hover:not(:disabled) {
+  cursor: pointer;
+  transform: translateY(-1px);
+  background: var(--secondary-soft);
+  border-color: var(--secondary-soft);
+}
+
+.carouselNavButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.carouselViewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.carouselTrack {
+  display: flex;
+  width: 100%;
+  transition: transform 0.32s ease;
+}
+
+.carouselPage {
+  flex: 0 0 100%;
+  min-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--carousel-items-per-view), minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+.carouselPage .grid {
+  max-width: 100%;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 350px;
+  min-height: 430px;
+  background-color: var(--primary);
+  align-items: center;
+  padding: 20px 18px 18px;
+  gap: 14px;
+  border-radius: 16px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  color: var(--on-primary);
+  box-shadow: 0 12px 28px rgb(0 0 0 / 10%);
+  justify-self: center;
+  align-self: start;
+}
+
+@keyframes gridAnim {
+  from {
+    scale: 0;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+.editButton {
+  background-color: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgb(255 255 255 / 20%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-height: 42px;
+  color: var(--card);
+  transition:
+    background-color 0.24s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.editButton:hover {
+  cursor: pointer;
+  background-color: var(--secondary-soft);
+  color: var(--secondary);
+  transform: translateY(-1px);
+}
+
+.itemImage {
+  border-radius: 18px;
+  height: 190px;
+  width: 100%;
+  max-width: 250px;
+  overflow: hidden;
+  background: rgb(255 255 255 / 10%);
+}
+
+.itemImage img {
+  object-fit: fill;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+
+.grid .productName {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.1;
+  color: var(--on-primary);
+}
+
+.productPrice {
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--on-primary);
+}
+
+.productCategory {
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-primary-muted);
+  background: rgb(255 255 255 / 14%);
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 999px;
+  padding: 5px 10px;
+}
+
+.gridActions {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.gridEditButton {
+  flex: 0 1 180px;
+  min-width: 150px;
+  justify-content: center;
+  background: #0d6efd;
+  color: #fff;
+  border-color: transparent;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 6px 14px rgb(0 0 0 / 16%);
+}
+
+.gridEditButton:hover {
+  background: #0b5ed7;
+  color: #fff;
+  box-shadow: 0 8px 18px rgb(0 0 0 / 20%);
+}
+
+.gridDeleteButton {
+  width: 44px;
+  min-width: 44px;
+  padding: 0;
+  background: #c1121f;
+  border-color: rgb(255 255 255 / 18%);
+  box-shadow: 0 6px 14px rgb(0 0 0 / 16%);
+}
+
+.gridDeleteButton:hover {
+  background: #a10f1a;
+  box-shadow: 0 8px 18px rgb(0 0 0 / 20%);
+}
+
+.gridActions .editButton img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+}
+
+.gridEditButton img,
+.gridDeleteButton img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
+}
+
+.productDescription {
+  width: 100%;
+  margin-top: 2px;
+  border-top: 1px solid rgb(255 255 255 / 18%);
+  padding-top: 10px;
+}
+
+.productDescription summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--on-primary);
+}
+
+.productDescription summary::-webkit-details-marker {
+  display: none;
+}
+
+.productDescription summary::after {
+  content: "▾";
+  transition: transform 0.2s ease;
+}
+
+.productDescription[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.productDescriptionText {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--on-primary-muted);
+}
+
+.productDescription:not([open]) .productDescriptionText {
+  display: none;
+}
+
+.wizardSection {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  align-items: center;
+  justify-content: center;
+  background: rgb(16 21 28 / 55%);
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.wizardSection.is-open {
+  display: flex;
+}
+
+.wizardContainer {
+  width: min(980px, 100%);
+  min-height: 540px;
+  max-height: min(100vh - 48px, 90vh);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 48px rgb(0 0 0 / 25%);
+  display: grid;
+  grid-template-columns: 290px 1fr;
+}
+
+.wizardVisual {
+  background: #e63946;
+  color: var(--card);
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.wizardVisualTitle {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.wizardVisual p {
+  line-height: 1.45;
+}
+
+.wizardVisualStep {
+  border-top: 1px solid rgb(255 255 255 / 30%);
+  padding-top: 14px;
+  opacity: 0.85;
+}
+
+.wizardMain {
+  display: flex;
+  flex-direction: column;
+  padding: 26px 28px;
+  min-width: 0;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+
+@media (max-width: 768px) {
+  .wizardMain {
+    padding: 20px 16px;
+    max-height: calc(100vh - 150px);
+  }
+}
+
+.wizardHeader {
+  margin-bottom: 18px;
+}
+
+.wizardTitle {
+  font-size: 24px;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.wizardSubtitle {
+  color: var(--text-light);
+}
+
+.wizardStep {
+  flex: 1;
+}
+
+.wizardStep.hidden,
+.hidden {
+  display: none;
+}
+
+.wizardStepTitle {
+  font-size: 18px;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+
+.wizardFieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  min-width: 0;
+}
+
+.wizardFieldLabel {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.wizardField,
+.wizardTextarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: 15px;
+}
+
+.wizardTextarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.wizardGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.imgDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.imgDivModal {
+  width: 240px;
+  height: 150px;
+  background: var(--secondary-soft);
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  overflow: hidden;
+}
+
+.imgDivModal img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.inputImg {
+  background: var(--primary);
+  color: var(--card);
+
+  padding: 10px 14px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.24s ease,
+    color 0.24s ease;
+}
+
+.inputImg:hover {
+  cursor: pointer;
+  background: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.wizardFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.wizardButton {
+  min-width: 130px;
+  height: 44px;
+  border-radius: 8px;
+  border: 0;
+  padding: 0 14px;
+  font-weight: 600;
+  transition:
+    background-color 0.24s ease,
+    color 0.24s ease;
+}
+
+.wizardButton:hover {
+  cursor: pointer;
+}
+
+.wizardButton.is-primary {
+  background: var(--primary);
+  color: var(--card);
+}
+
+.wizardButton.is-primary:hover {
+  background: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.wizardButton.is-secondary {
+  background: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.wizardButton.is-secondary:hover {
+  background: var(--border);
+}
+
+.wizardButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media only screen and (max-width: 1150px) {
+  :root {
+    --carousel-items-per-view: 2;
+  }
+
+  .contentArea {
+    margin-bottom: 150px;
+  }
+
+  .grid {
+    max-width: 100%;
+    min-height: 390px;
+  }
+
+  .itemImage {
+    max-width: 220px;
+    height: 160px;
+  }
+
+  .productName {
+    font-size: 1.6rem;
+  }
+
+  .productPrice {
+    font-size: 1.45rem;
+  }
+
+  .wizardContainer {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    max-height: calc(100vh - 24px);
+  }
+
+  .wizardVisual {
+    min-height: 180px;
+  }
+
+  .wizardMain {
+    padding: 20px;
+  }
+
+  .wizardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .wizardFooter {
+    flex-wrap: wrap;
+    justify-content: stretch;
+  }
+
+  .wizardButton {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .imgDivModal {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  :root {
+    --carousel-items-per-view: 1;
+  }
+
+  .wizardSection {
+    padding: 10px;
+  }
+
+  .categoryHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .carouselNav {
+    grid-row: auto;
+    grid-column: 1;
+    justify-content: flex-start;
+    margin-top: 2px;
+  }
+
+  .categoryTitle {
+    font-size: 1.45rem;
+  }
+
+  .wizardMain {
+    padding: 16px;
+  }
+
+  .wizardTitle {
+    font-size: 22px;
+  }
+
+  .wizardSubtitle {
+    font-size: 14px;
+  }
+}
