@@ -46,7 +46,8 @@ h6 {
 .main {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  min-height: calc(100vh - 100px);
   margin: 20px;
   margin-top: 50px;
   gap: 50px;
@@ -66,6 +67,21 @@ h6 {
   flex-direction: column;
   gap: 10px;
 }
+
+.wipSection {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wipSection p {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 0.04em;
+}
+
 .gridSection {
   display: flex;
   flex-direction: column;
