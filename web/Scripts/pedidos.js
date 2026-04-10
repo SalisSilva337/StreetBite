@@ -10,6 +10,7 @@ import {
   ORDER_STATUS_OPTIONS,
   PAYMENT_METHOD_OPTIONS,
 } from "./enumMappings.js";
+import { getShopPickupCep } from "./storeAuth.js";
 
 (() => {
   const api = new ApiService();
@@ -488,7 +489,7 @@ import {
   orderType.addEventListener("change", () => {
     if (orderType.value === "retirada") {
       addressGroup.classList.add("hidden");
-      orderCep.value = "57010000";
+      orderCep.value = getShopPickupCep();
       orderDistrict.value = "Loja";
       orderStreet.value = "Loja";
       orderNumber.value = "00";
