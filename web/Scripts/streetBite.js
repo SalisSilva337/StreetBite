@@ -18,7 +18,9 @@ const sidebarAvatarInitial = document.querySelector(
 const sidebarGreeting = document.querySelector("[data-sidebar-greeting]");
 const sidebarName = document.querySelector("[data-sidebar-name]");
 const sidebarRole = document.querySelector("[data-sidebar-role]");
-const sidebarAuthActions = document.querySelector("[data-sidebar-auth-actions]");
+const sidebarAuthActions = document.querySelector(
+  "[data-sidebar-auth-actions]",
+);
 const mobileActionButton = document.querySelector("#mobileActionButton");
 const mobileQuickActions = document.querySelector("#mobileQuickActions");
 const quickCreateItemButton = document.querySelector("#quickCreateItem");
@@ -70,7 +72,9 @@ function updateSidebarProfile() {
   }
 
   if (sidebarGreeting) {
-    sidebarGreeting.textContent = isAuthenticated ? session.shopName : "Bem-vindo!";
+    sidebarGreeting.textContent = isAuthenticated
+      ? session.shopName
+      : "Bem-vindo!";
   }
 
   if (sidebarName) {
@@ -80,7 +84,9 @@ function updateSidebarProfile() {
   }
 
   if (sidebarRole) {
-    sidebarRole.textContent = isAuthenticated ? "Foodtruck logado" : "Acesso ao painel";
+    sidebarRole.textContent = isAuthenticated
+      ? "Foodtruck logado"
+      : "Acesso ao painel";
   }
 
   if (sidebarAuthActions) {

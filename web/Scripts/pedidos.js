@@ -175,7 +175,8 @@ import { getShopPickupCep } from "./storeAuth.js";
     );
 
     if (orderPhone) {
-      orderPhone.value = selectedCustomer?.telefone ?? selectedCustomer?.Telefone ?? "";
+      orderPhone.value =
+        selectedCustomer?.telefone ?? selectedCustomer?.Telefone ?? "";
     }
 
     if (orderCustomerInfo) {
@@ -186,8 +187,10 @@ import { getShopPickupCep } from "./storeAuth.js";
       }
 
       const email = selectedCustomer?.email ?? selectedCustomer?.Email ?? "";
-      const phone = selectedCustomer?.telefone ?? selectedCustomer?.Telefone ?? "";
-      orderCustomerInfo.textContent = [email, phone].filter(Boolean).join(" | ") || "Cliente selecionado.";
+      const phone =
+        selectedCustomer?.telefone ?? selectedCustomer?.Telefone ?? "";
+      orderCustomerInfo.textContent =
+        [email, phone].filter(Boolean).join(" | ") || "Cliente selecionado.";
     }
   }
 
@@ -219,7 +222,8 @@ import { getShopPickupCep } from "./storeAuth.js";
       customers = Array.isArray(loadedCustomers) ? loadedCustomers : [];
 
       if (orderCustomer) {
-        orderCustomer.innerHTML = '<option value="" hidden>--- Selecione ---</option>';
+        orderCustomer.innerHTML =
+          '<option value="" hidden>--- Selecione ---</option>';
 
         if (!customers.length) {
           const emptyOption = document.createElement("option");
