@@ -1,8 +1,12 @@
+import ApiService from "./service.js";
+
 const STORAGE_KEYS = {
   account: "streetbite-store-account",
   session: "streetbite-store-session",
   recovery: "streetbite-store-recovery",
 };
+
+const api = new ApiService();
 
 function normalizeText(value) {
   return String(value ?? "").trim();
@@ -136,10 +140,14 @@ export function getStoredShopAccount() {
   }
 
   return {
+    id: Number(account.id ?? 0),
     shopName: normalizeText(account.shopName),
+    email: normalizeText(account.email),
     password: normalizeText(account.password),
     cep: normalizeDigits(account.cep),
     contact: normalizeDigits(account.contact),
+    document: normalizeText(account.document),
+    paymentMethod: normalizeText(account.paymentMethod),
   };
 }
 
@@ -163,12 +171,21 @@ export function initializeLandingAuth() {
   const registerShopNameInput = rootElement.querySelector(
     "[data-register-shop-name]",
   );
+  const registerEmailInput = rootElement.querySelector(
+    "[data-register-email]",
+  );
   const registerPasswordInput = rootElement.querySelector(
     "[data-register-password]",
+  );
+  const registerDocumentInput = rootElement.querySelector(
+    "[data-register-document]",
   );
   const registerCepInput = rootElement.querySelector("[data-register-cep]");
   const registerContactInput = rootElement.querySelector(
     "[data-register-contact]",
+  );
+  const registerPaymentInput = rootElement.querySelector(
+    "[data-register-payment]",
   );
 
   stripSensitiveQueryParams(["contact"]);
@@ -180,25 +197,6 @@ export function initializeLandingAuth() {
 
   if (loginIdentityInput) {
     loginIdentityInput.value = recoveryContact || "";
-  }
-
-  const storedAccount = getStoredShopAccount();
-  if (storedAccount) {
-    if (registerShopNameInput) {
-      registerShopNameInput.value = storedAccount.shopName;
-    }
-
-    if (registerPasswordInput) {
-      registerPasswordInput.value = "";
-    }
-
-    if (registerCepInput) {
-      registerCepInput.value = storedAccount.cep;
-    }
-
-    if (registerContactInput) {
-      registerContactInput.value = storedAccount.contact;
-    }
   }
 
   setActiveView(rootElement, initialTab);
@@ -246,6 +244,7 @@ export function initializeLandingAuth() {
 
     const identityMatches =
       identity.toLowerCase() === account.shopName.toLowerCase() ||
+      identity.toLowerCase() === account.email.toLowerCase() ||
       normalizeDigits(identity) === account.contact;
 
     if (!identityMatches || password !== account.password) {
@@ -266,14 +265,17 @@ export function initializeLandingAuth() {
     event.preventDefault();
 
     const shopName = normalizeText(registerShopNameInput?.value);
+    const email = normalizeText(registerEmailInput?.value);
     const password = normalizeText(registerPasswordInput?.value);
+    const document = normalizeText(registerDocumentInput?.value);
     const cep = normalizeDigits(registerCepInput?.value);
     const contact = normalizeDigits(registerContactInput?.value);
+    const paymentMethod = normalizeText(registerPaymentInput?.value);
 
-    if (!shopName || !password || !cep || !contact) {
+    if (!shopName || !email || !password || !document || !cep || !contact || !paymentMethod) {
       setStatus(
         authStatus,
-        "Preencha nome, senha, CEP e contato da loja.",
+        "Preencha nome, e-mail, senha, documento, CEP, contato e forma de pagamento.",
         "error",
       );
       return;
@@ -289,27 +291,55 @@ export function initializeLandingAuth() {
       return;
     }
 
-    const account = {
-      shopName,
-      password,
-      cep,
-      contact,
-      updatedAt: new Date().toISOString(),
-    };
+    api
+      .createFoodtruck({
+        nome: shopName,
+        email,
+        telefone: contact,
+        documento,
+        cep,
+        formaPagamento: paymentMethod,
+        senha: password,
+      })
+      .then((createdFoodtruck) => {
+        const account = {
+          id: Number(
+            createdFoodtruck?.foodtruckId ??
+              createdFoodtruck?.FoodtruckId ??
+              createdFoodtruck?.id ??
+              0,
+          ),
+          shopName,
+          email,
+          password,
+          document,
+          cep,
+          contact,
+          paymentMethod,
+          updatedAt: new Date().toISOString(),
+        };
 
-    saveAccount(account);
-    saveSession(account);
-    setStatus(authStatus, "Loja cadastrada com sucesso.", "success");
+        saveAccount(account);
+        saveSession(account);
+        setStatus(authStatus, "Foodtruck cadastrado com sucesso.", "success");
 
-    if (loginIdentityInput) {
-      loginIdentityInput.value = shopName;
-    }
+        if (loginIdentityInput) {
+          loginIdentityInput.value = shopName;
+        }
 
-    if (loginPasswordInput) {
-      loginPasswordInput.value = "";
-    }
+        if (loginPasswordInput) {
+          loginPasswordInput.value = "";
+        }
 
-    setActiveView(rootElement, "login");
+        setActiveView(rootElement, "login");
+      })
+      .catch((error) => {
+        setStatus(
+          authStatus,
+          error.message || "Não foi possível cadastrar o foodtruck.",
+          "error",
+        );
+      });
   });
 }
 

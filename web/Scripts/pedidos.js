@@ -11,6 +11,7 @@ import {
   PAYMENT_METHOD_OPTIONS,
 } from "./enumMappings.js";
 import { getShopPickupCep } from "./storeAuth.js";
+import { getStoredCustomerAccount } from "./customerAuth.js";
 
 (() => {
   const api = new ApiService();
@@ -168,6 +169,13 @@ import { getShopPickupCep } from "./storeAuth.js";
   }
 
   async function createOrderFromWizard() {
+    const customerAccount = getStoredCustomerAccount();
+
+    if (!customerAccount?.id) {
+      snackbar.warning("Cadastre o cliente antes de criar a comanda.");
+      return;
+    }
+
     if (!orderPayment.value) {
       snackbar.warning("Selecione o método de pagamento.");
       return;
@@ -179,7 +187,9 @@ import { getShopPickupCep } from "./storeAuth.js";
     }
 
     try {
-      const createdComanda = await api.createComanda();
+      const createdComanda = await api.createComanda({
+        clienteId: customerAccount.id,
+      });
       let comandaId = resolveComandaId(createdComanda);
 
       if (!comandaId) {

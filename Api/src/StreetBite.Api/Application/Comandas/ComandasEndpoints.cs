@@ -33,9 +33,10 @@ public static class ComandasEndpoints
 
     private static async Task<IResult> CriarComanda(
         IComandaService comandaService,
+        ComandaCreateRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await comandaService.AddComandaAsync(cancellationToken);
+        var result = await comandaService.AddComandaAsync(request, cancellationToken);
         if (!result.Success)
         {
             return result.ToHttpResult();

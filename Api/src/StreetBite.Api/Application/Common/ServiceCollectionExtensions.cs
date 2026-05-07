@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<StreetBiteDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
+        services.AddScoped<ICadastroService, CadastroService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IComandaService, ComandaService>();
         services.AddSingleton<IOrderCodeGeneratorService, NanoIdCodeGeneratorService>();

@@ -6,7 +6,7 @@ namespace StreetBite.Api.Abstractions;
 
 public interface IComandaService
 {
-    Task<Result<ComandaViewDTO>> AddComandaAsync(CancellationToken cancellationToken = default);
+    Task<Result<ComandaViewDTO>> AddComandaAsync(ComandaCreateRequest request, CancellationToken cancellationToken = default);
 
     Task<Result<List<ComandaViewDTO>>> ListComandasAsync(CancellationToken cancellationToken = default);
 

@@ -14,8 +14,16 @@ namespace StreetBite.Api.Services;
 public sealed class ComandaService(
     StreetBiteDbContext dbContext, IOrderCodeGeneratorService orderCodeGeneratorService) : IComandaService
 {
-    public async Task<Result<ComandaViewDTO>> AddComandaAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<ComandaViewDTO>> AddComandaAsync(ComandaCreateRequest request, CancellationToken cancellationToken = default)
     {
+        var cliente = await dbContext.Clientes
+            .FirstOrDefaultAsync(x => x.Id == request.ClienteId, cancellationToken);
+
+        if (cliente is null)
+        {
+            return Result<ComandaViewDTO>.Fail("Cliente não encontrado.", HttpStatusCode.NotFound);
+        }
+
         var codigoPedido = await GenerateCodigoPedidoAsync(cancellationToken);
         if (codigoPedido is null)
         {
@@ -26,6 +34,8 @@ public sealed class ComandaService(
 
         var comanda = new Comanda
         {
+            Cliente = cliente,
+            ClienteNome = cliente.Nome,
             CodigoPedido = codigoPedido,
             Status = EComandaStatus.Pendente,
             Subtotal = decimal.Zero,
@@ -42,6 +52,7 @@ public sealed class ComandaService(
     {
         var comandas = await dbContext.Comandas
             .AsNoTracking()
+            .Include(x => x.Cliente)
             .Include(x => x.Itens)
                 .ThenInclude(x => x.Produto)
             .OrderByDescending(x => x.Id)
@@ -58,6 +69,7 @@ public sealed class ComandaService(
     {
         var comanda = await dbContext.Comandas
             .AsNoTracking()
+            .Include(x => x.Cliente)
             .Include(x => x.Itens)
                 .ThenInclude(x => x.Produto)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -76,6 +88,9 @@ public sealed class ComandaService(
         CancellationToken cancellationToken = default)
     {
         var comanda = await dbContext.Comandas
+            .Include(x => x.Cliente)
+            .Include(x => x.Itens)
+                .ThenInclude(x => x.Produto)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         if (comanda is null)
@@ -250,6 +265,7 @@ public sealed class ComandaService(
         return new ComandaViewDTO(
             comanda.Id,
             items,
+            comanda.ClienteNome ?? comanda.Cliente?.Nome ?? string.Empty,
             comanda.CodigoPedido,
             comanda.Subtotal,
             comanda.Status,

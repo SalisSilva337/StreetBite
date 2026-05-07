@@ -8,5 +8,7 @@ public sealed class Cliente : BaseEntity
 
     public string? Telefone { get; set; }
 
+    public string Senha { get; set; } = string.Empty;
+
     public List<Endereco> Enderecos { get; set; } = [];
 }

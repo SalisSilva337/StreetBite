@@ -77,16 +77,16 @@ applyTheme(getCurrentTheme());
 
 const pages = {
   home: {
-    html: "Iframes/home.html",
+    html: "home.html",
   },
   menu: {
-    html: "Iframes/menu.html",
+    html: "menu.html",
   },
   requests: {
-    html: "Iframes/pedidos.html",
+    html: "pedidos.html",
   },
   settings: {
-    html: "Iframes/settings.html",
+    html: "settings.html",
   },
 };
 

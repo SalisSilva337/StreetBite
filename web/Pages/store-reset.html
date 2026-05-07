@@ -3,13 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="Styles/landPage.css" />
+    <link rel="stylesheet" href="../Styles/landingPage.css" />
     <title>StreetBite - Recuperar senha</title>
-    <link
-      rel="shortcut icon"
-      href="Imgs/images/favcon.png"
-      type="image/x-icon"
-    />
+    <link rel="shortcut icon" href="../Imgs/images/favcon.png" type="image/x-icon" />
   </head>
   <body>
     <main class="auth-shell">
@@ -81,7 +77,7 @@
           </label>
 
           <div class="auth-actions auth-actions--split">
-            <a class="auth-link" href="landPage.html">Voltar</a>
+            <a class="auth-link" href="landingPage.html">Voltar</a>
             <button class="auth-button" type="submit">Salvar nova senha</button>
           </div>
         </form>
@@ -89,7 +85,7 @@
     </main>
 
     <script type="module">
-      import { initializeRecoveryPage } from "./Scripts/storeAuth.js";
+      import { initializeRecoveryPage } from "../Scripts/storeAuth.js";
 
       document.addEventListener("DOMContentLoaded", () => {
         initializeRecoveryPage();

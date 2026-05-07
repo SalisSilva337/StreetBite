@@ -7,6 +7,8 @@ public sealed class Comanda : BaseEntity
 
     public Cliente? Cliente { get; set; }
 
+    public string ClienteNome { get; set; } = string.Empty;
+
     public string CodigoPedido { get; set; } = string.Empty;
 
     public EComandaStatus Status { get; set; }

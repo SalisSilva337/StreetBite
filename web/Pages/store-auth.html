@@ -3,13 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="Styles/landPage.css" />
-    <title>StreetBite - Login e cadastro da loja</title>
-    <link
-      rel="shortcut icon"
-      href="Imgs/images/favcon.png"
-      type="image/x-icon"
-    />
+    <link rel="stylesheet" href="../Styles/landingPage.css" />
+    <title>StreetBite - Login e cadastro do foodtruck</title>
+    <link rel="shortcut icon" href="../Imgs/images/favcon.png" type="image/x-icon" />
   </head>
   <body>
     <main class="auth-shell">
@@ -17,12 +13,12 @@
         <div class="auth-header">
           <p class="auth-kicker">Acesso da loja</p>
           <h1 id="storeAuthTitle" class="auth-title">
-            Entre ou cadastre sua loja
+            Entre ou cadastre seu foodtruck
           </h1>
           <p class="auth-description">
-            Cadastre nome da loja, senha, CEP e contato. O CEP cadastrado será
-            usado automaticamente no pedido quando o atendimento for retirada na
-            loja.
+            Cadastre o foodtruck com nome, e-mail, documento, contato e forma de
+            pagamento. O cadastro fica persistido no backend e também alimenta a
+            navegação da landpage.
           </p>
         </div>
 
@@ -81,15 +77,26 @@
           </div>
         </form>
 
-        <form class="auth-form hidden" data-auth-view="register" novalidate>
+        <form class="auth-form hidden" data-auth-view="register" novalidate autocomplete="off">
           <label class="auth-field">
-            <span class="field-label">Nome da loja</span>
+            <span class="field-label">Nome do foodtruck</span>
             <input
               class="field-input"
               type="text"
-              autocomplete="organization"
+              autocomplete="off"
               placeholder="Nome da loja"
               data-register-shop-name
+            />
+          </label>
+
+          <label class="auth-field">
+            <span class="field-label">E-mail</span>
+            <input
+              class="field-input"
+              type="email"
+              autocomplete="off"
+              placeholder="contato@foodtruck.com"
+              data-register-email
             />
           </label>
 
@@ -98,9 +105,21 @@
             <input
               class="field-input"
               type="password"
-              autocomplete="new-password"
+              autocomplete="off"
               placeholder="Crie uma senha"
               data-register-password
+            />
+          </label>
+
+          <label class="auth-field">
+            <span class="field-label">CPF ou CNPJ</span>
+            <input
+              class="field-input"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="00.000.000/0000-00"
+              data-register-document
             />
           </label>
 
@@ -111,7 +130,7 @@
                 class="field-input"
                 type="text"
                 inputmode="numeric"
-                autocomplete="postal-code"
+                autocomplete="off"
                 placeholder="00000000"
                 data-register-cep
               />
@@ -123,27 +142,38 @@
                 class="field-input"
                 type="tel"
                 inputmode="tel"
-                autocomplete="tel"
+                autocomplete="off"
                 placeholder="(00) 00000-0000"
                 data-register-contact
               />
             </label>
           </div>
 
+          <label class="auth-field">
+            <span class="field-label">Forma de pagamento do plano</span>
+            <input
+              class="field-input"
+              type="text"
+              autocomplete="off"
+              placeholder="Cartão, Pix, boleto..."
+              data-register-payment
+            />
+          </label>
+
           <div class="auth-actions">
-            <button class="auth-button" type="submit">Cadastrar loja</button>
+            <button class="auth-button" type="submit">Cadastrar foodtruck</button>
           </div>
         </form>
 
         <p class="auth-note">
-          Ao escolher retirada na loja, o CEP configurado no cadastro será
-          preenchido automaticamente.
+          O cadastro é gravado no backend, e o painel usa esse registro como base
+          para os acessos e para a criação das comandas.
         </p>
       </article>
     </main>
 
     <script type="module">
-      import { initializeLandingAuth } from "./Scripts/storeAuth.js";
+      import { initializeLandingAuth } from "../Scripts/storeAuth.js";
 
       document.addEventListener("DOMContentLoaded", () => {
         initializeLandingAuth();

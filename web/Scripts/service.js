@@ -154,7 +154,7 @@ class ApiService {
 
   // Métodos específicos para cada entidade
   async getClientes() {
-    return this.request("/api/v1/clientes");
+    return this.request("/api/v1/cadastros/clientes");
   }
 
   async getClienteById(id) {
@@ -162,7 +162,7 @@ class ApiService {
   }
 
   async createCliente(data) {
-    return this.request("/api/v1/clientes", "POST", data);
+    return this.request("/api/v1/cadastros/clientes", "POST", data);
   }
 
   async updateCliente(id, data) {
@@ -181,8 +181,8 @@ class ApiService {
     return this.request(`/api/v1/comandas/${id}`);
   }
 
-  async createComanda() {
-    return this.request("/api/v1/comandas", "POST");
+  async createComanda(data) {
+    return this.request("/api/v1/comandas", "POST", data);
   }
 
   async updateComanda(id, data) {
@@ -239,6 +239,10 @@ class ApiService {
 
   async deleteProduto(id) {
     return this.request(`/api/v1/produtos/${id}`, "DELETE");
+  }
+
+  async createFoodtruck(data) {
+    return this.request("/api/v1/cadastros/foodtrucks", "POST", data);
   }
 }
 

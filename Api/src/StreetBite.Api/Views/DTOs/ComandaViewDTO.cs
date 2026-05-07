@@ -5,6 +5,7 @@ namespace StreetBite.Api.Views.DTOs;
 public sealed record ComandaViewDTO(
     int ComandaId,
     List<ItemViewDTO> Items,
+    string ClienteNome,
     string CodigoDoPedido,
     decimal Subtotal,
     EComandaStatus Status,

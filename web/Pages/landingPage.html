@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../Scripts/landingPage.js" type="module"></script>
+    <link rel="stylesheet" href="../Styles/landingPage.css" />
+    <title>StreetBite</title>
+    <link
+      rel="shortcut icon"
+      href="../Imgs/images/favcon.png"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <main class="landing-shell">
+      <section class="landing-page">
+        <header class="landing-topbar">
+          <a class="brand-lockup" href="landingPage.html" aria-label="StreetBite">
+            <img src="../Imgs/images/StreetBite-logo.png" alt="Logo StreetBite" class="brand-logo" />
+            <span class="brand-name">StreetBite</span>
+          </a>
+
+          <nav class="landing-nav" aria-label="Navegação principal">
+            <a href="#sobre">Sobre</a>
+            <a href="#planos">Plano</a>
+            <a href="#funcionalidades">Funcionalidades</a>
+            <a href="#contato">Contato</a>
+          </nav>
+        </header>
+
+        <section class="hero-grid">
+          <div class="hero-copy-block" data-fade-in>
+            <p class="hero-eyebrow">Plano único pago para foodtrucks</p>
+            <h1 class="hero-title">Venda mais, anote menos e centralize tudo em um só lugar.</h1>
+            <p class="hero-copy">
+              O StreetBite organiza cardápio, comandas, pedidos e cadastro de clientes com uma navegação direta da landpage até o acesso principal.
+            </p>
+
+            <div class="hero-actions">
+              <a class="landing-button landing-button--primary" href="store-auth.html?tab=register">Cadastrar foodtruck</a>
+              <a class="landing-button" href="customer-auth.html?tab=register">Cadastrar cliente</a>
+            </div>
+
+            <div class="pricing-card" id="planos">
+              <span class="pricing-label">Plano StreetBite</span>
+              <strong class="pricing-value">R$ 49,90/mês</strong>
+              <span class="pricing-note">Acesso completo para gestão de foodtruck e clientes.</span>
+            </div>
+          </div>
+
+          <div class="hero-visual-block" data-fade-in aria-label="Prévia da aplicação">
+            <div class="hero-plate">
+              <img src="../Imgs/images/burger.jpg" alt="Hamburguer artesanal StreetBite" class="hero-plate-image" />
+            </div>
+
+            <article class="mini-product-card mini-product-card--top-left">
+              <img src="../Imgs/images/items/bigSB.png" alt="Big SB" />
+              <div>
+                <span>Mais popular</span>
+                <strong>Big SB</strong>
+              </div>
+            </article>
+
+            <article class="mini-product-card mini-product-card--bottom-right">
+              <img src="../Imgs/images/items/bigSBbacon.png" alt="Big SB Bacon" />
+              <div>
+                <span>Pedido rápido</span>
+                <strong>Big SB Bacon</strong>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="popular-section" data-fade-in aria-labelledby="popularTitle">
+          <div class="section-heading">
+            <p class="section-kicker">Mais Populares</p>
+            <h2 id="popularTitle">Itens que destacam o fluxo do cardápio</h2>
+          </div>
+
+          <div class="food-card-grid">
+            <article class="food-card" data-fade-in>
+              <img src="../Imgs/images/items/bigSB.png" alt="Big SB" />
+              <div class="food-card-body">
+                <h3>Big SB</h3>
+                <p>Hambúrguer artesanal com o padrão de venda mais forte da casa.</p>
+                <span class="food-card-price">R$ 20,00</span>
+              </div>
+            </article>
+
+            <article class="food-card food-card--featured" data-fade-in>
+              <img src="../Imgs/images/items/bigSBbacon.png" alt="Big SB Bacon" />
+              <div class="food-card-body">
+                <h3>Big SB Bacon</h3>
+                <p>Uma opção mais intensa para destacar no cardápio e nas comandas.</p>
+                <span class="food-card-price">R$ 23,00</span>
+              </div>
+            </article>
+
+            <article class="food-card" data-fade-in>
+              <img src="../Imgs/images/items/bigSBCheddar.png" alt="Big SB Cheddar" />
+              <div class="food-card-body">
+                <h3>Big SB Cheddar</h3>
+                <p>Combinação cremosa para reforçar o ticket médio sem complicar a operação.</p>
+                <span class="food-card-price">R$ 25,00</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="feature-section" id="funcionalidades" data-fade-in aria-labelledby="featuresTitle">
+          <div class="section-heading section-heading--center">
+            <p class="section-kicker">Por que escolher nosso app</p>
+            <h2 id="featuresTitle">Funcionalidades principais</h2>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-tile" data-fade-in>
+              <span class="feature-icon">01</span>
+              <h3>Cardápio e pedidos</h3>
+              <p>Criação de itens, montagem de pedidos e acompanhamento do fluxo em um painel só.</p>
+            </article>
+
+            <article class="feature-tile feature-tile--raised" data-fade-in>
+              <span class="feature-icon">02</span>
+              <h3>Cadastro persistido</h3>
+              <p>Cadastro de foodtruck e cliente gravado no backend, com nome garantido na comanda.</p>
+            </article>
+
+            <article class="feature-tile" data-fade-in>
+              <span class="feature-icon">03</span>
+              <h3>Navegação clara</h3>
+              <p>Rotas diretas para cadastro, login e painel principal sem mudar a linguagem visual.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="about-section" id="sobre" data-fade-in aria-labelledby="aboutTitle">
+          <div class="about-visual">
+            <img src="../Imgs/images/items/cheeseClassic.png" alt="Classic SB" />
+          </div>
+          <div class="about-copy">
+            <p class="section-kicker">Sobre nós</p>
+            <h2 id="aboutTitle">Uma operação simples, com cara de produto pronto para vender.</h2>
+            <p>
+              O StreetBite reduz a fricção entre o pedido e a gestão da cozinha. A aplicação foi desenhada para funcionar com um plano único, pago, e com foco em fluidez para foodtrucks pequenos e médios.
+            </p>
+            <a class="landing-button landing-button--primary" href="streetBite.html">Entrar no painel</a>
+          </div>
+        </section>
+
+        <section class="testimonial-section" data-fade-in aria-labelledby="testimonialTitle">
+          <div class="section-heading section-heading--center">
+            <p class="section-kicker">O que dizem os clientes</p>
+            <h2 id="testimonialTitle">A experiência precisa parecer rápida e confiável</h2>
+          </div>
+
+          <article class="testimonial-card" data-fade-in>
+            <p>
+              “A leitura visual é direta, o cadastro não se perde e o painel mantém a operação enxuta. É o tipo de interface que ajuda o time a vender sem ficar procurando tela.”
+            </p>
+            <strong>Equipe StreetBite</strong>
+          </article>
+        </section>
+
+        <footer class="landing-footer" id="contato" data-fade-in>
+          <div>
+            <strong>StreetBite</strong>
+            <p>Plano único para gestão de foodtrucks e comandas.</p>
+          </div>
+          <div>
+            <strong>Contato</strong>
+            <p>suporte@streetbite.app</p>
+          </div>
+        </footer>
+      </section>
+    </main>
+  </body>
+</html>

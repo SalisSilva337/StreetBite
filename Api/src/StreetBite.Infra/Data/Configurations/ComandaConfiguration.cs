@@ -29,6 +29,10 @@ public sealed class ComandaConfiguration : BaseEntityConfiguration<Comanda>
             .HasConversion<string>()
             .IsRequired();
 
+        builder.Property(x => x.ClienteNome)
+            .IsRequired()
+            .HasMaxLength(200);
+
         builder.HasOne(x => x.Cliente)
             .WithMany()
             .HasForeignKey("cliente_id")
