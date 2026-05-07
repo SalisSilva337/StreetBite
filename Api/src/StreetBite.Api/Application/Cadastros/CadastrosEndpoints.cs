@@ -15,10 +15,21 @@ public static class CadastrosEndpoints
             .WithTags("Cadastros")
             .AddEndpointFilter<ValidationRequestFilter>();
 
+        group.MapGet("/clientes", ListarClientes);
         group.MapPost("/clientes", CriarCliente);
         group.MapPost("/foodtrucks", CriarFoodtruck);
 
         return group;
+    }
+
+    private static async Task<IResult> ListarClientes(
+        ICadastroService cadastroService,
+        CancellationToken cancellationToken)
+    {
+        var result = await cadastroService.ListClientesAsync(cancellationToken);
+        return result.Success
+            ? TypedResults.Ok(ApiResponse<List<ClienteViewDTO>>.Success(result.Data!))
+            : result.ToHttpResult();
     }
 
     private static async Task<IResult> CriarCliente(

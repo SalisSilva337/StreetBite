@@ -129,6 +129,14 @@ class ApiService {
       }
 
       return this.unwrapResponse(payload);
+    } catch (error) {
+      if (error instanceof TypeError && /fetch/i.test(error.message)) {
+        throw new Error(
+          `Não foi possível conectar ao servidor em ${this.baseUrl}. Verifique se a API está em execução.`,
+        );
+      }
+
+      throw error;
     } finally {
       loadingProgress.finish(loadingToken);
     }

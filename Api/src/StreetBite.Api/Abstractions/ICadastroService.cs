@@ -6,6 +6,8 @@ namespace StreetBite.Api.Abstractions;
 
 public interface ICadastroService
 {
+    Task<Result<List<ClienteViewDTO>>> ListClientesAsync(CancellationToken cancellationToken = default);
+
     Task<Result<ClienteViewDTO>> CreateClienteAsync(ClienteCadastroRequest request, CancellationToken cancellationToken = default);
 
     Task<Result<FoodtruckViewDTO>> CreateFoodtruckAsync(FoodtruckCadastroRequest request, CancellationToken cancellationToken = default);

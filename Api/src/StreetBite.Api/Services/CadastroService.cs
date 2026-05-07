@@ -11,6 +11,20 @@ namespace StreetBite.Api.Services;
 
 public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroService
 {
+    public async Task<Result<List<ClienteViewDTO>>> ListClientesAsync(CancellationToken cancellationToken = default)
+    {
+        var clientes = await dbContext.Clientes
+            .AsNoTracking()
+            .OrderBy(x => x.Nome)
+            .ToListAsync(cancellationToken);
+
+        var response = clientes
+            .Select(MapCliente)
+            .ToList();
+
+        return Result<List<ClienteViewDTO>>.Ok(response);
+    }
+
     public async Task<Result<ClienteViewDTO>> CreateClienteAsync(ClienteCadastroRequest request, CancellationToken cancellationToken = default)
     {
         var normalizedName = request.Nome.Trim();

@@ -11,7 +11,6 @@ import {
   PAYMENT_METHOD_OPTIONS,
 } from "./enumMappings.js";
 import { getShopPickupCep } from "./storeAuth.js";
-import { getStoredCustomerAccount } from "./customerAuth.js";
 
 (() => {
   const api = new ApiService();
@@ -40,9 +39,12 @@ import { getStoredCustomerAccount } from "./customerAuth.js";
   const addOrderItem = document.querySelector("#addOrderItem");
   const orderCart = document.querySelector("#orderCart");
   const orderSubtotal = document.querySelector("#orderSubtotal");
+  const orderCustomer = document.querySelector("#orderCustomer");
+  const orderCustomerInfo = document.querySelector("#orderCustomerInfo");
 
   let currentStep = 1;
   let products = [];
+  let customers = [];
   let cartItems = [];
   let orders = [];
 
@@ -107,6 +109,14 @@ import { getStoredCustomerAccount } from "./customerAuth.js";
     orderPayment.value = "";
     orderProduct.value = "";
     orderQuantity.value = 1;
+    if (orderCustomer) {
+      orderCustomer.value = "";
+    }
+    if (orderCustomerInfo) {
+      orderCustomerInfo.textContent =
+        "Selecione um cliente já cadastrado para continuar.";
+    }
+    orderPhone.value = "";
     orderCep.value = "";
     orderDistrict.value = "";
     orderStreet.value = "";
@@ -148,6 +158,39 @@ import { getStoredCustomerAccount } from "./customerAuth.js";
     );
   }
 
+  function resolveCustomerId(customer) {
+    return customer?.clienteId ?? customer?.id ?? customer?.ClienteId ?? null;
+  }
+
+  function resolveCustomerLabel(customer) {
+    const name = customer?.nome ?? customer?.Nome ?? "Cliente";
+    const phone = customer?.telefone ?? customer?.Telefone ?? "";
+
+    return phone ? `${name} - ${phone}` : name;
+  }
+
+  function updateSelectedCustomerInfo(customerId) {
+    const selectedCustomer = customers.find(
+      (customer) => String(resolveCustomerId(customer)) === String(customerId),
+    );
+
+    if (orderPhone) {
+      orderPhone.value = selectedCustomer?.telefone ?? selectedCustomer?.Telefone ?? "";
+    }
+
+    if (orderCustomerInfo) {
+      if (!selectedCustomer) {
+        orderCustomerInfo.textContent =
+          "Selecione um cliente já cadastrado para continuar.";
+        return;
+      }
+
+      const email = selectedCustomer?.email ?? selectedCustomer?.Email ?? "";
+      const phone = selectedCustomer?.telefone ?? selectedCustomer?.Telefone ?? "";
+      orderCustomerInfo.textContent = [email, phone].filter(Boolean).join(" | ") || "Cliente selecionado.";
+    }
+  }
+
   async function fillProductOptions() {
     if (products.length) return;
 
@@ -168,11 +211,44 @@ import { getStoredCustomerAccount } from "./customerAuth.js";
     }
   }
 
-  async function createOrderFromWizard() {
-    const customerAccount = getStoredCustomerAccount();
+  async function fillCustomerOptions() {
+    if (customers.length) return;
 
-    if (!customerAccount?.id) {
-      snackbar.warning("Cadastre o cliente antes de criar a comanda.");
+    try {
+      const loadedCustomers = await api.getClientes();
+      customers = Array.isArray(loadedCustomers) ? loadedCustomers : [];
+
+      if (orderCustomer) {
+        orderCustomer.innerHTML = '<option value="" hidden>--- Selecione ---</option>';
+
+        if (!customers.length) {
+          const emptyOption = document.createElement("option");
+          emptyOption.value = "";
+          emptyOption.textContent = "Nenhum cliente cadastrado";
+          emptyOption.disabled = true;
+          orderCustomer.appendChild(emptyOption);
+          return;
+        }
+
+        customers.forEach((customer) => {
+          const option = document.createElement("option");
+          option.value = String(resolveCustomerId(customer) ?? "");
+          option.textContent = resolveCustomerLabel(customer);
+          orderCustomer.appendChild(option);
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao carregar clientes:", error);
+      snackbar.error(error.message || "Não foi possível carregar os clientes.");
+      throw error;
+    }
+  }
+
+  async function createOrderFromWizard() {
+    const customerId = Number(orderCustomer?.value);
+
+    if (!customerId) {
+      snackbar.warning("Selecione um cliente cadastrado para criar a comanda.");
       return;
     }
 
@@ -188,7 +264,7 @@ import { getStoredCustomerAccount } from "./customerAuth.js";
 
     try {
       const createdComanda = await api.createComanda({
-        clienteId: customerAccount.id,
+        clienteId: customerId,
       });
       let comandaId = resolveComandaId(createdComanda);
 
@@ -450,7 +526,7 @@ import { getStoredCustomerAccount } from "./customerAuth.js";
   }
 
   openOrderWizard.addEventListener("click", async () => {
-    await fillProductOptions();
+    await Promise.all([fillProductOptions(), fillCustomerOptions()]);
     openWizard();
   });
 
@@ -512,6 +588,12 @@ import { getStoredCustomerAccount } from "./customerAuth.js";
     orderStreet.value = "";
     orderNumber.value = "";
   });
+
+  if (orderCustomer) {
+    orderCustomer.addEventListener("change", () => {
+      updateSelectedCustomerInfo(orderCustomer.value);
+    });
+  }
 
   orderCep.addEventListener("change", async () => {
     const cepValue = orderCep.value;

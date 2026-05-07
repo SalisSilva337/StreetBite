@@ -10,6 +10,15 @@ const themeToggleSidebarButton = document.querySelector(
   "#themeToggleSidebarButton",
 );
 const themeToggleIcon = document.querySelector("#themeToggleIcon");
+const sidebarProfile = document.querySelector("[data-sidebar-profile]");
+const sidebarAvatar = document.querySelector("[data-sidebar-avatar]");
+const sidebarAvatarInitial = document.querySelector(
+  "[data-sidebar-avatar-initial]",
+);
+const sidebarGreeting = document.querySelector("[data-sidebar-greeting]");
+const sidebarName = document.querySelector("[data-sidebar-name]");
+const sidebarRole = document.querySelector("[data-sidebar-role]");
+const sidebarAuthActions = document.querySelector("[data-sidebar-auth-actions]");
 const mobileActionButton = document.querySelector("#mobileActionButton");
 const mobileQuickActions = document.querySelector("#mobileQuickActions");
 const quickCreateItemButton = document.querySelector("#quickCreateItem");
@@ -18,6 +27,70 @@ const floatingActionButtons = document.querySelector("#floatingActionButtons");
 
 const THEME_STORAGE_KEY = "streetbite-theme";
 const PAGE_SCRIPT_CACHE_PARAM = "sb_page_load";
+
+function readSidebarSession() {
+  try {
+    const rawSession = sessionStorage.getItem("streetbite-store-session");
+    if (!rawSession) {
+      return null;
+    }
+
+    const parsedSession = JSON.parse(rawSession);
+    if (!parsedSession || typeof parsedSession !== "object") {
+      return null;
+    }
+
+    return {
+      shopName: String(parsedSession.shopName ?? "").trim(),
+      contact: String(parsedSession.contact ?? "").trim(),
+      cep: String(parsedSession.cep ?? "").trim(),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function updateSidebarProfile() {
+  const session = readSidebarSession();
+  const isAuthenticated = Boolean(session?.shopName);
+
+  if (sidebarProfile) {
+    sidebarProfile.classList.toggle("is-authenticated", isAuthenticated);
+    sidebarProfile.classList.toggle("is-guest", !isAuthenticated);
+  }
+
+  if (sidebarAvatar) {
+    sidebarAvatar.classList.toggle("is-guest", !isAuthenticated);
+  }
+
+  if (sidebarAvatarInitial) {
+    sidebarAvatarInitial.textContent = isAuthenticated
+      ? session.shopName.charAt(0).toUpperCase()
+      : "👤";
+  }
+
+  if (sidebarGreeting) {
+    sidebarGreeting.textContent = isAuthenticated ? session.shopName : "Bem-vindo!";
+  }
+
+  if (sidebarName) {
+    sidebarName.textContent = isAuthenticated
+      ? "Administrador"
+      : "Faça login para continuar";
+  }
+
+  if (sidebarRole) {
+    sidebarRole.textContent = isAuthenticated ? "Foodtruck logado" : "Acesso ao painel";
+  }
+
+  if (sidebarAuthActions) {
+    sidebarAuthActions.hidden = isAuthenticated;
+  }
+
+  if (homeButton?.closest(".buttonsNav")) {
+    homeButton.closest(".buttonsNav").hidden = !isAuthenticated;
+  }
+}
 
 function applyTheme(theme) {
   const normalizedTheme = theme === "dark" ? "dark" : "light";
@@ -74,6 +147,7 @@ window.toggleTheme = toggleTheme;
 
 // Apply persisted theme as soon as shell script is loaded.
 applyTheme(getCurrentTheme());
+updateSidebarProfile();
 
 const pages = {
   home: {

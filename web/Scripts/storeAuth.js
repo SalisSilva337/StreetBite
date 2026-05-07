@@ -6,6 +6,8 @@ const STORAGE_KEYS = {
   recovery: "streetbite-store-recovery",
 };
 
+const LOGIN_REDIRECT_DELAY_MS = 1400;
+
 const api = new ApiService();
 
 function normalizeText(value) {
@@ -64,6 +66,15 @@ function setActiveView(rootElement, viewName) {
   views.forEach((view) => {
     view.classList.toggle("hidden", view.dataset.authView !== viewName);
   });
+}
+
+function focusLoginForm(rootElement, loginIdentityInput) {
+  setActiveView(rootElement, "login");
+
+  if (loginIdentityInput) {
+    loginIdentityInput.focus();
+    loginIdentityInput.select?.();
+  }
 }
 
 function getAccountStorageValue() {
@@ -265,7 +276,7 @@ export function initializeLandingAuth() {
     const shopName = normalizeText(registerShopNameInput?.value);
     const email = normalizeText(registerEmailInput?.value);
     const password = normalizeText(registerPasswordInput?.value);
-    const document = normalizeText(registerDocumentInput?.value);
+    const documentValue = normalizeText(registerDocumentInput?.value);
     const cep = normalizeDigits(registerCepInput?.value);
     const contact = normalizeDigits(registerContactInput?.value);
     const paymentMethod = normalizeText(registerPaymentInput?.value);
@@ -274,7 +285,7 @@ export function initializeLandingAuth() {
       !shopName ||
       !email ||
       !password ||
-      !document ||
+      !documentValue ||
       !cep ||
       !contact ||
       !paymentMethod
@@ -302,7 +313,7 @@ export function initializeLandingAuth() {
         nome: shopName,
         email,
         telefone: contact,
-        documento,
+        documento: documentValue,
         cep,
         formaPagamento: paymentMethod,
         senha: password,
@@ -318,7 +329,7 @@ export function initializeLandingAuth() {
           shopName,
           email,
           password,
-          document,
+          document: documentValue,
           cep,
           contact,
           paymentMethod,
@@ -327,17 +338,24 @@ export function initializeLandingAuth() {
 
         saveAccount(account);
         saveSession(account);
-        setStatus(authStatus, "Foodtruck cadastrado com sucesso.", "success");
+        setStatus(
+          authStatus,
+          "Foodtruck cadastrado com sucesso. Redirecionando para login...",
+          "success",
+        );
 
-        if (loginIdentityInput) {
-          loginIdentityInput.value = shopName;
-        }
+        window.setTimeout(() => {
+          if (loginIdentityInput) {
+            loginIdentityInput.value = shopName;
+          }
 
-        if (loginPasswordInput) {
-          loginPasswordInput.value = "";
-        }
+          if (loginPasswordInput) {
+            loginPasswordInput.value = "";
+          }
 
-        setActiveView(rootElement, "login");
+          focusLoginForm(rootElement, loginIdentityInput);
+          setStatus(authStatus, "Use suas credenciais para entrar.");
+        }, LOGIN_REDIRECT_DELAY_MS);
       })
       .catch((error) => {
         setStatus(
