@@ -171,9 +171,7 @@ export function initializeLandingAuth() {
   const registerShopNameInput = rootElement.querySelector(
     "[data-register-shop-name]",
   );
-  const registerEmailInput = rootElement.querySelector(
-    "[data-register-email]",
-  );
+  const registerEmailInput = rootElement.querySelector("[data-register-email]");
   const registerPasswordInput = rootElement.querySelector(
     "[data-register-password]",
   );
@@ -272,7 +270,15 @@ export function initializeLandingAuth() {
     const contact = normalizeDigits(registerContactInput?.value);
     const paymentMethod = normalizeText(registerPaymentInput?.value);
 
-    if (!shopName || !email || !password || !document || !cep || !contact || !paymentMethod) {
+    if (
+      !shopName ||
+      !email ||
+      !password ||
+      !document ||
+      !cep ||
+      !contact ||
+      !paymentMethod
+    ) {
       setStatus(
         authStatus,
         "Preencha nome, e-mail, senha, documento, CEP, contato e forma de pagamento.",

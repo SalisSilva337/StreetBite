@@ -109,7 +109,9 @@ export function initializeCustomerAuth() {
   const registerNameInput = rootElement.querySelector("[data-register-name]");
   const registerEmailInput = rootElement.querySelector("[data-register-email]");
   const registerPhoneInput = rootElement.querySelector("[data-register-phone]");
-  const registerPasswordInput = rootElement.querySelector("[data-register-password]");
+  const registerPasswordInput = rootElement.querySelector(
+    "[data-register-password]",
+  );
 
   const storedAccount = getStoredCustomerAccount();
   if (storedAccount) {
@@ -131,7 +133,8 @@ export function initializeCustomerAuth() {
 
   tabButtons.forEach((tabButton) => {
     tabButton.addEventListener("click", () => {
-      const nextView = tabButton.dataset.authTab === "login" ? "login" : "register";
+      const nextView =
+        tabButton.dataset.authTab === "login" ? "login" : "register";
       setActiveView(rootElement, nextView);
       setStatus(
         authStatus,
@@ -150,12 +153,20 @@ export function initializeCustomerAuth() {
     const account = getStoredCustomerAccount();
 
     if (!identity || !password) {
-      setStatus(authStatus, "Informe nome, telefone ou e-mail e a senha.", "error");
+      setStatus(
+        authStatus,
+        "Informe nome, telefone ou e-mail e a senha.",
+        "error",
+      );
       return;
     }
 
     if (!account) {
-      setStatus(authStatus, "Cadastre o cliente antes de tentar entrar.", "error");
+      setStatus(
+        authStatus,
+        "Cadastre o cliente antes de tentar entrar.",
+        "error",
+      );
       return;
     }
 
@@ -183,7 +194,11 @@ export function initializeCustomerAuth() {
     const password = normalizeText(registerPasswordInput?.value);
 
     if (!name || !email || !phone || !password) {
-      setStatus(authStatus, "Preencha nome, e-mail, telefone e senha.", "error");
+      setStatus(
+        authStatus,
+        "Preencha nome, e-mail, telefone e senha.",
+        "error",
+      );
       return;
     }
 

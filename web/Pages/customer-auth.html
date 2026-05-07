@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../Styles/landingPage.css" />
     <title>StreetBite - Cadastro do cliente</title>
-    <link rel="shortcut icon" href="../Imgs/images/favcon.png" type="image/x-icon" />
+    <link
+      rel="shortcut icon"
+      href="../Imgs/images/favcon.png"
+      type="image/x-icon"
+    />
   </head>
   <body>
     <main class="auth-shell">
@@ -20,25 +24,52 @@
         </div>
 
         <div class="auth-tabs" role="tablist" aria-label="Cadastro e login">
-          <button class="auth-tab is-active" type="button" data-auth-tab="login" aria-selected="true">
+          <button
+            class="auth-tab is-active"
+            type="button"
+            data-auth-tab="login"
+            aria-selected="true"
+          >
             Login
           </button>
-          <button class="auth-tab" type="button" data-auth-tab="register" aria-selected="false">
+          <button
+            class="auth-tab"
+            type="button"
+            data-auth-tab="register"
+            aria-selected="false"
+          >
             Cadastro
           </button>
         </div>
 
-        <div class="auth-status" data-auth-status role="status" aria-live="polite"></div>
+        <div
+          class="auth-status"
+          data-auth-status
+          role="status"
+          aria-live="polite"
+        ></div>
 
         <form class="auth-form hidden" data-auth-view="login" novalidate>
           <label class="auth-field">
             <span class="field-label">Nome, telefone ou e-mail</span>
-            <input class="field-input" type="text" autocomplete="username" placeholder="Digite seus dados de acesso" data-login-identity />
+            <input
+              class="field-input"
+              type="text"
+              autocomplete="username"
+              placeholder="Digite seus dados de acesso"
+              data-login-identity
+            />
           </label>
 
           <label class="auth-field">
             <span class="field-label">Senha</span>
-            <input class="field-input" type="password" autocomplete="current-password" placeholder="Digite sua senha" data-login-password />
+            <input
+              class="field-input"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Digite sua senha"
+              data-login-password
+            />
           </label>
 
           <div class="auth-actions auth-actions--split">
@@ -50,22 +81,47 @@
         <form class="auth-form" data-auth-view="register" novalidate>
           <label class="auth-field">
             <span class="field-label">Nome do cliente</span>
-            <input class="field-input" type="text" autocomplete="name" placeholder="Nome do cliente" data-register-name />
+            <input
+              class="field-input"
+              type="text"
+              autocomplete="name"
+              placeholder="Nome do cliente"
+              data-register-name
+            />
           </label>
 
           <label class="auth-field">
             <span class="field-label">E-mail</span>
-            <input class="field-input" type="email" autocomplete="email" placeholder="cliente@exemplo.com" data-register-email />
+            <input
+              class="field-input"
+              type="email"
+              autocomplete="email"
+              placeholder="cliente@exemplo.com"
+              data-register-email
+            />
           </label>
 
           <label class="auth-field">
             <span class="field-label">Telefone</span>
-            <input class="field-input" type="tel" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000" data-register-phone />
+            <input
+              class="field-input"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              placeholder="(00) 00000-0000"
+              data-register-phone
+            />
           </label>
 
           <label class="auth-field">
             <span class="field-label">Senha</span>
-            <input class="field-input" type="password" autocomplete="new-password" placeholder="Crie uma senha" data-register-password />
+            <input
+              class="field-input"
+              type="password"
+              autocomplete="new-password"
+              placeholder="Crie uma senha"
+              data-register-password
+            />
           </label>
 
           <div class="auth-actions auth-actions--split">

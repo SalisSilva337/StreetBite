@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../Styles/landingPage.css" />
+    <link rel="stylesheet" href="Styles/landPage.css" />
     <title>StreetBite - Login e cadastro do foodtruck</title>
     <link
       rel="shortcut icon"
-      href="../Imgs/images/favcon.png"
+      href="Imgs/images/favcon.png"
       type="image/x-icon"
     />
   </head>
@@ -81,18 +81,13 @@
           </div>
         </form>
 
-        <form
-          class="auth-form hidden"
-          data-auth-view="register"
-          novalidate
-          autocomplete="off"
-        >
+        <form class="auth-form hidden" data-auth-view="register" novalidate>
           <label class="auth-field">
             <span class="field-label">Nome do foodtruck</span>
             <input
               class="field-input"
               type="text"
-              autocomplete="off"
+              autocomplete="organization"
               placeholder="Nome da loja"
               data-register-shop-name
             />
@@ -103,7 +98,7 @@
             <input
               class="field-input"
               type="email"
-              autocomplete="off"
+              autocomplete="email"
               placeholder="contato@foodtruck.com"
               data-register-email
             />
@@ -114,7 +109,7 @@
             <input
               class="field-input"
               type="password"
-              autocomplete="off"
+              autocomplete="new-password"
               placeholder="Crie uma senha"
               data-register-password
             />
@@ -126,7 +121,6 @@
               class="field-input"
               type="text"
               inputmode="numeric"
-              autocomplete="off"
               placeholder="00.000.000/0000-00"
               data-register-document
             />
@@ -139,7 +133,7 @@
                 class="field-input"
                 type="text"
                 inputmode="numeric"
-                autocomplete="off"
+                autocomplete="postal-code"
                 placeholder="00000000"
                 data-register-cep
               />
@@ -151,7 +145,7 @@
                 class="field-input"
                 type="tel"
                 inputmode="tel"
-                autocomplete="off"
+                autocomplete="tel"
                 placeholder="(00) 00000-0000"
                 data-register-contact
               />
@@ -163,7 +157,6 @@
             <input
               class="field-input"
               type="text"
-              autocomplete="off"
               placeholder="Cartão, Pix, boleto..."
               data-register-payment
             />
@@ -184,7 +177,7 @@
     </main>
 
     <script type="module">
-      import { initializeLandingAuth } from "../Scripts/storeAuth.js";
+      import { initializeLandingAuth } from "./Scripts/storeAuth.js";
 
       document.addEventListener("DOMContentLoaded", () => {
         initializeLandingAuth();
