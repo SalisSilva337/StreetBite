@@ -27,11 +27,6 @@ import { getShopPickupCep } from "./storeAuth.js";
   const wizardCancel = document.querySelector("#orderWizardCancel");
 
   const orderType = document.querySelector("#orderType");
-  const addressGroup = document.querySelector("#addressGroup");
-  const orderCep = document.querySelector("#orderCep");
-  const orderDistrict = document.querySelector("#orderDistrict");
-  const orderStreet = document.querySelector("#orderStreet");
-  const orderNumber = document.querySelector("#orderNumber");
 
   const orderPayment = document.querySelector("#orderPayment");
   const orderProduct = document.querySelector("#orderProduct");
@@ -116,11 +111,6 @@ import { getShopPickupCep } from "./storeAuth.js";
       orderCustomerInfo.textContent =
         "Selecione um cliente já cadastrado para continuar.";
     }
-    orderPhone.value = "";
-    orderCep.value = "";
-    orderDistrict.value = "";
-    orderStreet.value = "";
-    orderNumber.value = "";
     cartItems = [];
     renderCart();
     showWizardStep(1);
@@ -173,11 +163,6 @@ import { getShopPickupCep } from "./storeAuth.js";
     const selectedCustomer = customers.find(
       (customer) => String(resolveCustomerId(customer)) === String(customerId),
     );
-
-    if (orderPhone) {
-      orderPhone.value =
-        selectedCustomer?.telefone ?? selectedCustomer?.Telefone ?? "";
-    }
 
     if (orderCustomerInfo) {
       if (!selectedCustomer) {
@@ -315,6 +300,16 @@ import { getShopPickupCep } from "./storeAuth.js";
       console.error("Erro ao carregar pedidos:", error);
       snackbar.error(error.message || "Não foi possível carregar os pedidos.");
     }
+  }
+
+  async function handlePendingAction() {
+    if (window.__streetbitePendingAction !== "open-order-wizard") {
+      return;
+    }
+
+    window.__streetbitePendingAction = null;
+    await Promise.all([fillProductOptions(), fillCustomerOptions()]);
+    openWizard();
   }
 
   function renderOrders() {
@@ -577,20 +572,7 @@ import { getShopPickupCep } from "./storeAuth.js";
   });
 
   orderType.addEventListener("change", () => {
-    if (orderType.value === "retirada") {
-      addressGroup.classList.add("hidden");
-      orderCep.value = getShopPickupCep();
-      orderDistrict.value = "Loja";
-      orderStreet.value = "Loja";
-      orderNumber.value = "00";
-      return;
-    }
-
-    addressGroup.classList.remove("hidden");
-    orderCep.value = "";
-    orderDistrict.value = "";
-    orderStreet.value = "";
-    orderNumber.value = "";
+    void orderType.value;
   });
 
   if (orderCustomer) {
@@ -598,33 +580,6 @@ import { getShopPickupCep } from "./storeAuth.js";
       updateSelectedCustomerInfo(orderCustomer.value);
     });
   }
-
-  orderCep.addEventListener("change", async () => {
-    const cepValue = orderCep.value;
-    if (!cepValue || orderType.value === "retirada") return;
-
-    const loadingToken = loadingProgress.start({
-      message: "Buscando endereço pelo CEP...",
-    });
-
-    try {
-      const response = await fetch(`https://opencep.com/v1/${cepValue}`);
-
-      if (!response.ok) {
-        throw new Error("CEP inválido.");
-      }
-
-      const endereco = await response.json();
-      orderStreet.value = endereco.logradouro || "";
-      orderDistrict.value = endereco.bairro || "";
-    } catch {
-      orderStreet.value = "CEP INVÁLIDO";
-      orderDistrict.value = "CEP INVÁLIDO";
-      snackbar.warning("Não foi possível localizar o CEP informado.");
-    } finally {
-      loadingProgress.finish(loadingToken);
-    }
-  });
 
   addOrderItem.addEventListener("click", () => {
     const productId = Number(orderProduct.value);
@@ -663,4 +618,5 @@ import { getShopPickupCep } from "./storeAuth.js";
   });
 
   loadOrders();
+  handlePendingAction();
 })();

@@ -5,7 +5,6 @@ const contentArea = document.querySelector("#contentArea");
 const homeButton = document.querySelector("#homeButton");
 const menuButton = document.querySelector("#menuButton");
 const ordersButton = document.querySelector("#ordersButton");
-const settingsButton = document.querySelector("#settingsButton");
 const themeToggleSidebarButton = document.querySelector(
   "#themeToggleSidebarButton",
 );
@@ -21,6 +20,8 @@ const sidebarRole = document.querySelector("[data-sidebar-role]");
 const sidebarAuthActions = document.querySelector(
   "[data-sidebar-auth-actions]",
 );
+const sidebarLoginButton = document.querySelector("[data-sidebar-login]");
+const sidebarRegisterButton = document.querySelector("[data-sidebar-register]");
 const mobileActionButton = document.querySelector("#mobileActionButton");
 const mobileQuickActions = document.querySelector("#mobileQuickActions");
 const quickCreateItemButton = document.querySelector("#quickCreateItem");
@@ -84,13 +85,24 @@ function updateSidebarProfile() {
   }
 
   if (sidebarRole) {
-    sidebarRole.textContent = isAuthenticated
-      ? "Foodtruck logado"
-      : "Acesso ao painel";
+    sidebarRole.textContent = isAuthenticated ? "Sair" : "Acesso ao painel";
+    sidebarRole.hidden = !isAuthenticated;
+    sidebarRole.setAttribute(
+      "aria-label",
+      isAuthenticated ? "Sair do painel" : "Acesso ao painel",
+    );
   }
 
   if (sidebarAuthActions) {
     sidebarAuthActions.hidden = isAuthenticated;
+  }
+
+  if (sidebarLoginButton) {
+    sidebarLoginButton.hidden = isAuthenticated;
+  }
+
+  if (sidebarRegisterButton) {
+    sidebarRegisterButton.hidden = isAuthenticated;
   }
 
   if (homeButton?.closest(".buttonsNav")) {
@@ -147,6 +159,20 @@ function syncAccessibilityButtonIntoStack() {
   }
 }
 
+function handleLogout() {
+  sessionStorage.removeItem("streetbite-store-session");
+  updateSidebarProfile();
+  window.location.href = "landingPage.html";
+}
+
+sidebarRole?.addEventListener("click", () => {
+  if (sidebarRole.hidden) {
+    return;
+  }
+
+  handleLogout();
+});
+
 window.applyTheme = applyTheme;
 window.getCurrentTheme = getCurrentTheme;
 window.toggleTheme = toggleTheme;
@@ -165,9 +191,6 @@ const pages = {
   requests: {
     html: "pedidos.html",
   },
-  settings: {
-    html: "settings.html",
-  },
 };
 
 // Map href filenames to page keys for internal link interception
@@ -175,14 +198,12 @@ const hrefToPageKey = {
   "home.html": "home",
   "menu.html": "menu",
   "pedidos.html": "requests",
-  "settings.html": "settings",
 };
 
 const pageToSidebarButton = {
   home: homeButton,
   menu: menuButton,
   requests: ordersButton,
-  settings: settingsButton,
 };
 
 let currentPageAssets = [];
@@ -221,7 +242,7 @@ async function triggerMobileQuickAction(actionType) {
 }
 
 function updateSidebarActive(pageKey) {
-  const buttons = [homeButton, menuButton, ordersButton, settingsButton];
+  const buttons = [homeButton, menuButton, ordersButton];
   buttons.forEach((button) => button?.classList.remove("is-active"));
 
   const activeButton = pageToSidebarButton[pageKey];
@@ -390,10 +411,6 @@ menuButton.addEventListener("click", (e) => {
 ordersButton.addEventListener("click", (e) => {
   e.preventDefault();
   loadPage("requests");
-});
-settingsButton.addEventListener("click", (e) => {
-  e.preventDefault();
-  loadPage("settings");
 });
 
 if (mobileActionButton) {

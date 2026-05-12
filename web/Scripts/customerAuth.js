@@ -2,11 +2,6 @@ import ApiService from "./service.js";
 
 const api = new ApiService();
 
-const STORAGE_KEYS = {
-  account: "streetbite-consumer-account",
-  session: "streetbite-consumer-session",
-};
-
 function normalizeText(value) {
   return String(value ?? "").trim();
 }
@@ -15,22 +10,103 @@ function normalizeDigits(value) {
   return normalizeText(value).replace(/\D/g, "");
 }
 
-function readJson(storage, key) {
-  try {
-    const rawValue = storage.getItem(key);
-    if (!rawValue) {
-      return null;
-    }
+function formatBrazilianPhone(value) {
+  const digits = normalizeDigits(value).slice(0, 11);
 
-    const parsedValue = JSON.parse(rawValue);
-    return parsedValue && typeof parsedValue === "object" ? parsedValue : null;
-  } catch {
-    return null;
+  if (!digits) {
+    return "";
+  }
+
+  if (digits.length <= 2) {
+    return `(${digits}`;
+  }
+
+  if (digits.length <= 6) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  }
+
+  if (digits.length <= 10) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
+
+function attachBrazilianPhoneMask(inputElement) {
+  if (!inputElement) {
+    return;
+  }
+
+  const applyMask = () => {
+    inputElement.value = formatBrazilianPhone(inputElement.value);
+  };
+
+  inputElement.addEventListener("input", applyMask);
+  inputElement.addEventListener("blur", applyMask);
+  applyMask();
+}
+
+function formatCep(value) {
+  const digits = normalizeDigits(value).slice(0, 8);
+
+  if (digits.length <= 5) {
+    return digits;
+  }
+
+  return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+}
+
+function attachCepMask(inputElement) {
+  if (!inputElement) {
+    return;
+  }
+
+  const applyMask = () => {
+    inputElement.value = formatCep(inputElement.value);
+  };
+
+  inputElement.addEventListener("input", applyMask);
+  inputElement.addEventListener("blur", applyMask);
+  applyMask();
+}
+
+function setFieldState(fieldStatusElement, inputElement, isValid) {
+  if (fieldStatusElement) {
+    fieldStatusElement.textContent = isValid ? "✓" : "✕";
+    fieldStatusElement.classList.toggle("is-valid", isValid);
+    fieldStatusElement.classList.toggle("is-invalid", !isValid);
+  }
+
+  if (inputElement) {
+    inputElement.classList.toggle("is-valid", isValid);
+    inputElement.classList.toggle("is-invalid", !isValid);
   }
 }
 
-function writeJson(storage, key, value) {
-  storage.setItem(key, JSON.stringify(value));
+function validateEmail(value) {
+  const normalizedValue = normalizeText(value);
+  if (!normalizedValue) {
+    return false;
+  }
+
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedValue);
+}
+
+function validatePhone(value) {
+  const digits = normalizeDigits(value);
+  return digits.length === 10 || digits.length === 11;
+}
+
+function validateCep(value) {
+  return normalizeDigits(value).length === 8;
+}
+
+function validateNumber(value) {
+  return normalizeDigits(value).length > 0;
+}
+
+function validateRequiredText(value) {
+  return normalizeText(value).length > 0;
 }
 
 function setStatus(statusElement, message, type = "info") {
@@ -50,50 +126,6 @@ function setStatus(statusElement, message, type = "info") {
   }
 }
 
-function setActiveView(rootElement, viewName) {
-  const tabs = rootElement.querySelectorAll("[data-auth-tab]");
-  const views = rootElement.querySelectorAll("[data-auth-view]");
-
-  tabs.forEach((tab) => {
-    const isActive = tab.dataset.authTab === viewName;
-    tab.classList.toggle("is-active", isActive);
-    tab.setAttribute("aria-selected", String(isActive));
-  });
-
-  views.forEach((view) => {
-    view.classList.toggle("hidden", view.dataset.authView !== viewName);
-  });
-}
-
-function saveAccount(account) {
-  writeJson(localStorage, STORAGE_KEYS.account, account);
-}
-
-function saveSession(account) {
-  writeJson(sessionStorage, STORAGE_KEYS.session, {
-    name: account.name,
-    email: account.email,
-    phone: account.phone,
-    authenticatedAt: new Date().toISOString(),
-  });
-}
-
-export function getStoredCustomerAccount() {
-  const account = readJson(localStorage, STORAGE_KEYS.account);
-
-  if (!account) {
-    return null;
-  }
-
-  return {
-    id: Number(account.id ?? 0),
-    name: normalizeText(account.name),
-    email: normalizeText(account.email),
-    phone: normalizeDigits(account.phone),
-    password: normalizeText(account.password),
-  };
-}
-
 export function initializeCustomerAuth() {
   const rootElement = document.querySelector("[data-customer-auth-root]");
   if (!rootElement) {
@@ -101,148 +133,168 @@ export function initializeCustomerAuth() {
   }
 
   const authStatus = rootElement.querySelector("[data-auth-status]");
-  const tabButtons = rootElement.querySelectorAll("[data-auth-tab]");
-  const loginView = rootElement.querySelector('[data-auth-view="login"]');
   const registerView = rootElement.querySelector('[data-auth-view="register"]');
-  const loginIdentityInput = rootElement.querySelector("[data-login-identity]");
-  const loginPasswordInput = rootElement.querySelector("[data-login-password]");
   const registerNameInput = rootElement.querySelector("[data-register-name]");
   const registerEmailInput = rootElement.querySelector("[data-register-email]");
   const registerPhoneInput = rootElement.querySelector("[data-register-phone]");
-  const registerPasswordInput = rootElement.querySelector(
-    "[data-register-password]",
+  const registerCepInput = rootElement.querySelector("[data-register-cep]");
+  const registerStreetInput = rootElement.querySelector(
+    "[data-register-street]",
   );
+  const registerNumberInput = rootElement.querySelector(
+    "[data-register-number]",
+  );
+  const backButton = rootElement.querySelector("[data-customer-back]");
 
-  const storedAccount = getStoredCustomerAccount();
-  if (storedAccount) {
-    if (registerNameInput) {
-      registerNameInput.value = storedAccount.name;
+  const fieldStatusElements = {
+    name: rootElement.querySelector('[data-field-status="name"]'),
+    email: rootElement.querySelector('[data-field-status="email"]'),
+    phone: rootElement.querySelector('[data-field-status="phone"]'),
+    cep: rootElement.querySelector('[data-field-status="cep"]'),
+    street: rootElement.querySelector('[data-field-status="street"]'),
+    number: rootElement.querySelector('[data-field-status="number"]'),
+  };
+
+  const submitButton = rootElement.querySelector(".auth-button[type='submit']");
+
+  const fieldBindings = [
+    {
+      input: registerNameInput,
+      status: fieldStatusElements.name,
+      validate: validateRequiredText,
+    },
+    {
+      input: registerEmailInput,
+      status: fieldStatusElements.email,
+      validate: validateEmail,
+    },
+    {
+      input: registerPhoneInput,
+      status: fieldStatusElements.phone,
+      validate: validatePhone,
+    },
+    {
+      input: registerCepInput,
+      status: fieldStatusElements.cep,
+      validate: validateCep,
+    },
+    {
+      input: registerStreetInput,
+      status: fieldStatusElements.street,
+      validate: validateRequiredText,
+    },
+    {
+      input: registerNumberInput,
+      status: fieldStatusElements.number,
+      validate: validateNumber,
+    },
+  ];
+
+  function validateField(binding) {
+    if (!binding?.input) {
+      return true;
     }
 
-    if (registerEmailInput) {
-      registerEmailInput.value = storedAccount.email;
-    }
-
-    if (registerPhoneInput) {
-      registerPhoneInput.value = storedAccount.phone;
-    }
+    const isValid = binding.validate(binding.input.value);
+    setFieldState(binding.status, binding.input, isValid);
+    return isValid;
   }
 
-  setActiveView(rootElement, "register");
+  function validateAllFields() {
+    return fieldBindings.every((binding) => validateField(binding));
+  }
+
+  let customerRegistered = false;
+
+  function goBackToPreviousPage() {
+    if (window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+
+    window.location.href = "pedidos.html";
+  }
+
+  backButton?.addEventListener("click", goBackToPreviousPage);
+
+  if (registerPhoneInput) {
+    registerPhoneInput.placeholder = "(99) 9 9999-9999";
+    attachBrazilianPhoneMask(registerPhoneInput);
+  }
+
+  if (registerCepInput) {
+    registerCepInput.placeholder = "00000-000";
+    attachCepMask(registerCepInput);
+  }
+
+  if (registerNameInput) {
+    registerNameInput.value = "";
+  }
+
+  if (registerEmailInput) {
+    registerEmailInput.value = "";
+  }
+
+  if (registerStreetInput) {
+    registerStreetInput.value = "";
+  }
+
+  if (registerNumberInput) {
+    registerNumberInput.value = "";
+  }
+
   setStatus(authStatus, "Cadastre o cliente para validar o nome na comanda.");
 
-  tabButtons.forEach((tabButton) => {
-    tabButton.addEventListener("click", () => {
-      const nextView =
-        tabButton.dataset.authTab === "login" ? "login" : "register";
-      setActiveView(rootElement, nextView);
-      setStatus(
-        authStatus,
-        nextView === "register"
-          ? "Cadastre o cliente para validar o nome na comanda."
-          : "Acesse com os dados já cadastrados.",
-      );
-    });
-  });
-
-  loginView?.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const identity = normalizeText(loginIdentityInput?.value).toLowerCase();
-    const password = normalizeText(loginPasswordInput?.value);
-    const account = getStoredCustomerAccount();
-
-    if (!identity || !password) {
-      setStatus(
-        authStatus,
-        "Informe nome, telefone ou e-mail e a senha.",
-        "error",
-      );
+  fieldBindings.forEach((binding) => {
+    if (!binding.input) {
       return;
     }
 
-    if (!account) {
-      setStatus(
-        authStatus,
-        "Cadastre o cliente antes de tentar entrar.",
-        "error",
-      );
-      return;
-    }
-
-    const identityMatches =
-      identity === account.name.toLowerCase() ||
-      identity === account.email.toLowerCase() ||
-      normalizeDigits(identity) === account.phone;
-
-    if (!identityMatches || password !== account.password) {
-      setStatus(authStatus, "Credenciais inválidas.", "error");
-      return;
-    }
-
-    saveSession(account);
-    setStatus(authStatus, "Cliente autenticado com sucesso.", "success");
-    window.location.href = "./landingPage.html";
+    binding.input.addEventListener("input", () => validateField(binding));
+    binding.input.addEventListener("blur", () => validateField(binding));
+    validateField(binding);
   });
 
   registerView?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    if (customerRegistered) {
+      goBackToPreviousPage();
+      return;
+    }
+
+    const areFieldsValid = validateAllFields();
+
+    if (!areFieldsValid) {
+      setStatus(authStatus, "Corrija os campos marcados com X.", "error");
+      return;
+    }
+
     const name = normalizeText(registerNameInput?.value);
     const email = normalizeText(registerEmailInput?.value);
     const phone = normalizeDigits(registerPhoneInput?.value);
-    const password = normalizeText(registerPasswordInput?.value);
-
-    if (!name || !email || !phone || !password) {
-      setStatus(
-        authStatus,
-        "Preencha nome, e-mail, telefone e senha.",
-        "error",
-      );
-      return;
-    }
-
-    if (phone.length < 10) {
-      setStatus(authStatus, "Informe um telefone válido.", "error");
-      return;
-    }
+    const cep = normalizeDigits(registerCepInput?.value);
+    const street = normalizeText(registerStreetInput?.value);
+    const number = normalizeDigits(registerNumberInput?.value);
 
     try {
       const createdCustomer = await api.createCliente({
         nome: name,
         email,
         telefone: phone,
-        senha: password,
+        cep,
+        street,
+        number,
       });
 
-      const account = {
-        id: Number(
-          createdCustomer?.clienteId ??
-            createdCustomer?.ClienteId ??
-            createdCustomer?.id ??
-            createdCustomer?.Id ??
-            0,
-        ),
-        name,
-        email,
-        phone,
-        password,
-        createdAt: new Date().toISOString(),
-      };
-
-      saveAccount(account);
-      saveSession(account);
       setStatus(authStatus, "Cliente cadastrado com sucesso.", "success");
 
-      if (loginIdentityInput) {
-        loginIdentityInput.value = name;
+      if (submitButton) {
+        submitButton.textContent = "Voltar para a página anterior";
+        submitButton.disabled = false;
       }
 
-      if (loginPasswordInput) {
-        loginPasswordInput.value = "";
-      }
-
-      setActiveView(rootElement, "login");
+      customerRegistered = true;
     } catch (error) {
       setStatus(
         authStatus,

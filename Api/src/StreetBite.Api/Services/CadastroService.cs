@@ -28,11 +28,14 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
     public async Task<Result<ClienteViewDTO>> CreateClienteAsync(ClienteCadastroRequest request, CancellationToken cancellationToken = default)
     {
         var normalizedName = request.Nome.Trim();
-        var normalizedEmail = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email.Trim();
-        var normalizedPhone = string.IsNullOrWhiteSpace(request.Telefone) ? null : request.Telefone.Trim();
+        var normalizedEmail = request.Email?.Trim();
+        var normalizedPhone = request.Telefone?.Trim();
+        var normalizedCep = request.Cep?.Trim();
+        var normalizedStreet = request.Street?.Trim();
+        var normalizedNumber = request.Number?.Trim();
 
         var clientExists = await dbContext.Clientes.AnyAsync(
-            x => x.Nome == normalizedName || (normalizedEmail != null && x.Email == normalizedEmail) || (normalizedPhone != null && x.Telefone == normalizedPhone),
+            x => x.Nome == normalizedName || x.Email == normalizedEmail || x.Telefone == normalizedPhone,
             cancellationToken);
 
         if (clientExists)
@@ -45,8 +48,15 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
             Nome = normalizedName,
             Email = normalizedEmail,
             Telefone = normalizedPhone,
-            Senha = request.Senha.Trim(),
+            Senha = string.Empty,
         };
+
+        cliente.Enderecos.Add(new Endereco
+        {
+            Cep = int.TryParse(normalizedCep, out var cepValue) ? cepValue : null,
+            Street = normalizedStreet ?? string.Empty,
+            Number = int.TryParse(normalizedNumber, out var numberValue) ? numberValue : null,
+        });
 
         dbContext.Clientes.Add(cliente);
         await dbContext.SaveChangesAsync(cancellationToken);

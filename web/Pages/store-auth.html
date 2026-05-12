@@ -21,8 +21,7 @@
           </h1>
           <p class="auth-description">
             Cadastre o foodtruck com nome, e-mail, documento, contato e forma de
-            pagamento. O cadastro fica persistido no backend e também alimenta a
-            navegação da landpage.
+            pagamento.
           </p>
         </div>
 
@@ -150,8 +149,8 @@
               <input
                 class="field-input"
                 type="tel"
-                inputmode="tel"
-                autocomplete="off"
+                autocomplete="username"
+                placeholder="Digite o nome da loja ou telefone"
                 placeholder="(00) 00000-0000"
                 data-register-contact
               />
@@ -165,7 +164,7 @@
               type="text"
               autocomplete="off"
               placeholder="Cartão, Pix, boleto..."
-              data-register-payment
+              placeholder="(99) 9 9999-9999"
             />
           </label>
 
@@ -175,11 +174,6 @@
             </button>
           </div>
         </form>
-
-        <p class="auth-note">
-          O cadastro é gravado no backend, e o painel usa esse registro como
-          base para os acessos e para a criação das comandas.
-        </p>
       </article>
     </main>
 

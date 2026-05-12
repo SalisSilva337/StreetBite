@@ -18,6 +18,42 @@ function normalizeDigits(value) {
   return normalizeText(value).replace(/\D/g, "");
 }
 
+function formatBrazilianPhone(value) {
+  const digits = normalizeDigits(value).slice(0, 11);
+
+  if (!digits) {
+    return "";
+  }
+
+  if (digits.length <= 2) {
+    return `(${digits}`;
+  }
+
+  if (digits.length <= 6) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  }
+
+  if (digits.length <= 10) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
+
+function attachBrazilianPhoneMask(inputElement) {
+  if (!inputElement) {
+    return;
+  }
+
+  const applyMask = () => {
+    inputElement.value = formatBrazilianPhone(inputElement.value);
+  };
+
+  inputElement.addEventListener("input", applyMask);
+  inputElement.addEventListener("blur", applyMask);
+  applyMask();
+}
+
 function readJson(storage, key) {
   try {
     const rawValue = storage.getItem(key);
@@ -208,6 +244,16 @@ export function initializeLandingAuth() {
     loginIdentityInput.value = recoveryContact || "";
   }
 
+  if (loginIdentityInput) {
+    loginIdentityInput.placeholder =
+      "Digite o nome da loja ou telefone no formato (99) 9 9999-9999";
+  }
+
+  if (registerContactInput) {
+    registerContactInput.placeholder = "(99) 9 9999-9999";
+    attachBrazilianPhoneMask(registerContactInput);
+  }
+
   setActiveView(rootElement, initialTab);
   setStatus(
     authStatus,
@@ -267,7 +313,7 @@ export function initializeLandingAuth() {
       "Login realizado com sucesso. Abrindo o painel...",
       "success",
     );
-    window.location.href = "./Pages/streetBite.html";
+    window.location.href = "../Pages/streetBite.html";
   });
 
   registerView?.addEventListener("submit", (event) => {
@@ -392,7 +438,12 @@ export function initializeRecoveryPage() {
   const contactToResume = storedContact;
 
   if (contactInput && contactToResume) {
-    contactInput.value = contactToResume;
+    contactInput.value = formatBrazilianPhone(contactToResume);
+  }
+
+  if (contactInput) {
+    contactInput.placeholder = "(99) 9 9999-9999";
+    attachBrazilianPhoneMask(contactInput);
   }
 
   function showResetStage(contactValue) {

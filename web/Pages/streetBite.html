@@ -21,30 +21,19 @@
           src="../Imgs/images/StreetBite-logo.png"
           alt="Logo StreetBite"
         />
-        <section class="sidebarProfile" data-sidebar-profile>
-          <div class="sidebarAvatar" data-sidebar-avatar aria-hidden="true">
-            <span class="sidebarAvatarInitial" data-sidebar-avatar-initial
-              >?</span
-            >
-          </div>
-          <div class="sidebarProfileText">
-            <p class="sidebarGreeting" data-sidebar-greeting>Bem-vindo!</p>
-            <p class="sidebarName" data-sidebar-name>
-              Faça login para continuar
-            </p>
-            <p class="sidebarRole" data-sidebar-role>Administrador</p>
-          </div>
-        </section>
+        
 
         <div class="sidebarAuthActions" data-sidebar-auth-actions>
           <a
             class="sidebarAuthButton sidebarAuthButton--primary"
             href="store-auth.html?tab=login"
+            data-sidebar-login
             >Login</a
           >
           <a
             class="sidebarAuthButton sidebarAuthButton--secondary"
             href="store-auth.html?tab=register"
+            data-sidebar-register
             >Registrar-se</a
           >
         </div>
@@ -68,7 +57,7 @@
             <span class="navIcon menuIcon" aria-hidden="true"></span>
             <span class="navLabel">Cardápio</span>
           </a>
-          <button
+          <!-- <button
             class="mobileActionButton"
             id="mobileActionButton"
             type="button"
@@ -77,7 +66,7 @@
             title="Ações rápidas"
           >
             <span class="mobileActionButtonGlyph" aria-hidden="true">+</span>
-          </button>
+          </button> -->
           <a
             class="navBarButtons"
             id="ordersButton"
@@ -87,17 +76,8 @@
             <span class="navIcon orderIcon" aria-hidden="true"></span>
             <span class="navLabel">Pedidos</span>
           </a>
-          <a
-            class="navBarButtons"
-            id="settingsButton"
-            href="settings.html"
-            aria-label="Abrir página Configurações"
-          >
-            <span class="navIcon settingsIcon" aria-hidden="true"></span>
-            <span class="navLabel">Configurações</span>
-          </a>
         </div>
-        <div
+        <!-- <div
           class="mobileQuickActions"
           id="mobileQuickActions"
           aria-hidden="true"
@@ -117,10 +97,71 @@
             aria-label="Criar novo pedido"
           >
             Pedido
-          </button>
+          </button> -->
+          <section class="sidebarProfile" data-sidebar-profile>
+          <div class="sidebarAvatar" data-sidebar-avatar aria-hidden="true">
+            <span class="sidebarAvatarInitial" data-sidebar-avatar-initial
+              >?</span
+            >
+          </div>
+          <div class="sidebarProfileText">
+            <p class="sidebarGreeting" data-sidebar-greeting>Bem-vindo!</p>
+            <p class="sidebarName" data-sidebar-name>
+              Faça login para continuar
+            </p>
+            <button
+              class="sidebarRole"
+              type="button"
+              data-sidebar-role
+              aria-label="Sair do painel"
+            >
+              Acesso ao painel
+            </button>
+          </div>
+        </section>
         </div>
       </aside>
-      <div class="contentArea" id="contentArea" aria-live="polite"></div>
+      <main class="panelContent">
+        <div class="contentArea" id="contentArea" aria-live="polite"></div>
+
+        <footer class="panelFooter" id="contato" data-panel-footer>
+          <div class="panelFooterBrand">
+            <strong>StreetBite</strong>
+            <p>Plano único para gestão de foodtrucks e comandas.</p>
+            <p>
+              Sistema de gestão para foodtrucks. Mais controle, mais sabor, mais
+              vendas.
+            </p>
+          </div>
+
+          <div class="panelFooterColumn">
+            <strong>Navegação</strong>
+            <a href="home.html">Início</a>
+            <a href="menu.html">Cardápio</a>
+            <a href="pedidos.html">Pedidos</a>
+          </div>
+
+          <div class="panelFooterColumn">
+            <strong>Suporte</strong>
+            <a href="#">Central de Ajuda</a>
+            <a href="#">Fale Conosco</a>
+            <a href="#">Tutoriais</a>
+          </div>
+
+          <div class="panelFooterColumn">
+            <strong>Contato</strong>
+            <a href="tel:+5511999999999">(11) 99999-9999</a>
+            <a href="mailto:contato@streetbite.com.br"
+              >contato@streetbite.com.br</a
+            >
+            <span>São Paulo - SP, Brasil</span>
+          </div>
+
+          <div class="panelFooterCopyright">
+            © 2024 StreetBite Management. Todos os direitos reservados.
+          </div>
+        </footer>
+      </main>
     </section>
 
     <div
