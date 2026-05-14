@@ -306,13 +306,16 @@ body {
 
 .panelContent {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   padding: calc(var(--panel-header-height) + 20px) 24px 0;
 }
 
 .contentArea {
   width: 100%;
+  flex: 1 0 auto;
 }
 
 .panelFooter {
@@ -530,6 +533,7 @@ body {
   }
 
   .panelContent {
+    min-height: 100vh;
     padding: calc(var(--panel-header-height) + 16px) 16px 0;
   }
 
