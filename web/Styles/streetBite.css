@@ -52,7 +52,6 @@ h6 {
 body {
   background-color: var(--background);
   color: var(--text);
-  overflow: hidden;
 }
 
 :where(button, [role="button"], input, select, textarea, a):focus-visible {
