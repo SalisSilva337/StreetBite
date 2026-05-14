@@ -319,21 +319,21 @@ body {
 }
 
 .panelFooter {
-  margin: 24px -24px 0;
-  padding: 32px 28px 24px;
+  margin: 16px -24px 0;
+  padding: 20px 28px 16px;
   border-radius: 0;
   background: linear-gradient(180deg, #1a222d, #111722);
   color: #f8f9fa;
   display: grid;
-  grid-template-columns: minmax(240px, 1.5fr) repeat(3, minmax(140px, 0.75fr));
+  grid-template-columns: minmax(240px, 1.5fr) minmax(140px, 0.75fr);
   gap: 24px;
   align-items: start;
 }
 
 .panelFooter strong {
   display: block;
-  margin-bottom: 10px;
-  font-size: 1rem;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
 }
 
 .panelFooter p,
@@ -341,8 +341,8 @@ body {
 .panelFooter a {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  font-size: 0.95rem;
-  line-height: 1.6;
+  font-size: 0.8rem;
+  line-height: 1.5;
 }
 
 .panelFooterBrand {
@@ -362,11 +362,11 @@ body {
 
 .panelFooterCopyright {
   grid-column: 1 / -1;
-  margin-top: 8px;
-  padding-top: 16px;
+  margin-top: 4px;
+  padding-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.72);
 }
 
@@ -539,9 +539,9 @@ body {
 
   .panelFooter {
     grid-template-columns: 1fr;
-    gap: 18px;
-    margin: 20px -16px 0;
-    padding: 28px 20px 20px;
+    gap: 14px;
+    margin: 14px -16px 0;
+    padding: 16px 20px 14px;
   }
 
   .panelFooterCopyright {

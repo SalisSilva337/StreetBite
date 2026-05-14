@@ -4,6 +4,7 @@ import {
   normalizeEnumValue,
   getEnumDescription,
 } from "./enumMappings.js";
+import { attachPasswordToggle } from "./components/togglePassword.js";
 
 const STORAGE_KEYS = {
   account: "streetbite-store-account",
@@ -239,6 +240,9 @@ export function initializeLandingAuth() {
     "[data-register-payment]",
   );
 
+  attachPasswordToggle(loginPasswordInput);
+  attachPasswordToggle(registerPasswordInput);
+
   stripSensitiveQueryParams(["email"]);
 
   const url = new URL(window.location.href);
@@ -447,6 +451,9 @@ export function initializeRecoveryPage() {
   const emailSummary = rootElement.querySelector(
     "[data-recovery-email-summary]",
   );
+
+  attachPasswordToggle(passwordInput);
+  attachPasswordToggle(confirmPasswordInput);
 
   const storedEmail = getRecoveryEmail();
   const account = getStoredShopAccount();
