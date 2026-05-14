@@ -888,6 +888,23 @@ body {
   text-decoration: none;
 }
 
+.auth-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.auth-back-link:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
 .auth-note {
   margin-top: 1rem;
   padding-top: 1rem;
