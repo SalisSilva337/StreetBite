@@ -1,4 +1,9 @@
 import ApiService from "./service.js";
+import {
+  PAYMENT_METHOD_OPTIONS,
+  normalizeEnumValue,
+  getEnumDescription,
+} from "./enumMappings.js";
 
 const STORAGE_KEYS = {
   account: "streetbite-store-account",
@@ -254,6 +259,15 @@ export function initializeLandingAuth() {
     attachBrazilianPhoneMask(registerContactInput);
   }
 
+  if (registerPaymentInput) {
+    PAYMENT_METHOD_OPTIONS.forEach((option) => {
+      const optionElement = document.createElement("option");
+      optionElement.value = option.value;
+      optionElement.textContent = option.getDescription();
+      registerPaymentInput.appendChild(optionElement);
+    });
+  }
+
   setActiveView(rootElement, initialTab);
   setStatus(
     authStatus,
@@ -319,7 +333,10 @@ export function initializeLandingAuth() {
     const documentValue = normalizeText(registerDocumentInput?.value);
     const cep = normalizeDigits(registerCepInput?.value);
     const contact = normalizeDigits(registerContactInput?.value);
-    const paymentMethod = normalizeText(registerPaymentInput?.value);
+    const paymentMethod = normalizeEnumValue(
+      registerPaymentInput?.value,
+      PAYMENT_METHOD_OPTIONS,
+    );
 
     if (
       !shopName ||
@@ -328,7 +345,7 @@ export function initializeLandingAuth() {
       !documentValue ||
       !cep ||
       !contact ||
-      !paymentMethod
+      paymentMethod == null
     ) {
       setStatus(
         authStatus,
@@ -373,6 +390,10 @@ export function initializeLandingAuth() {
           cep,
           contact,
           paymentMethod,
+          paymentMethodLabel: getEnumDescription(
+            PAYMENT_METHOD_OPTIONS,
+            paymentMethod,
+          ),
           updatedAt: new Date().toISOString(),
         };
 

@@ -1,3 +1,5 @@
+using StreetBite.Core.Enums;
+
 namespace StreetBite.Core.Entities;
 
 public sealed class Foodtruck : BaseEntity
@@ -12,7 +14,7 @@ public sealed class Foodtruck : BaseEntity
 
     public string? Cep { get; set; }
 
-    public string? FormaPagamento { get; set; }
+    public EMetodoPagamento FormaPagamento { get; set; }
 
     public string Senha { get; set; } = string.Empty;
 }

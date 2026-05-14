@@ -1,4 +1,5 @@
 using StreetBite.Core.Abstractions;
+using StreetBite.Core.Enums;
 using StreetBite.Core.Models;
 
 namespace StreetBite.Api.Views.Requests;
@@ -9,7 +10,7 @@ public sealed record FoodtruckCadastroRequest(
     string? Telefone,
     string Documento,
     string? Cep,
-    string? FormaPagamento,
+    EMetodoPagamento FormaPagamento,
     string Senha) : IValidation
 {
     public Result Validate()
@@ -32,6 +33,11 @@ public sealed record FoodtruckCadastroRequest(
         if (string.IsNullOrWhiteSpace(Senha))
         {
             return Result.Fail("Senha do foodtruck deve ser informada.");
+        }
+
+        if (!Enum.IsDefined(FormaPagamento) || FormaPagamento == EMetodoPagamento.NotDefined)
+        {
+            return Result.Fail("Forma de pagamento inválida.");
         }
 
         return Result.Ok();

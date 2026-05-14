@@ -1,3 +1,5 @@
+using StreetBite.Core.Enums;
+
 namespace StreetBite.Api.Views.DTOs;
 
 public sealed record FoodtruckViewDTO(
@@ -7,5 +9,5 @@ public sealed record FoodtruckViewDTO(
     string? Telefone,
     string Documento,
     string? Cep,
-    string? FormaPagamento,
+    EMetodoPagamento FormaPagamento,
     DateTime CriadoEm);

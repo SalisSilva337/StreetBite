@@ -87,7 +87,7 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
             Telefone = normalizedPhone,
             Documento = normalizedDocument,
             Cep = string.IsNullOrWhiteSpace(request.Cep) ? null : request.Cep.Trim(),
-            FormaPagamento = string.IsNullOrWhiteSpace(request.FormaPagamento) ? null : request.FormaPagamento.Trim(),
+            FormaPagamento = request.FormaPagamento,
             Senha = request.Senha.Trim(),
         };
 

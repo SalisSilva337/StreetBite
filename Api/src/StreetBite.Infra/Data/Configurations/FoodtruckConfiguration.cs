@@ -29,7 +29,7 @@ public sealed class FoodtruckConfiguration : BaseEntityConfiguration<Foodtruck>
             .HasMaxLength(20);
 
         builder.Property(x => x.FormaPagamento)
-            .HasMaxLength(60);
+            .IsRequired();
 
         builder.Property(x => x.Senha)
             .IsRequired()
