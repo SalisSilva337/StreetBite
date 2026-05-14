@@ -124,28 +124,28 @@ function saveAccount(account) {
 function saveSession(account) {
   writeJson(sessionStorage, STORAGE_KEYS.session, {
     shopName: account.shopName,
-    contact: account.contact,
+    email: account.email,
     cep: account.cep,
     authenticatedAt: new Date().toISOString(),
   });
 }
 
-function getRecoveryContact() {
-  return normalizeDigits(sessionStorage.getItem(STORAGE_KEYS.recovery));
+function getRecoveryEmail() {
+  return normalizeText(sessionStorage.getItem(STORAGE_KEYS.recovery));
 }
 
-function setRecoveryContact(contact) {
-  const normalizedContact = normalizeDigits(contact);
+function setRecoveryEmail(email) {
+  const normalizedEmail = normalizeText(email);
 
-  if (!normalizedContact) {
+  if (!normalizedEmail) {
     sessionStorage.removeItem(STORAGE_KEYS.recovery);
     return;
   }
 
-  sessionStorage.setItem(STORAGE_KEYS.recovery, normalizedContact);
+  sessionStorage.setItem(STORAGE_KEYS.recovery, normalizedEmail);
 }
 
-function clearRecoveryContact() {
+function clearRecoveryEmail() {
   sessionStorage.removeItem(STORAGE_KEYS.recovery);
 }
 
@@ -168,15 +168,16 @@ function stripSensitiveQueryParams(paramNames) {
   window.history.replaceState({}, "", cleanRelativeUrl);
 }
 
-function maskContact(contact) {
-  const normalizedContact = normalizeDigits(contact);
+function maskEmail(email) {
+  const normalizedEmail = normalizeText(email);
 
-  if (!normalizedContact) {
+  if (!normalizedEmail || !normalizedEmail.includes("@")) {
     return "";
   }
 
-  const lastDigits = normalizedContact.slice(-4);
-  return `****${lastDigits}`;
+  const [localPart, domain] = normalizedEmail.split("@");
+  const visible = localPart.slice(0, 2);
+  return `${visible}***@${domain}`;
 }
 
 export function getStoredShopAccount() {
@@ -233,20 +234,19 @@ export function initializeLandingAuth() {
     "[data-register-payment]",
   );
 
-  stripSensitiveQueryParams(["contact"]);
+  stripSensitiveQueryParams(["email"]);
 
   const url = new URL(window.location.href);
   const initialTab =
     url.searchParams.get("tab") === "register" ? "register" : "login";
-  const recoveryContact = getRecoveryContact();
+  const recoveryEmail = getRecoveryEmail();
 
   if (loginIdentityInput) {
-    loginIdentityInput.value = recoveryContact || "";
+    loginIdentityInput.value = recoveryEmail || "";
   }
 
   if (loginIdentityInput) {
-    loginIdentityInput.placeholder =
-      "Digite o nome da loja ou telefone no formato (99) 9 9999-9999";
+    loginIdentityInput.placeholder = "Digite o e-mail cadastrado";
   }
 
   if (registerContactInput) {
@@ -284,11 +284,7 @@ export function initializeLandingAuth() {
     const account = getStoredShopAccount();
 
     if (!identity || !password) {
-      setStatus(
-        authStatus,
-        "Informe o nome da loja ou contato e a senha.",
-        "error",
-      );
+      setStatus(authStatus, "Informe o e-mail e a senha.", "error");
       return;
     }
 
@@ -298,9 +294,7 @@ export function initializeLandingAuth() {
     }
 
     const identityMatches =
-      identity.toLowerCase() === account.shopName.toLowerCase() ||
-      identity.toLowerCase() === account.email.toLowerCase() ||
-      normalizeDigits(identity) === account.contact;
+      identity.toLowerCase() === account.email.toLowerCase();
 
     if (!identityMatches || password !== account.password) {
       setStatus(authStatus, "Credenciais inválidas.", "error");
@@ -392,7 +386,7 @@ export function initializeLandingAuth() {
 
         window.setTimeout(() => {
           if (loginIdentityInput) {
-            loginIdentityInput.value = shopName;
+            loginIdentityInput.value = email;
           }
 
           if (loginPasswordInput) {
@@ -419,34 +413,33 @@ export function initializeRecoveryPage() {
     return;
   }
 
-  stripSensitiveQueryParams(["contact"]);
+  stripSensitiveQueryParams(["email"]);
 
   const authStatus = rootElement.querySelector("[data-auth-status]");
   const lookupForm = rootElement.querySelector("[data-recovery-lookup]");
   const resetForm = rootElement.querySelector("[data-recovery-reset]");
-  const contactInput = rootElement.querySelector("[data-recovery-contact]");
+  const emailInput = rootElement.querySelector("[data-recovery-email]");
   const passwordInput = rootElement.querySelector("[data-recovery-password]");
   const confirmPasswordInput = rootElement.querySelector(
     "[data-recovery-confirm-password]",
   );
-  const contactSummary = rootElement.querySelector(
-    "[data-recovery-contact-summary]",
+  const emailSummary = rootElement.querySelector(
+    "[data-recovery-email-summary]",
   );
 
-  const storedContact = getRecoveryContact();
+  const storedEmail = getRecoveryEmail();
   const account = getStoredShopAccount();
-  const contactToResume = storedContact;
+  const emailToResume = storedEmail;
 
-  if (contactInput && contactToResume) {
-    contactInput.value = formatBrazilianPhone(contactToResume);
+  if (emailInput && emailToResume) {
+    emailInput.value = emailToResume;
   }
 
-  if (contactInput) {
-    contactInput.placeholder = "(99) 9 9999-9999";
-    attachBrazilianPhoneMask(contactInput);
+  if (emailInput) {
+    emailInput.placeholder = "seuemail@exemplo.com";
   }
 
-  function showResetStage(contactValue) {
+  function showResetStage(emailValue) {
     if (lookupForm) {
       lookupForm.classList.add("hidden");
     }
@@ -455,8 +448,8 @@ export function initializeRecoveryPage() {
       resetForm.classList.remove("hidden");
     }
 
-    if (contactSummary) {
-      contactSummary.textContent = maskContact(contactValue);
+    if (emailSummary) {
+      emailSummary.textContent = maskEmail(emailValue);
     }
 
     setStatus(
@@ -466,44 +459,51 @@ export function initializeRecoveryPage() {
     );
   }
 
-  if (contactToResume && account && contactToResume === account.contact) {
-    setRecoveryContact(contactToResume);
-    showResetStage(contactToResume);
+  if (
+    emailToResume &&
+    account &&
+    emailToResume.toLowerCase() === account.email.toLowerCase()
+  ) {
+    setRecoveryEmail(emailToResume);
+    showResetStage(emailToResume);
   }
 
   lookupForm?.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const contactValue = normalizeDigits(contactInput?.value);
+    const emailValue = normalizeText(emailInput?.value);
 
-    if (!contactValue) {
-      setStatus(authStatus, "Informe o número de contato cadastrado.", "error");
+    if (!emailValue) {
+      setStatus(authStatus, "Informe o e-mail cadastrado.", "error");
       return;
     }
 
     const currentAccount = getStoredShopAccount();
 
-    if (!currentAccount || currentAccount.contact !== contactValue) {
-      setStatus(authStatus, "Número de contato não encontrado.", "error");
+    if (
+      !currentAccount ||
+      currentAccount.email.toLowerCase() !== emailValue.toLowerCase()
+    ) {
+      setStatus(authStatus, "E-mail não encontrado.", "error");
       return;
     }
 
-    setRecoveryContact(contactValue);
-    showResetStage(contactValue);
+    setRecoveryEmail(emailValue);
+    showResetStage(emailValue);
   });
 
   resetForm?.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const contactValue = getRecoveryContact();
+    const emailValue = getRecoveryEmail();
     const newPassword = normalizeText(passwordInput?.value);
     const confirmPassword = normalizeText(confirmPasswordInput?.value);
     const currentAccount = getStoredShopAccount();
 
     if (
-      !contactValue ||
+      !emailValue ||
       !currentAccount ||
-      currentAccount.contact !== contactValue
+      currentAccount.email.toLowerCase() !== emailValue.toLowerCase()
     ) {
       setStatus(
         authStatus,
@@ -529,7 +529,7 @@ export function initializeRecoveryPage() {
       updatedAt: new Date().toISOString(),
     });
 
-    clearRecoveryContact();
+    clearRecoveryEmail();
     setStatus(
       authStatus,
       "Senha atualizada com sucesso. Redirecionando para o login...",

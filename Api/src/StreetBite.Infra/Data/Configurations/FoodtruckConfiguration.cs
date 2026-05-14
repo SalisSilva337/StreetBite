@@ -15,6 +15,7 @@ public sealed class FoodtruckConfiguration : BaseEntityConfiguration<Foodtruck>
             .HasMaxLength(200);
 
         builder.Property(x => x.Email)
+            .IsRequired()
             .HasMaxLength(200);
 
         builder.Property(x => x.Telefone)

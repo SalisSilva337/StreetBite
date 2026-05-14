@@ -18,7 +18,7 @@
           <p class="auth-kicker">Recuperação de acesso</p>
           <h1 class="auth-title">Esqueci minha senha</h1>
           <p class="auth-description">
-            Informe o número de contato da loja. Se ele existir no cadastro,
+            Informe o e-mail cadastrado da loja. Se ele existir no cadastro,
             você poderá criar uma nova senha na etapa seguinte.
           </p>
         </div>
@@ -32,14 +32,14 @@
 
         <form class="auth-form auth-steps" data-recovery-lookup novalidate>
           <label class="auth-field">
-            <span class="field-label">Número de contato</span>
+            <span class="field-label">E-mail</span>
             <input
               class="field-input"
-              type="tel"
-              inputmode="tel"
-              autocomplete="tel"
-              placeholder="(99) 9 9999-9999"
-              data-recovery-contact
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              placeholder="seuemail@exemplo.com"
+              data-recovery-email
             />
           </label>
 
@@ -54,8 +54,8 @@
           novalidate
         >
           <p class="auth-description">
-            Conta localizada para o número
-            <strong data-recovery-contact-summary></strong>.
+            Conta localizada para o e-mail
+            <strong data-recovery-email-summary></strong>.
           </p>
 
           <label class="auth-field">
@@ -81,7 +81,7 @@
           </label>
 
           <div class="auth-actions auth-actions--split">
-            <a class="auth-link" href="landingPage.html">Voltar</a>
+            <a class="auth-link" href="../index.html">Voltar</a>
             <button class="auth-button" type="submit">Salvar nova senha</button>
           </div>
         </form>

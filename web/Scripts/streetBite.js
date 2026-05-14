@@ -45,7 +45,7 @@ function readSidebarSession() {
 
     return {
       shopName: String(parsedSession.shopName ?? "").trim(),
-      contact: String(parsedSession.contact ?? "").trim(),
+      email: String(parsedSession.email ?? "").trim(),
       cep: String(parsedSession.cep ?? "").trim(),
     };
   } catch {
@@ -162,7 +162,7 @@ function syncAccessibilityButtonIntoStack() {
 function handleLogout() {
   sessionStorage.removeItem("streetbite-store-session");
   updateSidebarProfile();
-  window.location.href = "landingPage.html";
+  window.location.href = "../index.html";
 }
 
 sidebarRole?.addEventListener("click", () => {

@@ -5,7 +5,7 @@ namespace StreetBite.Api.Views.Requests;
 
 public sealed record FoodtruckCadastroRequest(
     string Nome,
-    string? Email,
+    string Email,
     string? Telefone,
     string Documento,
     string? Cep,
@@ -17,6 +17,11 @@ public sealed record FoodtruckCadastroRequest(
         if (string.IsNullOrWhiteSpace(Nome))
         {
             return Result.Fail("Nome do foodtruck deve ser informado.");
+        }
+
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            return Result.Fail("E-mail do foodtruck deve ser informado.");
         }
 
         if (string.IsNullOrWhiteSpace(Documento))

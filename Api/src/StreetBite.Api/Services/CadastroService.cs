@@ -67,12 +67,12 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
     public async Task<Result<FoodtruckViewDTO>> CreateFoodtruckAsync(FoodtruckCadastroRequest request, CancellationToken cancellationToken = default)
     {
         var normalizedName = request.Nome.Trim();
-        var normalizedEmail = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email.Trim();
+        var normalizedEmail = request.Email.Trim();
         var normalizedPhone = string.IsNullOrWhiteSpace(request.Telefone) ? null : request.Telefone.Trim();
         var normalizedDocument = request.Documento.Trim();
 
         var truckExists = await dbContext.Foodtrucks.AnyAsync(
-            x => x.Nome == normalizedName || x.Documento == normalizedDocument || (normalizedEmail != null && x.Email == normalizedEmail),
+            x => x.Nome == normalizedName || x.Documento == normalizedDocument || x.Email == normalizedEmail,
             cancellationToken);
 
         if (truckExists)
