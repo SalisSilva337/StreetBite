@@ -1,74 +1,15 @@
 import ApiService from "./service.js";
+import { normalizeText, normalizeDigits } from "./utils/normalizers.js";
+import { attachBrazilianPhoneMask, attachCepMask } from "./utils/masks.js";
+import {
+  validateEmail,
+  validatePhone,
+  validateCep,
+  validateNumber,
+  validateRequiredText,
+} from "./validators.js";
 
 const api = new ApiService();
-
-function normalizeText(value) {
-  return String(value ?? "").trim();
-}
-
-function normalizeDigits(value) {
-  return normalizeText(value).replace(/\D/g, "");
-}
-
-function formatBrazilianPhone(value) {
-  const digits = normalizeDigits(value).slice(0, 11);
-
-  if (!digits) {
-    return "";
-  }
-
-  if (digits.length <= 2) {
-    return `(${digits}`;
-  }
-
-  if (digits.length <= 6) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-  }
-
-  if (digits.length <= 10) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
-  }
-
-  return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3, 7)}-${digits.slice(7)}`;
-}
-
-function attachBrazilianPhoneMask(inputElement) {
-  if (!inputElement) {
-    return;
-  }
-
-  const applyMask = () => {
-    inputElement.value = formatBrazilianPhone(inputElement.value);
-  };
-
-  inputElement.addEventListener("input", applyMask);
-  inputElement.addEventListener("blur", applyMask);
-  applyMask();
-}
-
-function formatCep(value) {
-  const digits = normalizeDigits(value).slice(0, 8);
-
-  if (digits.length <= 5) {
-    return digits;
-  }
-
-  return `${digits.slice(0, 5)}-${digits.slice(5)}`;
-}
-
-function attachCepMask(inputElement) {
-  if (!inputElement) {
-    return;
-  }
-
-  const applyMask = () => {
-    inputElement.value = formatCep(inputElement.value);
-  };
-
-  inputElement.addEventListener("input", applyMask);
-  inputElement.addEventListener("blur", applyMask);
-  applyMask();
-}
 
 function setFieldState(fieldStatusElement, inputElement, isValid) {
   if (fieldStatusElement) {
@@ -81,32 +22,6 @@ function setFieldState(fieldStatusElement, inputElement, isValid) {
     inputElement.classList.toggle("is-valid", isValid);
     inputElement.classList.toggle("is-invalid", !isValid);
   }
-}
-
-function validateEmail(value) {
-  const normalizedValue = normalizeText(value);
-  if (!normalizedValue) {
-    return false;
-  }
-
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedValue);
-}
-
-function validatePhone(value) {
-  const digits = normalizeDigits(value);
-  return digits.length === 10 || digits.length === 11;
-}
-
-function validateCep(value) {
-  return normalizeDigits(value).length === 8;
-}
-
-function validateNumber(value) {
-  return normalizeDigits(value).length > 0;
-}
-
-function validateRequiredText(value) {
-  return normalizeText(value).length > 0;
 }
 
 function setStatus(statusElement, message, type = "info") {
