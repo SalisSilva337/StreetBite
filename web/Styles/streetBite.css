@@ -40,6 +40,24 @@
   font-family: "Inter", sans-serif;
 }
 
+.skipLink {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 12px 24px;
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.skipLink:focus {
+  top: 16px;
+}
+
 h1,
 h2,
 h3,
@@ -590,5 +608,42 @@ body {
     bottom: auto !important;
     margin: 0 !important;
     z-index: auto !important;
+  }
+}
+
+@media only screen and (max-width: 360px) {
+  :root {
+    --panel-header-height: 170px;
+  }
+
+  .navBarButtons {
+    min-height: 42px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .navLabel {
+    font-size: 12px;
+  }
+
+  .sidebarAuthButton {
+    min-width: 100px;
+    min-height: 40px;
+    font-size: 12px;
+    padding: 0 10px;
+  }
+
+  .panelContent {
+    padding: calc(var(--panel-header-height) + 10px) 10px 0;
+  }
+
+  .panelFooter {
+    padding: 14px 14px 10px;
+    gap: 10px;
+  }
+
+  .floatingActionButtons {
+    right: 10px;
+    bottom: 90px;
   }
 }

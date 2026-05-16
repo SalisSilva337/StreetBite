@@ -652,6 +652,33 @@ h6 {
   cursor: not-allowed;
 }
 
+.wizardFieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.wizardLegend {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.field-required {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.field-help {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
 .orderCart {
   max-height: 170px;
   width: 100%;
@@ -808,6 +835,45 @@ h6 {
 
   .wizardSubtitle {
     font-size: 14px;
+  }
+}
+
+@media only screen and (max-width: 360px) {
+  .main {
+    margin: 10px;
+    margin-top: 30px;
+    gap: 40px;
+  }
+
+  .main h1 {
+    font-size: 24px;
+  }
+
+  .labelSection {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .labelSection nav {
+    margin-left: 0;
+  }
+
+  .main nav {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .main nav .createOrder {
+    width: 100%;
+  }
+
+  .orderCardHeader {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .orderCardBody {
+    padding: 12px;
   }
 }
 

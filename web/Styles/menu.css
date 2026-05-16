@@ -680,6 +680,33 @@ body {
   cursor: not-allowed;
 }
 
+.wizardFieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.wizardLegend {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.field-required {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.field-help {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
 @keyframes wizardBackdropIn {
   from {
     opacity: 0;
@@ -791,5 +818,51 @@ body {
 
   .wizardSubtitle {
     font-size: 14px;
+  }
+}
+
+@media only screen and (max-width: 360px) {
+  .main {
+    margin: 10px;
+    margin-top: 30px;
+    gap: 40px;
+  }
+
+  .main h1 {
+    font-size: 24px;
+  }
+
+  .labelSection {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .labelSection nav {
+    margin-left: 0;
+  }
+
+  .main nav button {
+    width: 100%;
+  }
+
+  .grid {
+    min-height: 340px;
+  }
+
+  .itemImage {
+    max-width: 180px;
+    height: 140px;
+  }
+
+  .productName {
+    font-size: 1.3rem;
+  }
+
+  .productPrice {
+    font-size: 1.2rem;
+  }
+
+  .wizardContainer {
+    border-radius: 12px;
   }
 }

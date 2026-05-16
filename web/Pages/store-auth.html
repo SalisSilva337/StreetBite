@@ -54,27 +54,45 @@
         ></div>
 
         <form class="auth-form" data-auth-view="login" novalidate>
-          <label class="auth-field">
-            <span class="field-label">E-mail</span>
-            <input
-              class="field-input"
-              type="email"
-              autocomplete="username"
-              placeholder="Digite o e-mail cadastrado"
-              data-login-identity
-            />
-          </label>
+          <fieldset class="auth-fieldset">
+            <legend class="auth-legend">Credenciais de acesso</legend>
 
-          <label class="auth-field">
-            <span class="field-label">Senha</span>
-            <input
-              class="field-input"
-              type="password"
-              autocomplete="current-password"
-              placeholder="Digite sua senha"
-              data-login-password
-            />
-          </label>
+            <label class="auth-field">
+              <span class="field-label"
+                >E-mail
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <input
+                class="field-input"
+                type="email"
+                autocomplete="username"
+                placeholder="Digite o e-mail cadastrado"
+                required
+                aria-required="true"
+                aria-describedby="login-identity-help"
+                data-login-identity
+              />
+              <span id="login-identity-help" class="field-help"
+                >Informe o e-mail cadastrado no seu foodtruck.</span
+              >
+            </label>
+
+            <label class="auth-field">
+              <span class="field-label"
+                >Senha
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <input
+                class="field-input"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Digite sua senha"
+                required
+                aria-required="true"
+                data-login-password
+              />
+            </label>
+          </fieldset>
 
           <div class="auth-actions auth-actions--split">
             <a class="auth-link" href="store-reset.html">Esqueci a senha</a>
@@ -88,84 +106,149 @@
           novalidate
           autocomplete="off"
         >
-          <label class="auth-field">
-            <span class="field-label">Nome do foodtruck</span>
-            <input
-              class="field-input"
-              type="text"
-              autocomplete="off"
-              placeholder="Nome da loja"
-              data-register-shop-name
-            />
-          </label>
+          <fieldset class="auth-fieldset">
+            <legend class="auth-legend">Dados do foodtruck</legend>
 
-          <label class="auth-field">
-            <span class="field-label">E-mail</span>
-            <input
-              class="field-input"
-              type="email"
-              autocomplete="off"
-              placeholder="contato@foodtruck.com"
-              data-register-email
-            />
-          </label>
-
-          <label class="auth-field">
-            <span class="field-label">Senha</span>
-            <input
-              class="field-input"
-              type="password"
-              autocomplete="off"
-              placeholder="Crie uma senha"
-              data-register-password
-            />
-          </label>
-
-          <label class="auth-field">
-            <span class="field-label">CPF ou CNPJ</span>
-            <input
-              class="field-input"
-              type="text"
-              inputmode="numeric"
-              autocomplete="off"
-              placeholder="00.000.000/0000-00"
-              data-register-document
-            />
-          </label>
-
-          <div class="auth-grid">
             <label class="auth-field">
-              <span class="field-label">CEP da loja</span>
+              <span class="field-label"
+                >Nome do foodtruck
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <input
+                class="field-input"
+                type="text"
+                autocomplete="off"
+                placeholder="Nome da loja"
+                required
+                aria-required="true"
+                aria-describedby="register-shop-name-help"
+                data-register-shop-name
+              />
+              <span id="register-shop-name-help" class="field-help"
+                >Nome público do seu foodtruck exibido no painel.</span
+              >
+            </label>
+
+            <label class="auth-field">
+              <span class="field-label"
+                >E-mail
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <input
+                class="field-input"
+                type="email"
+                autocomplete="off"
+                placeholder="contato@foodtruck.com"
+                required
+                aria-required="true"
+                aria-describedby="register-email-help"
+                data-register-email
+              />
+              <span id="register-email-help" class="field-help"
+                >E-mail que será usado para acessar o painel.</span
+              >
+            </label>
+
+            <label class="auth-field">
+              <span class="field-label"
+                >Senha
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <input
+                class="field-input"
+                type="password"
+                autocomplete="off"
+                placeholder="Crie uma senha"
+                required
+                aria-required="true"
+                aria-describedby="register-password-help"
+                data-register-password
+              />
+              <span id="register-password-help" class="field-help"
+                >Mínimo de 8 caracteres, com letras e números.</span
+              >
+            </label>
+
+            <label class="auth-field">
+              <span class="field-label"
+                >CPF ou CNPJ
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
               <input
                 class="field-input"
                 type="text"
                 inputmode="numeric"
                 autocomplete="off"
-                placeholder="00000000"
-                data-register-cep
+                placeholder="00.000.000/0000-00"
+                required
+                aria-required="true"
+                aria-describedby="register-document-help"
+                data-register-document
               />
+              <span id="register-document-help" class="field-help"
+                >CPF (11 dígitos) ou CNPJ (14 dígitos) do estabelecimento.</span
+              >
             </label>
+          </fieldset>
+
+          <fieldset class="auth-fieldset">
+            <legend class="auth-legend">Endereço e contato</legend>
+
+            <div class="auth-grid">
+              <label class="auth-field">
+                <span class="field-label"
+                  >CEP da loja
+                  <span class="field-required" aria-hidden="true">*</span></span
+                >
+                <input
+                  class="field-input"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  placeholder="00000000"
+                  required
+                  aria-required="true"
+                  data-register-cep
+                />
+              </label>
+
+              <label class="auth-field">
+                <span class="field-label"
+                  >Número de contato
+                  <span class="field-required" aria-hidden="true">*</span></span
+                >
+                <input
+                  class="field-input"
+                  type="tel"
+                  autocomplete="username"
+                  placeholder="(00) 00000-0000"
+                  required
+                  aria-required="true"
+                  data-register-contact
+                />
+              </label>
+            </div>
 
             <label class="auth-field">
-              <span class="field-label">Número de contato</span>
-              <input
+              <span class="field-label"
+                >Forma de pagamento do plano
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <select
                 class="field-input"
-                type="tel"
-                autocomplete="username"
-                placeholder="(00) 00000-0000"
-                data-register-contact
-              />
+                required
+                aria-required="true"
+                data-register-payment
+              >
+                <option value="" disabled selected>
+                  Selecione a forma de pagamento
+                </option>
+              </select>
+              <span class="field-help"
+                >Método de cobrança da assinatura do plano.</span
+              >
             </label>
-          </div>
-
-          <label class="auth-field">
-            <span class="field-label">Forma de pagamento do plano</span>
-            <select class="field-input" data-register-payment>
-              <option value="" disabled selected>
-                Selecione a forma de pagamento
-              </option>
-            </select>
-          </label>
+          </fieldset>
 
           <div class="auth-actions">
             <button class="auth-button" type="submit">

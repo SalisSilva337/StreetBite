@@ -56,61 +56,93 @@
               <div class="wizardStep" id="wizardStepItem">
                 <h3 class="wizardStepTitle">Dados do Item</h3>
 
-                <div class="wizardGrid">
-                  <div>
-                    <div class="wizardFieldGroup">
-                      <label class="wizardFieldLabel" for="inputName"
-                        >Nome</label
-                      >
-                      <input
-                        class="wizardField"
-                        type="text"
-                        id="inputName"
-                        aria-label="Nome do item"
-                      />
-                    </div>
+                <fieldset class="wizardFieldset">
+                  <legend class="wizardLegend">Informações do item</legend>
 
-                    <div class="wizardFieldGroup">
-                      <label class="wizardFieldLabel" for="selectCategory"
-                        >Categoria</label
-                      >
-                      <select
-                        class="wizardField"
-                        id="selectCategory"
-                        aria-label="Categoria do item"
-                      >
-                        <option value="3">Lanche</option>
-                        <option value="0">Acompanhamento</option>
-                        <option value="1">Bebida</option>
-                        <option value="2">Combo</option>
-                      </select>
-                    </div>
+                  <div class="wizardGrid">
+                    <div>
+                      <div class="wizardFieldGroup">
+                        <label class="wizardFieldLabel" for="inputName"
+                          >Nome
+                          <span class="field-required" aria-hidden="true"
+                            >*</span
+                          ></label
+                        >
+                        <input
+                          class="wizardField"
+                          type="text"
+                          id="inputName"
+                          required
+                          aria-required="true"
+                          aria-describedby="inputNameHelp"
+                        />
+                        <span id="inputNameHelp" class="field-help"
+                          >Nome do item exibido no cardápio.</span
+                        >
+                      </div>
 
-                    <div class="wizardFieldGroup">
-                      <label class="wizardFieldLabel" for="inputPrice"
-                        >Preço</label
-                      >
-                      <input
-                        class="wizardField"
-                        type="number"
-                        id="inputPrice"
-                        aria-label="Preço do item"
-                      />
-                    </div>
+                      <div class="wizardFieldGroup">
+                        <label class="wizardFieldLabel" for="selectCategory"
+                          >Categoria
+                          <span class="field-required" aria-hidden="true"
+                            >*</span
+                          ></label
+                        >
+                        <select
+                          class="wizardField"
+                          id="selectCategory"
+                          required
+                          aria-required="true"
+                          aria-describedby="selectCategoryHelp"
+                        >
+                          <option value="3">Lanche</option>
+                          <option value="0">Acompanhamento</option>
+                          <option value="1">Bebida</option>
+                          <option value="2">Combo</option>
+                        </select>
+                        <span id="selectCategoryHelp" class="field-help"
+                          >Categoria em que o item será exibido no
+                          cardápio.</span
+                        >
+                      </div>
 
-                    <div class="wizardFieldGroup">
-                      <label class="wizardFieldLabel" for="inputDesc"
-                        >Descrição</label
-                      >
-                      <textarea
-                        class="wizardTextarea"
-                        id="inputDesc"
-                        placeholder="Descrição do item"
-                        aria-label="Descrição do item"
-                      ></textarea>
+                      <div class="wizardFieldGroup">
+                        <label class="wizardFieldLabel" for="inputPrice"
+                          >Preço
+                          <span class="field-required" aria-hidden="true"
+                            >*</span
+                          ></label
+                        >
+                        <input
+                          class="wizardField"
+                          type="number"
+                          id="inputPrice"
+                          required
+                          aria-required="true"
+                          aria-describedby="inputPriceHelp"
+                        />
+                        <span id="inputPriceHelp" class="field-help"
+                          >Preço unitário do item em reais.</span
+                        >
+                      </div>
+
+                      <div class="wizardFieldGroup">
+                        <label class="wizardFieldLabel" for="inputDesc"
+                          >Descrição</label
+                        >
+                        <textarea
+                          class="wizardTextarea"
+                          id="inputDesc"
+                          placeholder="Descrição do item"
+                          aria-describedby="inputDescHelp"
+                        ></textarea>
+                        <span id="inputDescHelp" class="field-help"
+                          >Descrição opcional com detalhes do item.</span
+                        >
+                      </div>
                     </div>
                   </div>
-                </div>
+                </fieldset>
               </div>
             </section>
 

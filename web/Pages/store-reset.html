@@ -33,22 +33,35 @@
         ></div>
 
         <form class="auth-form auth-steps" data-recovery-lookup novalidate>
-          <label class="auth-field">
-            <span class="field-label">E-mail</span>
-            <span
-              class="field-status"
-              data-field-status="recovery-email"
-              aria-hidden="true"
-            ></span>
-            <input
-              class="field-input"
-              type="email"
-              inputmode="email"
-              autocomplete="email"
-              placeholder="seuemail@exemplo.com"
-              data-recovery-email
-            />
-          </label>
+          <fieldset class="auth-fieldset">
+            <legend class="auth-legend">Localizar conta</legend>
+
+            <label class="auth-field">
+              <span class="field-label"
+                >E-mail
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <span
+                class="field-status"
+                data-field-status="recovery-email"
+                aria-hidden="true"
+              ></span>
+              <input
+                class="field-input"
+                type="email"
+                inputmode="email"
+                autocomplete="email"
+                placeholder="seuemail@exemplo.com"
+                required
+                aria-required="true"
+                aria-describedby="recovery-email-help"
+                data-recovery-email
+              />
+              <span id="recovery-email-help" class="field-help"
+                >Informe o e-mail cadastrado para localizar sua conta.</span
+              >
+            </label>
+          </fieldset>
 
           <div class="auth-actions">
             <button class="auth-button" type="submit">Continuar</button>
@@ -60,42 +73,60 @@
           data-recovery-reset
           novalidate
         >
-          <p class="auth-description">
-            Conta localizada para o e-mail
-            <strong data-recovery-email-summary></strong>.
-          </p>
+          <fieldset class="auth-fieldset">
+            <legend class="auth-legend">Nova senha</legend>
 
-          <label class="auth-field">
-            <span class="field-label">Nova senha</span>
-            <span
-              class="field-status"
-              data-field-status="recovery-password"
-              aria-hidden="true"
-            ></span>
-            <input
-              class="field-input"
-              type="password"
-              autocomplete="new-password"
-              placeholder="Digite a nova senha"
-              data-recovery-password
-            />
-          </label>
+            <p class="auth-description">
+              Conta localizada para o e-mail
+              <strong data-recovery-email-summary></strong>.
+            </p>
 
-          <label class="auth-field">
-            <span class="field-label">Confirme a nova senha</span>
-            <span
-              class="field-status"
-              data-field-status="recovery-confirm-password"
-              aria-hidden="true"
-            ></span>
-            <input
-              class="field-input"
-              type="password"
-              autocomplete="new-password"
-              placeholder="Confirme a nova senha"
-              data-recovery-confirm-password
-            />
-          </label>
+            <label class="auth-field">
+              <span class="field-label"
+                >Nova senha
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <span
+                class="field-status"
+                data-field-status="recovery-password"
+                aria-hidden="true"
+              ></span>
+              <input
+                class="field-input"
+                type="password"
+                autocomplete="new-password"
+                placeholder="Digite a nova senha"
+                required
+                aria-required="true"
+                aria-describedby="recovery-password-help"
+                data-recovery-password
+              />
+              <span id="recovery-password-help" class="field-help"
+                >Mínimo de 8 caracteres, com letras e números.</span
+              >
+            </label>
+
+            <label class="auth-field">
+              <span class="field-label"
+                >Confirme a nova senha
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <span
+                class="field-status"
+                data-field-status="recovery-confirm-password"
+                aria-hidden="true"
+              ></span>
+              <input
+                class="field-input"
+                type="password"
+                autocomplete="new-password"
+                placeholder="Confirme a nova senha"
+                required
+                aria-required="true"
+                data-recovery-confirm-password
+              />
+            </label>
+          </fieldset>
 
           <div class="auth-actions">
             <button class="auth-button" type="submit">Salvar nova senha</button>

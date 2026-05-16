@@ -32,106 +32,148 @@
         ></div>
 
         <form class="auth-form" data-auth-view="register" novalidate>
-          <label class="auth-field">
-            <span class="field-label">Nome do cliente</span>
-            <span
-              class="field-status"
-              data-field-status="name"
-              aria-hidden="true"
-            ></span>
-            <input
-              class="field-input"
-              type="text"
-              autocomplete="name"
-              placeholder="Nome do cliente"
-              data-register-name
-            />
-          </label>
+          <fieldset class="auth-fieldset">
+            <legend class="auth-legend">Dados pessoais</legend>
 
-          <label class="auth-field">
-            <span class="field-label">E-mail</span>
-            <span
-              class="field-status"
-              data-field-status="email"
-              aria-hidden="true"
-            ></span>
-            <input
-              class="field-input"
-              type="email"
-              autocomplete="email"
-              placeholder="cliente@exemplo.com"
-              data-register-email
-            />
-          </label>
-
-          <label class="auth-field">
-            <span class="field-label">Telefone</span>
-            <span
-              class="field-status"
-              data-field-status="phone"
-              aria-hidden="true"
-            ></span>
-            <input
-              class="field-input"
-              type="tel"
-              inputmode="tel"
-              autocomplete="tel"
-              placeholder="(99) 9 9999-9999"
-              data-register-phone
-            />
-          </label>
-
-          <div class="auth-grid auth-grid--address">
             <label class="auth-field">
-              <span class="field-label">CEP</span>
+              <span class="field-label"
+                >Nome do cliente
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
               <span
                 class="field-status"
-                data-field-status="cep"
+                data-field-status="name"
                 aria-hidden="true"
               ></span>
               <input
                 class="field-input"
                 type="text"
-                inputmode="numeric"
-                autocomplete="postal-code"
-                placeholder="00000-000"
-                data-register-cep
+                autocomplete="name"
+                placeholder="Nome do cliente"
+                required
+                aria-required="true"
+                data-register-name
               />
             </label>
 
             <label class="auth-field">
-              <span class="field-label">Número</span>
+              <span class="field-label"
+                >E-mail
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
               <span
                 class="field-status"
-                data-field-status="number"
+                data-field-status="email"
+                aria-hidden="true"
+              ></span>
+              <input
+                class="field-input"
+                type="email"
+                autocomplete="email"
+                placeholder="cliente@exemplo.com"
+                required
+                aria-required="true"
+                aria-describedby="customer-email-help"
+                data-register-email
+              />
+              <span id="customer-email-help" class="field-help"
+                >E-mail do cliente para identificação na comanda.</span
+              >
+            </label>
+
+            <label class="auth-field">
+              <span class="field-label"
+                >Telefone
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <span
+                class="field-status"
+                data-field-status="phone"
+                aria-hidden="true"
+              ></span>
+              <input
+                class="field-input"
+                type="tel"
+                inputmode="tel"
+                autocomplete="tel"
+                placeholder="(99) 9 9999-9999"
+                required
+                aria-required="true"
+                data-register-phone
+              />
+            </label>
+          </fieldset>
+
+          <fieldset class="auth-fieldset">
+            <legend class="auth-legend">Endereço</legend>
+
+            <div class="auth-grid auth-grid--address">
+              <label class="auth-field">
+                <span class="field-label"
+                  >CEP
+                  <span class="field-required" aria-hidden="true">*</span></span
+                >
+                <span
+                  class="field-status"
+                  data-field-status="cep"
+                  aria-hidden="true"
+                ></span>
+                <input
+                  class="field-input"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="postal-code"
+                  placeholder="00000-000"
+                  required
+                  aria-required="true"
+                  data-register-cep
+                />
+              </label>
+
+              <label class="auth-field">
+                <span class="field-label"
+                  >Número
+                  <span class="field-required" aria-hidden="true">*</span></span
+                >
+                <span
+                  class="field-status"
+                  data-field-status="number"
+                  aria-hidden="true"
+                ></span>
+                <input
+                  class="field-input"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  placeholder="123"
+                  required
+                  aria-required="true"
+                  data-register-number
+                />
+              </label>
+            </div>
+
+            <label class="auth-field">
+              <span class="field-label"
+                >Rua
+                <span class="field-required" aria-hidden="true">*</span></span
+              >
+              <span
+                class="field-status"
+                data-field-status="street"
                 aria-hidden="true"
               ></span>
               <input
                 class="field-input"
                 type="text"
-                inputmode="numeric"
-                autocomplete="off"
-                placeholder="123"
-                data-register-number
+                autocomplete="address-line1"
+                placeholder="Rua, avenida ou travessa"
+                required
+                aria-required="true"
+                data-register-street
               />
             </label>
-          </div>
-
-          <label class="auth-field">
-            <span class="field-label">Rua</span>
-            <span
-              class="field-status"
-              data-field-status="street"
-              aria-hidden="true"
-            ></span>
-            <input
-              class="field-input"
-              type="text"
-              autocomplete="address-line1"
-              placeholder="Rua, avenida ou travessa"
-              data-register-street
-            />
-          </label>
+          </fieldset>
 
           <div class="auth-actions auth-actions--split">
             <button class="auth-link" type="button" data-customer-back>

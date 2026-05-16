@@ -60,111 +60,160 @@
             <section class="wizardBody">
               <div class="wizardStep" id="orderWizardStepItems">
                 <h3 class="wizardStepTitle">Passo 1: Adicionar Itens</h3>
-                <div class="wizardFieldGroup">
-                  <label class="wizardFieldLabel" for="orderProduct"
-                    >Item do cardápio</label
-                  >
-                  <select
-                    class="wizardField"
-                    id="orderProduct"
-                    aria-label="Item do cardápio"
-                  >
-                    <option value="" hidden>--- Selecione ---</option>
-                  </select>
-                </div>
 
-                <div class="wizardFieldGroup">
-                  <label class="wizardFieldLabel" for="orderQuantity"
-                    >Quantidade</label
-                  >
-                  <input
-                    class="wizardField"
-                    id="orderQuantity"
-                    type="number"
-                    min="1"
-                    value="1"
-                    aria-label="Quantidade do item"
-                  />
-                </div>
+                <fieldset class="wizardFieldset">
+                  <legend class="wizardLegend">Seleção de itens</legend>
 
-                <div class="wizardFieldGroup">
-                  <button
-                    class="wizardButton is-secondary"
-                    id="addOrderItem"
-                    type="button"
-                    aria-label="Adicionar item ao pedido"
-                  >
-                    Adicionar item
-                  </button>
-                </div>
-
-                <div class="wizardFieldGroup">
-                  <label class="wizardFieldLabel">Resumo do pedido</label>
-                  <div class="orderCart" id="orderCart"></div>
-                  <div class="orderSubtotal" id="orderSubtotal">
-                    Subtotal: R$0.00
+                  <div class="wizardFieldGroup">
+                    <label class="wizardFieldLabel" for="orderProduct"
+                      >Item do cardápio
+                      <span class="field-required" aria-hidden="true"
+                        >*</span
+                      ></label
+                    >
+                    <select
+                      class="wizardField"
+                      id="orderProduct"
+                      required
+                      aria-required="true"
+                      aria-describedby="orderProductHelp"
+                    >
+                      <option value="" hidden>--- Selecione ---</option>
+                    </select>
+                    <span id="orderProductHelp" class="field-help"
+                      >Escolha um item do cardápio para adicionar ao
+                      pedido.</span
+                    >
                   </div>
-                </div>
+
+                  <div class="wizardFieldGroup">
+                    <label class="wizardFieldLabel" for="orderQuantity"
+                      >Quantidade
+                      <span class="field-required" aria-hidden="true"
+                        >*</span
+                      ></label
+                    >
+                    <input
+                      class="wizardField"
+                      id="orderQuantity"
+                      type="number"
+                      min="1"
+                      value="1"
+                      required
+                      aria-required="true"
+                    />
+                  </div>
+
+                  <div class="wizardFieldGroup">
+                    <button
+                      class="wizardButton is-secondary"
+                      id="addOrderItem"
+                      type="button"
+                    >
+                      Adicionar item
+                    </button>
+                  </div>
+
+                  <div class="wizardFieldGroup">
+                    <label class="wizardFieldLabel">Resumo do pedido</label>
+                    <div class="orderCart" id="orderCart"></div>
+                    <div class="orderSubtotal" id="orderSubtotal">
+                      Subtotal: R$0.00
+                    </div>
+                  </div>
+                </fieldset>
               </div>
 
               <div class="wizardStep hidden" id="orderWizardStepLocal">
                 <h3 class="wizardStepTitle">Passo 2: Tipo de Atendimento</h3>
-                <div class="wizardFieldGroup">
-                  <label class="wizardFieldLabel" for="orderType"
-                    >Tipo de atendimento</label
-                  >
-                  <select
-                    class="wizardField"
-                    id="orderType"
-                    aria-label="Tipo de atendimento"
-                  >
-                    <option value="" hidden>--- Selecione ---</option>
-                    <option value="delivery">Delivery</option>
-                    <option value="retirada">Retirada/Comer no Local</option>
-                  </select>
-                </div>
+
+                <fieldset class="wizardFieldset">
+                  <legend class="wizardLegend">Modalidade do pedido</legend>
+
+                  <div class="wizardFieldGroup">
+                    <label class="wizardFieldLabel" for="orderType"
+                      >Tipo de atendimento
+                      <span class="field-required" aria-hidden="true"
+                        >*</span
+                      ></label
+                    >
+                    <select
+                      class="wizardField"
+                      id="orderType"
+                      required
+                      aria-required="true"
+                      aria-describedby="orderTypeHelp"
+                    >
+                      <option value="" hidden>--- Selecione ---</option>
+                      <option value="delivery">Delivery</option>
+                      <option value="retirada">Retirada/Comer no Local</option>
+                    </select>
+                    <span id="orderTypeHelp" class="field-help"
+                      >Escolha se o pedido será entregue ou retirado no
+                      local.</span
+                    >
+                  </div>
+                </fieldset>
               </div>
 
               <div class="wizardStep hidden" id="orderWizardStepDetails">
                 <h3 class="wizardStepTitle">Passo 3: Dados do Cliente</h3>
 
-                <div class="wizardGrid">
-                  <div>
-                    <div class="wizardFieldGroup">
-                      <label class="wizardFieldLabel" for="orderCustomer"
-                        >Cliente cadastrado</label
-                      >
-                      <select
-                        class="wizardField"
-                        id="orderCustomer"
-                        aria-label="Cliente cadastrado"
-                      >
-                        <option value="" hidden>--- Selecione ---</option>
-                      </select>
-                      <small class="wizardFieldHint" id="orderCustomerInfo"
-                        >Selecione um cliente já cadastrado para
-                        continuar.</small
-                      >
-                    </div>
+                <fieldset class="wizardFieldset">
+                  <legend class="wizardLegend">Cliente e pagamento</legend>
 
-                    <div class="wizardFieldGroup">
-                      <label class="wizardFieldLabel" for="orderPayment"
-                        >Método de pagamento</label
-                      >
-                      <select
-                        class="wizardField"
-                        id="orderPayment"
-                        aria-label="Método de pagamento"
-                      >
-                        <option value="" hidden>--- Selecione ---</option>
-                        <option value="3">PIX</option>
-                        <option value="0">Crédito</option>
-                        <option value="1">Débito</option>
-                        <option value="2">Dinheiro</option>
-                      </select>
+                  <div class="wizardGrid">
+                    <div>
+                      <div class="wizardFieldGroup">
+                        <label class="wizardFieldLabel" for="orderCustomer"
+                          >Cliente cadastrado
+                          <span class="field-required" aria-hidden="true"
+                            >*</span
+                          ></label
+                        >
+                        <select
+                          class="wizardField"
+                          id="orderCustomer"
+                          required
+                          aria-required="true"
+                          aria-describedby="orderCustomerInfo"
+                        >
+                          <option value="" hidden>--- Selecione ---</option>
+                        </select>
+                        <small class="wizardFieldHint" id="orderCustomerInfo"
+                          >Selecione um cliente já cadastrado para
+                          continuar.</small
+                        >
+                      </div>
+
+                      <div class="wizardFieldGroup">
+                        <label class="wizardFieldLabel" for="orderPayment"
+                          >Método de pagamento
+                          <span class="field-required" aria-hidden="true"
+                            >*</span
+                          ></label
+                        >
+                        <select
+                          class="wizardField"
+                          id="orderPayment"
+                          required
+                          aria-required="true"
+                          aria-describedby="orderPaymentHelp"
+                        >
+                          <option value="" hidden>--- Selecione ---</option>
+                          <option value="3">PIX</option>
+                          <option value="0">Crédito</option>
+                          <option value="1">Débito</option>
+                          <option value="2">Dinheiro</option>
+                        </select>
+                        <span id="orderPaymentHelp" class="field-help"
+                          >Forma de pagamento que será registrada na
+                          comanda.</span
+                        >
+                      </div>
                     </div>
                   </div>
-                </div>
+                </fieldset>
               </div>
             </section>
 
