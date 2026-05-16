@@ -406,7 +406,11 @@ export function initializeLandingAuth() {
       "Login realizado com sucesso. Abrindo o painel...",
       "success",
     );
-    window.location.href = "../Pages/streetBite.html";
+    const redirectParam = new URLSearchParams(window.location.search).get(
+      "redirect",
+    );
+    const redirectUrl = redirectParam || "../Pages/streetBite.html";
+    window.location.href = redirectUrl;
   });
 
   const registerSubmitButton = registerView?.querySelector(

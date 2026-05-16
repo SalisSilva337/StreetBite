@@ -1,5 +1,10 @@
 import loadingProgress from "./components/loadingProgress.js";
 import "./components/snackbar.js";
+import { requireAuth, redirectToLogin } from "./authGuard.js";
+
+if (!requireAuth()) {
+  redirectToLogin();
+}
 
 const contentArea = document.querySelector("#contentArea");
 const homeButton = document.querySelector("#homeButton");
@@ -331,6 +336,11 @@ function injectPageAssets(doc, baseUrl) {
 }
 
 async function loadPage(pageKey) {
+  if (!requireAuth()) {
+    redirectToLogin();
+    return;
+  }
+
   const page = pages[pageKey];
   if (!page) return;
 
