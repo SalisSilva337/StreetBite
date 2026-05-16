@@ -103,7 +103,7 @@ h6 {
   border: 0;
   border-radius: 5px;
   padding: 5px;
-  color: var(--card);
+  color: #ffffff;
 }
 .grid nav {
   display: flex;
@@ -125,7 +125,7 @@ h6 {
   padding: 15px;
   font-size: 15px;
   font-weight: 410;
-  color: var(--card);
+  color: #ffffff;
 }
 .main button:hover {
   cursor: pointer;
@@ -188,11 +188,4 @@ h6 {
 body {
   background-color: var(--background);
   color: var(--text);
-}
-
-:root[data-theme="dark"] body,
-:root[data-theme="dark"] body *,
-:root[data-theme="dark"] body *::before,
-:root[data-theme="dark"] body *::after {
-  color: #fff !important;
 }

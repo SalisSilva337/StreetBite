@@ -1,33 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:wght@100..900&display=swap");
 
-:root {
-  --primary: #e63946;
-  --secondary: #1d3557;
-  --background: #f8f9fa;
-  --card: #ffffff;
-  --text: #212529;
-  --text-light: #6c757d;
-  --secondary-soft: #e9eef5;
-  --primary-soft: #fdecee;
-  --border: #dce3ea;
-  --danger: #c1121f;
-  --success: #2a9d8f;
-}
-
-:root[data-theme="dark"] {
-  --primary: #e63946;
-  --secondary: #8fb3d9;
-  --background: #10151c;
-  --card: #1a222d;
-  --text: #e9ecef;
-  --text-light: #aeb8c2;
-  --secondary-soft: #263243;
-  --primary-soft: #3a2327;
-  --border: #314152;
-  --danger: #ff5d6a;
-  --success: #4cc9a6;
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -74,9 +46,9 @@ body {
 .dashboard-statCard,
 .dashboard-panel {
   border: 1px solid var(--border);
-  background: linear-gradient(180deg, var(--card), rgba(255, 255, 255, 0.92));
+  background: var(--card);
   border-radius: 24px;
-  box-shadow: 0 18px 34px rgba(33, 37, 41, 0.08);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.18);
 }
 
 .dashboard-heroCopy {
@@ -120,7 +92,11 @@ body {
     var(--secondary),
     color-mix(in srgb, var(--secondary) 76%, black)
   );
-  color: var(--card);
+  color: #ffffff;
+}
+
+:root[data-theme="dark"] .dashboard-heroCard {
+  background: linear-gradient(180deg, #1d3557, #0f1b2e);
 }
 
 .dashboard-heroCard .dashboard-heroLabel,
@@ -150,7 +126,7 @@ body {
     var(--primary),
     color-mix(in srgb, var(--primary) 72%, black)
   );
-  color: var(--card);
+  color: #ffffff;
   border-color: transparent;
 }
 
@@ -215,7 +191,7 @@ body {
 .dashboard-panelLink:hover {
   transform: translateY(-1px);
   background: var(--secondary-soft);
-  box-shadow: 0 10px 18px rgba(33, 37, 41, 0.08);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.18);
 }
 
 .dashboard-orders {

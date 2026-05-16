@@ -219,7 +219,7 @@ h6,
 
 .landing-button--primary {
   background: var(--primary);
-  color: var(--card);
+  color: #ffffff;
   border-color: transparent;
 }
 
@@ -622,13 +622,6 @@ body {
   color: var(--text);
 }
 
-:root[data-theme="dark"] body,
-:root[data-theme="dark"] body *,
-:root[data-theme="dark"] body *::before,
-:root[data-theme="dark"] body *::after {
-  color: #fff !important;
-}
-
 :where(button, a, [role="button"], input, select, textarea):focus-visible {
   outline: 3px solid var(--secondary);
   outline-offset: 2px;
@@ -752,8 +745,6 @@ body {
   color: var(--text-light);
 }
 
-
-
 .field-input {
   position: relative;
   z-index: 1;
@@ -816,7 +807,7 @@ body {
   border-radius: 16px;
   padding: 0.9rem 1.4rem;
   background: var(--primary);
-  color: var(--card);
+  color: #ffffff;
   font-weight: 700;
   box-shadow: 0 16px 30px rgba(230, 57, 70, 0.18);
   cursor: pointer;
@@ -906,6 +897,81 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+/* Dark mode overrides for elements with hardcoded white backgrounds */
+:root[data-theme="dark"] .pricing-card {
+  background: var(--card);
+}
+
+:root[data-theme="dark"] .mini-product-card {
+  background: var(--card);
+}
+
+:root[data-theme="dark"] .about-visual {
+  background: linear-gradient(135deg, var(--secondary-soft), var(--background));
+}
+
+:root[data-theme="dark"] .about-visual img {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+:root[data-theme="dark"] .food-card img {
+  background: var(--background);
+}
+
+:root[data-theme="dark"] .auth-card {
+  background: var(--card);
+}
+
+:root[data-theme="dark"] .hero-plate {
+  background:
+    radial-gradient(
+      circle at 58% 36%,
+      rgba(255, 160, 170, 0.25) 0 20%,
+      transparent 21%
+    ),
+    linear-gradient(
+      135deg,
+      var(--primary),
+      color-mix(in srgb, var(--primary) 72%, #2a0a0e)
+    );
+}
+
+:root[data-theme="dark"] .hero-plate-image {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Theme toggle button for landing and auth pages */
+.themeToggleLanding {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 30;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: var(--button-color, #af303b);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 1px 1px 10px rgb(0, 0, 0, 0.1);
+  transition: 0.3s all;
+}
+
+.themeToggleLanding:hover {
+  background-color: var(--secondary-soft);
+  color: var(--secondary);
+}
+
+.themeToggleLandingGlyph {
+  font-size: 20px;
+  line-height: 1;
 }
 
 @media (max-width: 1080px) {

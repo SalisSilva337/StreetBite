@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../Styles/landingPage.css" />
+    <script src="../Scripts/landingPage.js" type="module"></script>
     <title>StreetBite - Recuperar senha</title>
     <link
       rel="shortcut icon"
@@ -102,6 +103,22 @@
         </form>
       </article>
     </main>
+
+    <button
+      class="themeToggleLanding"
+      id="themeToggleLandingButton"
+      type="button"
+      aria-label="Ativar modo escuro"
+      aria-pressed="false"
+      title="Alternar tema"
+    >
+      <span
+        id="themeToggleLandingIcon"
+        class="themeToggleLandingGlyph"
+        aria-hidden="true"
+        >☾</span
+      >
+    </button>
 
     <script type="module">
       import { initializeRecoveryPage } from "../Scripts/storeAuth.js";

@@ -4,14 +4,14 @@ Frontend web do StreetBite, feito com **HTML5**, **CSS3** e **JavaScript vanilla
 
 ## Stack
 
-| Componente | Papel |
-|---|---|
-| HTML5 | Estrutura das telas |
-| CSS3 | Layout, responsividade e tema |
-| JavaScript ES Modules | Lógica da aplicação |
-| Fetch API | Comunicação com o backend |
-| Prettier 3.8.1 | Formatação |
-| Vite 6 | Dev server e build |
+| Componente            | Papel                         |
+| --------------------- | ----------------------------- |
+| HTML5                 | Estrutura das telas           |
+| CSS3                  | Layout, responsividade e tema |
+| JavaScript ES Modules | Lógica da aplicação           |
+| Fetch API             | Comunicação com o backend     |
+| Prettier 3.8.1        | Formatação                    |
+| Vite 6                | Dev server e build            |
 
 ## Estrutura
 
@@ -73,12 +73,12 @@ Ele:
 
 ## Telas principais
 
-| Tela | Responsabilidade |
-|---|---|
-| Home | Visão geral da operação |
-| Menu | CRUD de produtos |
-| Pedidos | CRUD de comandas e itens |
-| Settings | Tema e configurações |
+| Tela     | Responsabilidade         |
+| -------- | ------------------------ |
+| Home     | Visão geral da operação  |
+| Menu     | CRUD de produtos         |
+| Pedidos  | CRUD de comandas e itens |
+| Settings | Tema e configurações     |
 
 ## Arquitetura visual e UX
 

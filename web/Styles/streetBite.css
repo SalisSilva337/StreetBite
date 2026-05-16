@@ -106,7 +106,7 @@ body {
   border: 0;
   border-radius: 999px;
   background-color: var(--button-color);
-  color: var(--card);
+  color: #ffffff;
   box-shadow: 1px 1px 10px rgb(0, 0, 0, 0.1);
   display: inline-flex;
   align-items: center;
@@ -130,7 +130,7 @@ body {
 
 .navBarButtons.is-active {
   background-color: var(--primary);
-  color: var(--card);
+  color: #ffffff;
 }
 
 .navLabel {
@@ -185,7 +185,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--card);
+  color: #ffffff;
   box-shadow: 0 14px 24px rgba(230, 57, 70, 0.18);
 }
 
@@ -277,7 +277,7 @@ body {
 
 .sidebarAuthButton--primary {
   background-color: var(--primary);
-  color: var(--card);
+  color: #ffffff;
   box-shadow: 1px 1px 10px rgb(0, 0, 0, 0.1);
 }
 
@@ -388,7 +388,7 @@ body {
   border: 0;
   border-radius: 50%;
   background-color: var(--button-color);
-  color: var(--card);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -449,7 +449,7 @@ body {
   border: 0;
   border-radius: 10px;
   background-color: var(--button-color);
-  color: var(--card);
+  color: #ffffff;
   font-size: 22px;
   font-weight: 500;
   box-shadow: 0 10px 18px rgb(0, 0, 0, 0.2);
@@ -485,13 +485,6 @@ body {
 
 :root[data-theme="dark"] .sideBar {
   background: rgba(26, 34, 45, 0.96);
-}
-
-:root[data-theme="dark"] body,
-:root[data-theme="dark"] body *,
-:root[data-theme="dark"] body *::before,
-:root[data-theme="dark"] body *::after {
-  color: #fff !important;
 }
 
 @media only screen and (max-width: 768px) {

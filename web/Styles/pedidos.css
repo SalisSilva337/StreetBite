@@ -81,7 +81,7 @@ h6 {
   min-width: 160px;
   border: 0;
   height: 48px;
-  color: var(--card);
+  color: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -99,6 +99,11 @@ h6 {
 
 .main nav .createCustomer {
   background-color: var(--secondary);
+  color: #ffffff;
+}
+
+:root[data-theme="dark"] .main nav .createCustomer {
+  background-color: #1d3557;
 }
 
 .main nav .createOrder:hover {
@@ -447,7 +452,7 @@ h6 {
 
 .wizardVisual {
   background: #e63946;
-  color: var(--card);
+  color: #ffffff;
   padding: 30px 24px;
   display: flex;
   flex-direction: column;
@@ -585,7 +590,7 @@ h6 {
 
 .wizardButton.is-primary {
   background: var(--primary);
-  color: var(--card);
+  color: #ffffff;
   font-weight: 700;
 }
 
@@ -636,7 +641,7 @@ h6 {
   border: 0;
   border-radius: 6px;
   background: var(--primary);
-  color: var(--card);
+  color: #ffffff;
   height: 28px;
   padding: 0 10px;
 }
@@ -754,11 +759,4 @@ h6 {
 body {
   background-color: var(--background);
   color: var(--text);
-}
-
-:root[data-theme="dark"] body,
-:root[data-theme="dark"] body *,
-:root[data-theme="dark"] body *::before,
-:root[data-theme="dark"] body *::after {
-  color: #fff !important;
 }

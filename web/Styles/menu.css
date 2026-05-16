@@ -57,13 +57,6 @@ body {
   color: var(--text);
 }
 
-:root[data-theme="dark"] body,
-:root[data-theme="dark"] body *,
-:root[data-theme="dark"] body *::before,
-:root[data-theme="dark"] body *::after {
-  color: #fff !important;
-}
-
 .main {
   display: flex;
   flex-direction: column;
@@ -268,7 +261,7 @@ body {
   border-radius: 10px;
   padding: 10px 12px;
   min-height: 42px;
-  color: var(--card);
+  color: var(--on-primary);
   transition:
     background-color 0.24s ease,
     transform 0.2s ease,
@@ -454,7 +447,7 @@ body {
 
 .wizardVisual {
   background: #e63946;
-  color: var(--card);
+  color: #ffffff;
   padding: 30px 24px;
   display: flex;
   flex-direction: column;
@@ -626,7 +619,7 @@ body {
 
 .wizardButton.is-primary {
   background: var(--primary);
-  color: var(--card);
+  color: #ffffff;
 }
 
 .wizardButton.is-primary:hover {
