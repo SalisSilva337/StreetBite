@@ -35,7 +35,7 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
         var normalizedNumber = request.Number?.Trim();
 
         var clientExists = await dbContext.Clientes.AnyAsync(
-            x => x.Nome == normalizedName || x.Email == normalizedEmail || x.Telefone == normalizedPhone,
+            x => x.Email == normalizedEmail || x.Telefone == normalizedPhone,
             cancellationToken);
 
         if (clientExists)
@@ -72,7 +72,7 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
         var normalizedDocument = request.Documento.Trim();
 
         var truckExists = await dbContext.Foodtrucks.AnyAsync(
-            x => x.Nome == normalizedName || x.Documento == normalizedDocument || x.Email == normalizedEmail,
+            x => x.Documento == normalizedDocument || x.Email == normalizedEmail,
             cancellationToken);
 
         if (truckExists)
