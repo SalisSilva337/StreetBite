@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../Styles/landingPage.css" />
+    <script src="../Scripts/landingPage.js" type="module"></script>
     <title>StreetBite - Recuperar senha</title>
     <link
       rel="shortcut icon"
@@ -15,10 +16,11 @@
     <main class="auth-shell">
       <article class="auth-card auth-card--recovery" data-store-recovery-root>
         <div class="auth-header">
+          <a class="auth-back-link" href="store-auth.html">← Voltar</a>
           <p class="auth-kicker">Recuperação de acesso</p>
           <h1 class="auth-title">Esqueci minha senha</h1>
           <p class="auth-description">
-            Informe o número de contato da loja. Se ele existir no cadastro,
+            Informe o e-mail cadastrado da loja. Se ele existir no cadastro,
             você poderá criar uma nova senha na etapa seguinte.
           </p>
         </div>
@@ -32,14 +34,19 @@
 
         <form class="auth-form auth-steps" data-recovery-lookup novalidate>
           <label class="auth-field">
-            <span class="field-label">Número de contato</span>
+            <span class="field-label">E-mail</span>
+            <span
+              class="field-status"
+              data-field-status="recovery-email"
+              aria-hidden="true"
+            ></span>
             <input
               class="field-input"
-              type="tel"
-              inputmode="tel"
-              autocomplete="tel"
-              placeholder="(99) 9 9999-9999"
-              data-recovery-contact
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              placeholder="seuemail@exemplo.com"
+              data-recovery-email
             />
           </label>
 
@@ -54,12 +61,17 @@
           novalidate
         >
           <p class="auth-description">
-            Conta localizada para o número
-            <strong data-recovery-contact-summary></strong>.
+            Conta localizada para o e-mail
+            <strong data-recovery-email-summary></strong>.
           </p>
 
           <label class="auth-field">
             <span class="field-label">Nova senha</span>
+            <span
+              class="field-status"
+              data-field-status="recovery-password"
+              aria-hidden="true"
+            ></span>
             <input
               class="field-input"
               type="password"
@@ -71,6 +83,11 @@
 
           <label class="auth-field">
             <span class="field-label">Confirme a nova senha</span>
+            <span
+              class="field-status"
+              data-field-status="recovery-confirm-password"
+              aria-hidden="true"
+            ></span>
             <input
               class="field-input"
               type="password"
@@ -80,13 +97,28 @@
             />
           </label>
 
-          <div class="auth-actions auth-actions--split">
-            <a class="auth-link" href="landingPage.html">Voltar</a>
+          <div class="auth-actions">
             <button class="auth-button" type="submit">Salvar nova senha</button>
           </div>
         </form>
       </article>
     </main>
+
+    <button
+      class="themeToggleLanding"
+      id="themeToggleLandingButton"
+      type="button"
+      aria-label="Ativar modo escuro"
+      aria-pressed="false"
+      title="Alternar tema"
+    >
+      <span
+        id="themeToggleLandingIcon"
+        class="themeToggleLandingGlyph"
+        aria-hidden="true"
+        >☾</span
+      >
+    </button>
 
     <script type="module">
       import { initializeRecoveryPage } from "../Scripts/storeAuth.js";

@@ -19,7 +19,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        landingPage: resolve(__dirname, "Pages", "landingPage.html"),
+        index: resolve(__dirname, "index.html"),
         customerAuth: resolve(__dirname, "Pages", "customer-auth.html"),
         streetBite: resolve(__dirname, "Pages", "streetBite.html"),
         ...pageInputs,

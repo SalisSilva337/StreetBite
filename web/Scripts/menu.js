@@ -33,10 +33,6 @@ const DELETE_ICON_URL = new URL("../Imgs/icons/deleteIcon.svg", import.meta.url)
   const inputPrice = document.querySelector("#inputPrice");
   const inputDesc = document.querySelector("#inputDesc");
 
-  const inputFile = document.querySelector("#files");
-  const imgArea = document.querySelector(".imgDivModal");
-  const imageImg = document.querySelector("#imageImg");
-
   let editMode = false;
   let editingItemId = null;
   let currentProducts = [];
@@ -98,7 +94,6 @@ const DELETE_ICON_URL = new URL("../Imgs/icons/deleteIcon.svg", import.meta.url)
     selectCategory.value = "3";
     inputPrice.value = "";
     inputDesc.value = "";
-    imageImg.src = "";
   }
 
   function openWizard(mode, produto = null) {
@@ -424,24 +419,6 @@ const DELETE_ICON_URL = new URL("../Imgs/icons/deleteIcon.svg", import.meta.url)
   });
 
   wizardNext.addEventListener("click", saveItem);
-
-  inputFile.addEventListener("change", function () {
-    const image = this.files[0];
-    if (!image) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const allImg = imgArea.querySelectorAll("img");
-      allImg.forEach((item) => item.remove());
-      const imgUrl = reader.result;
-      const img = document.createElement("img");
-      img.src = imgUrl;
-      img.alt = "Pré-visualização da imagem selecionada";
-      imgArea.appendChild(img);
-      imgArea.dataset.img = image.name;
-    };
-    reader.readAsDataURL(image);
-  });
 
   window.addEventListener("resize", () => {
     window.clearTimeout(resizeTimeoutId);

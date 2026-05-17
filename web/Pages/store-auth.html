@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../Styles/landingPage.css" />
+    <script src="../Scripts/landingPage.js" type="module"></script>
     <title>StreetBite - Login e cadastro do foodtruck</title>
     <link
       rel="shortcut icon"
@@ -15,6 +16,7 @@
     <main class="auth-shell">
       <article class="auth-card" data-store-auth-root>
         <div class="auth-header">
+          <a class="auth-back-link" href="../index.html">← Voltar</a>
           <p class="auth-kicker">Acesso da loja</p>
           <h1 id="storeAuthTitle" class="auth-title">
             Entre ou cadastre seu foodtruck
@@ -53,12 +55,12 @@
 
         <form class="auth-form" data-auth-view="login" novalidate>
           <label class="auth-field">
-            <span class="field-label">Nome da loja ou contato</span>
+            <span class="field-label">E-mail</span>
             <input
               class="field-input"
-              type="text"
+              type="email"
               autocomplete="username"
-              placeholder="Digite o nome da loja ou telefone"
+              placeholder="Digite o e-mail cadastrado"
               data-login-identity
             />
           </label>
@@ -150,7 +152,6 @@
                 class="field-input"
                 type="tel"
                 autocomplete="username"
-                placeholder="Digite o nome da loja ou telefone"
                 placeholder="(00) 00000-0000"
                 data-register-contact
               />
@@ -159,13 +160,11 @@
 
           <label class="auth-field">
             <span class="field-label">Forma de pagamento do plano</span>
-            <input
-              class="field-input"
-              type="text"
-              autocomplete="off"
-              placeholder="Cartão, Pix, boleto..."
-              placeholder="(99) 9 9999-9999"
-            />
+            <select class="field-input" data-register-payment>
+              <option value="" disabled selected>
+                Selecione a forma de pagamento
+              </option>
+            </select>
           </label>
 
           <div class="auth-actions">
@@ -176,6 +175,22 @@
         </form>
       </article>
     </main>
+
+    <button
+      class="themeToggleLanding"
+      id="themeToggleLandingButton"
+      type="button"
+      aria-label="Ativar modo escuro"
+      aria-pressed="false"
+      title="Alternar tema"
+    >
+      <span
+        id="themeToggleLandingIcon"
+        class="themeToggleLandingGlyph"
+        aria-hidden="true"
+        >☾</span
+      >
+    </button>
 
     <script type="module">
       import { initializeLandingAuth } from "../Scripts/storeAuth.js";

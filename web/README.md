@@ -4,14 +4,14 @@ Frontend web do StreetBite, feito com **HTML5**, **CSS3** e **JavaScript vanilla
 
 ## Stack
 
-| Componente | Papel |
-|---|---|
-| HTML5 | Estrutura das telas |
-| CSS3 | Layout, responsividade e tema |
-| JavaScript ES Modules | Lógica da aplicação |
-| Fetch API | Comunicação com o backend |
-| Prettier 3.8.1 | Formatação |
-| Vite 6 | Dev server e build |
+| Componente            | Papel                         |
+| --------------------- | ----------------------------- |
+| HTML5                 | Estrutura das telas           |
+| CSS3                  | Layout, responsividade e tema |
+| JavaScript ES Modules | Lógica da aplicação           |
+| Fetch API             | Comunicação com o backend     |
+| Prettier 3.8.1        | Formatação                    |
+| Vite 6                | Dev server e build            |
 
 ## Estrutura
 
@@ -73,6 +73,7 @@ Ele:
 
 ## Telas principais
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 | Tela | Responsabilidade |
 |---|---|
@@ -81,13 +82,20 @@ Ele:
 | Pedidos | CRUD de comandas e itens |
 | Settings | Tema e configurações |
 =======
+=======
+>>>>>>> 4ca4df1d84a100491e68e259a17185c276c97be1
 | Tela     | Responsabilidade         |
 | -------- | ------------------------ |
 | Home     | Visão geral da operação  |
 | Menu     | CRUD de produtos         |
+<<<<<<< HEAD
 | Comandas | CRUD de comandas e itens |
 | Settings | Tema e configurações     |
 >>>>>>> Stashed changes
+=======
+| Pedidos  | CRUD de comandas e itens |
+| Settings | Tema e configurações     |
+>>>>>>> 4ca4df1d84a100491e68e259a17185c276c97be1
 
 ## Arquitetura visual e UX
 

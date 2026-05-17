@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StreetBite.Infra.Data;
@@ -11,9 +12,11 @@ using StreetBite.Infra.Data;
 namespace StreetBite.Infra.Data.Migrations
 {
     [DbContext(typeof(StreetBiteDbContext))]
-    partial class StreetBiteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260514185315_MakeFoodtruckEmailRequired")]
+    partial class MakeFoodtruckEmailRequired
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,8 +179,9 @@ namespace StreetBite.Infra.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int>("FormaPagamento")
-                        .HasColumnType("integer");
+                    b.Property<string>("FormaPagamento")
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");

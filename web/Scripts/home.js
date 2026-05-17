@@ -3,8 +3,8 @@ import { getEnumByValue, PAYMENT_METHOD_OPTIONS } from "./enumMappings.js";
 
 const api = new ApiService();
 
-const weeklyProfitElement = document.querySelector(
-  "[data-dashboard-weekly-profit]",
+const weeklyRevenueElement = document.querySelector(
+  "[data-dashboard-weekly-revenue]",
 );
 const weeklyOrdersElement = document.querySelector(
   "[data-dashboard-weekly-orders]",
@@ -151,17 +151,17 @@ async function initializeDashboard() {
       return !Number.isNaN(orderDate.getTime()) && orderDate >= weekStart;
     });
 
-    const weeklyProfit = weeklyOrders.reduce(
+    const weeklyRevenue = weeklyOrders.reduce(
       (sum, order) => sum + resolveOrderTotal(order),
       0,
     );
 
     const averageTicket = weeklyOrders.length
-      ? weeklyProfit / weeklyOrders.length
+      ? weeklyRevenue / weeklyOrders.length
       : 0;
 
-    if (weeklyProfitElement) {
-      weeklyProfitElement.textContent = formatCurrency(weeklyProfit);
+    if (weeklyRevenueElement) {
+      weeklyRevenueElement.textContent = formatCurrency(weeklyRevenue);
     }
 
     if (weeklyOrdersElement) {

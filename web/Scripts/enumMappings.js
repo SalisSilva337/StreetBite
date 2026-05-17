@@ -85,10 +85,10 @@ const PRODUCT_CATEGORY_OPTIONS = [
 ];
 
 const PAYMENT_METHOD_OPTIONS = [
-  new PaymentMethod(0, "Crédito"),
-  new PaymentMethod(1, "Débito"),
-  new PaymentMethod(2, "Dinheiro"),
-  new PaymentMethod(3, "PIX"),
+  new PaymentMethod(1, "Crédito"),
+  new PaymentMethod(2, "Débito"),
+  new PaymentMethod(3, "Dinheiro"),
+  new PaymentMethod(4, "PIX"),
 ];
 
 const ORDER_STATUS_OPTIONS = [

@@ -35,7 +35,7 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
         var normalizedNumber = request.Number?.Trim();
 
         var clientExists = await dbContext.Clientes.AnyAsync(
-            x => x.Nome == normalizedName || x.Email == normalizedEmail || x.Telefone == normalizedPhone,
+            x => x.Email == normalizedEmail || x.Telefone == normalizedPhone,
             cancellationToken);
 
         if (clientExists)
@@ -67,12 +67,12 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
     public async Task<Result<FoodtruckViewDTO>> CreateFoodtruckAsync(FoodtruckCadastroRequest request, CancellationToken cancellationToken = default)
     {
         var normalizedName = request.Nome.Trim();
-        var normalizedEmail = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email.Trim();
+        var normalizedEmail = request.Email.Trim();
         var normalizedPhone = string.IsNullOrWhiteSpace(request.Telefone) ? null : request.Telefone.Trim();
         var normalizedDocument = request.Documento.Trim();
 
         var truckExists = await dbContext.Foodtrucks.AnyAsync(
-            x => x.Nome == normalizedName || x.Documento == normalizedDocument || (normalizedEmail != null && x.Email == normalizedEmail),
+            x => x.Documento == normalizedDocument || x.Email == normalizedEmail,
             cancellationToken);
 
         if (truckExists)
@@ -87,7 +87,7 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
             Telefone = normalizedPhone,
             Documento = normalizedDocument,
             Cep = string.IsNullOrWhiteSpace(request.Cep) ? null : request.Cep.Trim(),
-            FormaPagamento = string.IsNullOrWhiteSpace(request.FormaPagamento) ? null : request.FormaPagamento.Trim(),
+            FormaPagamento = request.FormaPagamento,
             Senha = request.Senha.Trim(),
         };
 

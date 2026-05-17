@@ -1,5 +1,10 @@
 import loadingProgress from "./components/loadingProgress.js";
 import "./components/snackbar.js";
+import { requireAuth, redirectToLogin } from "./authGuard.js";
+
+if (!requireAuth()) {
+  redirectToLogin();
+}
 
 const contentArea = document.querySelector("#contentArea");
 const homeButton = document.querySelector("#homeButton");
@@ -45,7 +50,7 @@ function readSidebarSession() {
 
     return {
       shopName: String(parsedSession.shopName ?? "").trim(),
-      contact: String(parsedSession.contact ?? "").trim(),
+      email: String(parsedSession.email ?? "").trim(),
       cep: String(parsedSession.cep ?? "").trim(),
     };
   } catch {
@@ -162,7 +167,7 @@ function syncAccessibilityButtonIntoStack() {
 function handleLogout() {
   sessionStorage.removeItem("streetbite-store-session");
   updateSidebarProfile();
-  window.location.href = "landingPage.html";
+  window.location.href = "../index.html";
 }
 
 sidebarRole?.addEventListener("click", () => {
@@ -331,6 +336,11 @@ function injectPageAssets(doc, baseUrl) {
 }
 
 async function loadPage(pageKey) {
+  if (!requireAuth()) {
+    redirectToLogin();
+    return;
+  }
+
   const page = pages[pageKey];
   if (!page) return;
 

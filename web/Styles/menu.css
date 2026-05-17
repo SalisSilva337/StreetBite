@@ -57,13 +57,6 @@ body {
   color: var(--text);
 }
 
-:root[data-theme="dark"] body,
-:root[data-theme="dark"] body *,
-:root[data-theme="dark"] body *::before,
-:root[data-theme="dark"] body *::after {
-  color: #fff !important;
-}
-
 .main {
   display: flex;
   flex-direction: column;
@@ -268,7 +261,7 @@ body {
   border-radius: 10px;
   padding: 10px 12px;
   min-height: 42px;
-  color: var(--card);
+  color: var(--on-primary);
   transition:
     background-color 0.24s ease,
     transform 0.2s ease,
@@ -430,13 +423,16 @@ body {
   z-index: 1200;
   align-items: center;
   justify-content: center;
-  background: rgb(16 21 28 / 55%);
+  background: rgb(0 0 0 / 32%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   padding: 24px;
   overflow-y: auto;
 }
 
 .wizardSection.is-open {
   display: flex;
+  animation: wizardBackdropIn 0.25s ease;
 }
 
 .wizardContainer {
@@ -447,33 +443,70 @@ body {
   overflow: hidden;
   background: var(--card);
   border: 1px solid var(--border);
-  box-shadow: 0 18px 48px rgb(0 0 0 / 25%);
+  box-shadow: 0 25px 60px rgb(0 0 0 / 20%);
   display: grid;
   grid-template-columns: 290px 1fr;
+  animation: wizardContainerIn 0.3s ease;
 }
 
 .wizardVisual {
-  background: #e63946;
-  color: var(--card);
+  background: linear-gradient(135deg, #e63946 0%, #c1121f 100%);
+  color: #ffffff;
   padding: 30px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.wizardVisual::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 6%);
+  pointer-events: none;
+}
+
+.wizardVisual::after {
+  content: "";
+  position: absolute;
+  bottom: -24px;
+  left: -24px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 4%);
+  pointer-events: none;
+}
+
+.wizardVisual > * {
+  position: relative;
+  z-index: 1;
 }
 
 .wizardVisualTitle {
-  font-size: 20px;
+  font-size: 22px;
+  font-weight: 700;
   margin-bottom: 12px;
+  letter-spacing: -0.01em;
 }
 
 .wizardVisual p {
-  line-height: 1.45;
+  line-height: 1.5;
+  opacity: 0.9;
 }
 
 .wizardVisualStep {
-  border-top: 1px solid rgb(255 255 255 / 30%);
+  border-top: 1px solid rgb(255 255 255 / 25%);
   padding-top: 14px;
-  opacity: 0.85;
+  opacity: 0.8;
+  font-size: 13px;
+  letter-spacing: 0.02em;
 }
 
 .wizardMain {
@@ -553,10 +586,9 @@ body {
 }
 
 .wizardGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 14px;
-  align-items: start;
 }
 
 .imgDiv {
@@ -626,7 +658,7 @@ body {
 
 .wizardButton.is-primary {
   background: var(--primary);
-  color: var(--card);
+  color: #ffffff;
 }
 
 .wizardButton.is-primary:hover {
@@ -646,6 +678,26 @@ body {
 .wizardButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@keyframes wizardBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes wizardContainerIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @media only screen and (max-width: 1150px) {
@@ -687,10 +739,6 @@ body {
 
   .wizardMain {
     padding: 20px;
-  }
-
-  .wizardGrid {
-    grid-template-columns: 1fr;
   }
 
   .wizardFooter {

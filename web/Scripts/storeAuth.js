@@ -1,4 +1,24 @@
 import ApiService from "./service.js";
+import { normalizeText, normalizeDigits } from "./utils/normalizers.js";
+import {
+  attachBrazilianPhoneMask,
+  attachCepMask,
+  attachCpfCnpjMask,
+} from "./utils/masks.js";
+import {
+  validateEmail,
+  validatePhone,
+  validateCep,
+  validateRequiredText,
+  validatePassword,
+  validateDocument,
+} from "./validators.js";
+import {
+  PAYMENT_METHOD_OPTIONS,
+  normalizeEnumValue,
+  getEnumDescription,
+} from "./enumMappings.js";
+import { attachPasswordToggle } from "./components/togglePassword.js";
 
 const STORAGE_KEYS = {
   account: "streetbite-store-account",
@@ -10,48 +30,11 @@ const LOGIN_REDIRECT_DELAY_MS = 1400;
 
 const api = new ApiService();
 
-function normalizeText(value) {
-  return String(value ?? "").trim();
-}
-
-function normalizeDigits(value) {
-  return normalizeText(value).replace(/\D/g, "");
-}
-
-function formatBrazilianPhone(value) {
-  const digits = normalizeDigits(value).slice(0, 11);
-
-  if (!digits) {
-    return "";
+function setFieldState(inputElement, isValid) {
+  if (inputElement) {
+    inputElement.classList.toggle("is-valid", isValid);
+    inputElement.classList.toggle("is-invalid", !isValid);
   }
-
-  if (digits.length <= 2) {
-    return `(${digits}`;
-  }
-
-  if (digits.length <= 6) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-  }
-
-  if (digits.length <= 10) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
-  }
-
-  return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3, 7)}-${digits.slice(7)}`;
-}
-
-function attachBrazilianPhoneMask(inputElement) {
-  if (!inputElement) {
-    return;
-  }
-
-  const applyMask = () => {
-    inputElement.value = formatBrazilianPhone(inputElement.value);
-  };
-
-  inputElement.addEventListener("input", applyMask);
-  inputElement.addEventListener("blur", applyMask);
-  applyMask();
 }
 
 function readJson(storage, key) {
@@ -124,28 +107,28 @@ function saveAccount(account) {
 function saveSession(account) {
   writeJson(sessionStorage, STORAGE_KEYS.session, {
     shopName: account.shopName,
-    contact: account.contact,
+    email: account.email,
     cep: account.cep,
     authenticatedAt: new Date().toISOString(),
   });
 }
 
-function getRecoveryContact() {
-  return normalizeDigits(sessionStorage.getItem(STORAGE_KEYS.recovery));
+function getRecoveryEmail() {
+  return normalizeText(sessionStorage.getItem(STORAGE_KEYS.recovery));
 }
 
-function setRecoveryContact(contact) {
-  const normalizedContact = normalizeDigits(contact);
+function setRecoveryEmail(email) {
+  const normalizedEmail = normalizeText(email);
 
-  if (!normalizedContact) {
+  if (!normalizedEmail) {
     sessionStorage.removeItem(STORAGE_KEYS.recovery);
     return;
   }
 
-  sessionStorage.setItem(STORAGE_KEYS.recovery, normalizedContact);
+  sessionStorage.setItem(STORAGE_KEYS.recovery, normalizedEmail);
 }
 
-function clearRecoveryContact() {
+function clearRecoveryEmail() {
   sessionStorage.removeItem(STORAGE_KEYS.recovery);
 }
 
@@ -168,15 +151,16 @@ function stripSensitiveQueryParams(paramNames) {
   window.history.replaceState({}, "", cleanRelativeUrl);
 }
 
-function maskContact(contact) {
-  const normalizedContact = normalizeDigits(contact);
+function maskEmail(email) {
+  const normalizedEmail = normalizeText(email);
 
-  if (!normalizedContact) {
+  if (!normalizedEmail || !normalizedEmail.includes("@")) {
     return "";
   }
 
-  const lastDigits = normalizedContact.slice(-4);
-  return `****${lastDigits}`;
+  const [localPart, domain] = normalizedEmail.split("@");
+  const visible = localPart.slice(0, 2);
+  return `${visible}***@${domain}`;
 }
 
 export function getStoredShopAccount() {
@@ -233,25 +217,133 @@ export function initializeLandingAuth() {
     "[data-register-payment]",
   );
 
-  stripSensitiveQueryParams(["contact"]);
+  const loginFieldBindings = [
+    {
+      input: loginIdentityInput,
+      validate: validateEmail,
+    },
+    {
+      input: loginPasswordInput,
+      validate: validateRequiredText,
+    },
+  ];
+
+  const registerFieldBindings = [
+    {
+      input: registerShopNameInput,
+      validate: validateRequiredText,
+    },
+    {
+      input: registerEmailInput,
+      validate: validateEmail,
+    },
+    {
+      input: registerPasswordInput,
+      validate: validatePassword,
+    },
+    {
+      input: registerDocumentInput,
+      validate: validateDocument,
+    },
+    {
+      input: registerCepInput,
+      validate: validateCep,
+    },
+    {
+      input: registerContactInput,
+      validate: validatePhone,
+    },
+    {
+      input: registerPaymentInput,
+      validate: (value) => {
+        const normalized = normalizeEnumValue(
+          normalizeText(value),
+          PAYMENT_METHOD_OPTIONS,
+        );
+        return (
+          normalized != null &&
+          normalized !== "" &&
+          !Number.isNaN(Number(normalized))
+        );
+      },
+    },
+  ];
+
+  let loginSubmitting = false;
+  let registerSubmitting = false;
+
+  function validateField(binding) {
+    if (!binding?.input) {
+      return true;
+    }
+
+    const isValid = binding.validate(binding.input.value);
+    setFieldState(binding.input, isValid);
+    return isValid;
+  }
+
+  function validateAllFields(bindings) {
+    return bindings.every((binding) => validateField(binding));
+  }
+
+  loginFieldBindings.forEach((binding) => {
+    if (!binding.input) {
+      return;
+    }
+
+    binding.input.addEventListener("input", () => validateField(binding));
+    binding.input.addEventListener("blur", () => validateField(binding));
+  });
+
+  registerFieldBindings.forEach((binding) => {
+    if (!binding.input) {
+      return;
+    }
+
+    binding.input.addEventListener("input", () => validateField(binding));
+    binding.input.addEventListener("blur", () => validateField(binding));
+  });
+
+  attachPasswordToggle(loginPasswordInput);
+  attachPasswordToggle(registerPasswordInput);
+
+  stripSensitiveQueryParams(["email"]);
 
   const url = new URL(window.location.href);
   const initialTab =
     url.searchParams.get("tab") === "register" ? "register" : "login";
-  const recoveryContact = getRecoveryContact();
+  const recoveryEmail = getRecoveryEmail();
 
   if (loginIdentityInput) {
-    loginIdentityInput.value = recoveryContact || "";
+    loginIdentityInput.value = recoveryEmail || "";
   }
 
   if (loginIdentityInput) {
-    loginIdentityInput.placeholder =
-      "Digite o nome da loja ou telefone no formato (99) 9 9999-9999";
+    loginIdentityInput.placeholder = "Digite o e-mail cadastrado";
   }
 
   if (registerContactInput) {
     registerContactInput.placeholder = "(99) 9 9999-9999";
     attachBrazilianPhoneMask(registerContactInput);
+  }
+
+  if (registerCepInput) {
+    registerCepInput.placeholder = "00000-000";
+    attachCepMask(registerCepInput);
+  }
+
+  if (registerDocumentInput) {
+    registerDocumentInput.placeholder = "000.000.000-00 ou 00.000.000/0000-00";
+    attachCpfCnpjMask(registerDocumentInput);
+  }
+
+  if (registerPaymentInput) {
+    PAYMENT_METHOD_OPTIONS.forEach((option) => {
+      const optionElement = document.createElement("option");
+      optionElement.value = option.value;
+      optionElement.textContent = option.getDescription();
+      registerPaymentInput.appendChild(optionElement);
+    });
   }
 
   setActiveView(rootElement, initialTab);
@@ -279,18 +371,20 @@ export function initializeLandingAuth() {
   loginView?.addEventListener("submit", (event) => {
     event.preventDefault();
 
+    if (loginSubmitting) {
+      return;
+    }
+
+    const areFieldsValid = validateAllFields(loginFieldBindings);
+
+    if (!areFieldsValid) {
+      setStatus(authStatus, "Corrija os campos em destaque.", "error");
+      return;
+    }
+
     const identity = normalizeText(loginIdentityInput?.value);
     const password = normalizeText(loginPasswordInput?.value);
     const account = getStoredShopAccount();
-
-    if (!identity || !password) {
-      setStatus(
-        authStatus,
-        "Informe o nome da loja ou contato e a senha.",
-        "error",
-      );
-      return;
-    }
 
     if (!account) {
       setStatus(authStatus, "Cadastre a loja antes de tentar entrar.", "error");
@@ -298,61 +392,63 @@ export function initializeLandingAuth() {
     }
 
     const identityMatches =
-      identity.toLowerCase() === account.shopName.toLowerCase() ||
-      identity.toLowerCase() === account.email.toLowerCase() ||
-      normalizeDigits(identity) === account.contact;
+      identity.toLowerCase() === account.email.toLowerCase();
 
     if (!identityMatches || password !== account.password) {
       setStatus(authStatus, "Credenciais inválidas.", "error");
       return;
     }
 
+    loginSubmitting = true;
     saveSession(account);
     setStatus(
       authStatus,
       "Login realizado com sucesso. Abrindo o painel...",
       "success",
     );
-    window.location.href = "../Pages/streetBite.html";
+    const redirectParam = new URLSearchParams(window.location.search).get(
+      "redirect",
+    );
+    const redirectUrl = redirectParam || "../Pages/streetBite.html";
+    window.location.href = redirectUrl;
   });
+
+  const registerSubmitButton = registerView?.querySelector(
+    'button[type="submit"]',
+  );
 
   registerView?.addEventListener("submit", (event) => {
     event.preventDefault();
 
+    if (registerSubmitting) {
+      return;
+    }
+
+    setStatus(authStatus, "");
+
+    const areFieldsValid = validateAllFields(registerFieldBindings);
+
+    if (!areFieldsValid) {
+      setStatus(authStatus, "Corrija os campos em destaque.", "error");
+      return;
+    }
+
     const shopName = normalizeText(registerShopNameInput?.value);
     const email = normalizeText(registerEmailInput?.value);
     const password = normalizeText(registerPasswordInput?.value);
-    const documentValue = normalizeText(registerDocumentInput?.value);
+    const documentValue = normalizeDigits(registerDocumentInput?.value);
     const cep = normalizeDigits(registerCepInput?.value);
     const contact = normalizeDigits(registerContactInput?.value);
-    const paymentMethod = normalizeText(registerPaymentInput?.value);
+    const paymentMethod = normalizeEnumValue(
+      registerPaymentInput?.value,
+      PAYMENT_METHOD_OPTIONS,
+    );
 
-    if (
-      !shopName ||
-      !email ||
-      !password ||
-      !documentValue ||
-      !cep ||
-      !contact ||
-      !paymentMethod
-    ) {
-      setStatus(
-        authStatus,
-        "Preencha nome, e-mail, senha, documento, CEP, contato e forma de pagamento.",
-        "error",
-      );
-      return;
+    registerSubmitting = true;
+    if (registerSubmitButton) {
+      registerSubmitButton.disabled = true;
     }
-
-    if (cep.length < 8) {
-      setStatus(authStatus, "Informe um CEP válido com 8 dígitos.", "error");
-      return;
-    }
-
-    if (contact.length < 10) {
-      setStatus(authStatus, "Informe um número de contato válido.", "error");
-      return;
-    }
+    setStatus(authStatus, "Cadastrando foodtruck...");
 
     api
       .createFoodtruck({
@@ -379,6 +475,10 @@ export function initializeLandingAuth() {
           cep,
           contact,
           paymentMethod,
+          paymentMethodLabel: getEnumDescription(
+            PAYMENT_METHOD_OPTIONS,
+            paymentMethod,
+          ),
           updatedAt: new Date().toISOString(),
         };
 
@@ -392,7 +492,7 @@ export function initializeLandingAuth() {
 
         window.setTimeout(() => {
           if (loginIdentityInput) {
-            loginIdentityInput.value = shopName;
+            loginIdentityInput.value = email;
           }
 
           if (loginPasswordInput) {
@@ -404,6 +504,10 @@ export function initializeLandingAuth() {
         }, LOGIN_REDIRECT_DELAY_MS);
       })
       .catch((error) => {
+        registerSubmitting = false;
+        if (registerSubmitButton) {
+          registerSubmitButton.disabled = false;
+        }
         setStatus(
           authStatus,
           error.message || "Não foi possível cadastrar o foodtruck.",
@@ -419,34 +523,109 @@ export function initializeRecoveryPage() {
     return;
   }
 
-  stripSensitiveQueryParams(["contact"]);
+  stripSensitiveQueryParams(["email"]);
 
   const authStatus = rootElement.querySelector("[data-auth-status]");
   const lookupForm = rootElement.querySelector("[data-recovery-lookup]");
   const resetForm = rootElement.querySelector("[data-recovery-reset]");
-  const contactInput = rootElement.querySelector("[data-recovery-contact]");
+  const emailInput = rootElement.querySelector("[data-recovery-email]");
   const passwordInput = rootElement.querySelector("[data-recovery-password]");
   const confirmPasswordInput = rootElement.querySelector(
     "[data-recovery-confirm-password]",
   );
-  const contactSummary = rootElement.querySelector(
-    "[data-recovery-contact-summary]",
+  const emailSummary = rootElement.querySelector(
+    "[data-recovery-email-summary]",
   );
 
-  const storedContact = getRecoveryContact();
+  const fieldStatusElementsRecovery = {
+    email: rootElement.querySelector('[data-field-status="recovery-email"]'),
+    password: rootElement.querySelector(
+      '[data-field-status="recovery-password"]',
+    ),
+    confirmPassword: rootElement.querySelector(
+      '[data-field-status="recovery-confirm-password"]',
+    ),
+  };
+
+  const lookupFieldBindings = [
+    {
+      input: emailInput,
+      status: fieldStatusElementsRecovery.email,
+      validate: validateEmail,
+    },
+  ];
+
+  const resetFieldBindings = [
+    {
+      input: passwordInput,
+      status: fieldStatusElementsRecovery.password,
+      validate: validatePassword,
+    },
+    {
+      input: confirmPasswordInput,
+      status: fieldStatusElementsRecovery.confirmPassword,
+      validate: validateRequiredText,
+    },
+  ];
+
+  let recoverySubmitting = false;
+
+  function validateRecoveryField(binding) {
+    if (!binding?.input) {
+      return true;
+    }
+
+    const isValid = binding.validate(binding.input.value);
+    setFieldState(binding.input, isValid);
+    return isValid;
+  }
+
+  function validateAllRecoveryFields(bindings) {
+    return bindings.every((binding) => validateRecoveryField(binding));
+  }
+
+  lookupFieldBindings.forEach((binding) => {
+    if (!binding.input) {
+      return;
+    }
+
+    binding.input.addEventListener("input", () =>
+      validateRecoveryField(binding),
+    );
+    binding.input.addEventListener("blur", () =>
+      validateRecoveryField(binding),
+    );
+  });
+
+  resetFieldBindings.forEach((binding) => {
+    if (!binding.input) {
+      return;
+    }
+
+    binding.input.addEventListener("input", () =>
+      validateRecoveryField(binding),
+    );
+    binding.input.addEventListener("blur", () =>
+      validateRecoveryField(binding),
+    );
+  });
+
+  attachPasswordToggle(passwordInput);
+  attachPasswordToggle(confirmPasswordInput);
+
+  const storedEmail = getRecoveryEmail();
   const account = getStoredShopAccount();
-  const contactToResume = storedContact;
+  const emailToResume = storedEmail;
 
-  if (contactInput && contactToResume) {
-    contactInput.value = formatBrazilianPhone(contactToResume);
+  if (emailInput && emailToResume) {
+    emailInput.value = emailToResume;
   }
 
-  if (contactInput) {
-    contactInput.placeholder = "(99) 9 9999-9999";
-    attachBrazilianPhoneMask(contactInput);
+  if (emailInput) {
+    emailInput.placeholder = "seuemail@exemplo.com";
   }
 
-  function showResetStage(contactValue) {
+  function showResetStage(emailValue) {
     if (lookupForm) {
       lookupForm.classList.add("hidden");
     }
@@ -455,8 +634,8 @@ export function initializeRecoveryPage() {
       resetForm.classList.remove("hidden");
     }
 
-    if (contactSummary) {
-      contactSummary.textContent = maskContact(contactValue);
+    if (emailSummary) {
+      emailSummary.textContent = maskEmail(emailValue);
     }
 
     setStatus(
@@ -466,44 +645,63 @@ export function initializeRecoveryPage() {
     );
   }
 
-  if (contactToResume && account && contactToResume === account.contact) {
-    setRecoveryContact(contactToResume);
-    showResetStage(contactToResume);
+  if (
+    emailToResume &&
+    account &&
+    emailToResume.toLowerCase() === account.email.toLowerCase()
+  ) {
+    setRecoveryEmail(emailToResume);
+    showResetStage(emailToResume);
   }
 
   lookupForm?.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const contactValue = normalizeDigits(contactInput?.value);
+    const areFieldsValid = validateAllRecoveryFields(lookupFieldBindings);
 
-    if (!contactValue) {
-      setStatus(authStatus, "Informe o número de contato cadastrado.", "error");
+    if (!areFieldsValid) {
+      setStatus(authStatus, "Informe um e-mail válido.", "error");
       return;
     }
 
+    const emailValue = normalizeText(emailInput?.value);
     const currentAccount = getStoredShopAccount();
 
-    if (!currentAccount || currentAccount.contact !== contactValue) {
-      setStatus(authStatus, "Número de contato não encontrado.", "error");
+    if (
+      !currentAccount ||
+      currentAccount.email.toLowerCase() !== emailValue.toLowerCase()
+    ) {
+      setStatus(authStatus, "E-mail não encontrado.", "error");
       return;
     }
 
-    setRecoveryContact(contactValue);
-    showResetStage(contactValue);
+    setRecoveryEmail(emailValue);
+    showResetStage(emailValue);
   });
 
   resetForm?.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const contactValue = getRecoveryContact();
+    if (recoverySubmitting) {
+      return;
+    }
+
+    const areFieldsValid = validateAllRecoveryFields(resetFieldBindings);
+
+    if (!areFieldsValid) {
+      setStatus(authStatus, "Corrija os campos em destaque.", "error");
+      return;
+    }
+
+    const emailValue = getRecoveryEmail();
     const newPassword = normalizeText(passwordInput?.value);
     const confirmPassword = normalizeText(confirmPasswordInput?.value);
     const currentAccount = getStoredShopAccount();
 
     if (
-      !contactValue ||
+      !emailValue ||
       !currentAccount ||
-      currentAccount.contact !== contactValue
+      currentAccount.email.toLowerCase() !== emailValue.toLowerCase()
     ) {
       setStatus(
         authStatus,
@@ -513,15 +711,12 @@ export function initializeRecoveryPage() {
       return;
     }
 
-    if (!newPassword || !confirmPassword) {
-      setStatus(authStatus, "Preencha a nova senha e a confirmação.", "error");
-      return;
-    }
-
     if (newPassword !== confirmPassword) {
       setStatus(authStatus, "As senhas não coincidem.", "error");
       return;
     }
+
+    recoverySubmitting = true;
 
     saveAccount({
       ...currentAccount,
@@ -529,7 +724,7 @@ export function initializeRecoveryPage() {
       updatedAt: new Date().toISOString(),
     });
 
-    clearRecoveryContact();
+    clearRecoveryEmail();
     setStatus(
       authStatus,
       "Senha atualizada com sucesso. Redirecionando para o login...",
