@@ -1,0 +1,829 @@
+import ApiService from "./service.js";
+import loadingProgress from "./components/loadingProgress.js";
+import snackbar from "./components/snackbar.js";
+import {
+  getProductCategoryImage,
+  normalizeProductCategory,
+} from "./productCategories.js";
+import {
+  getEnumByValue,
+  ORDER_TYPE_OPTIONS,
+  ORDER_STATUS_OPTIONS,
+  PAYMENT_METHOD_OPTIONS,
+} from "./enumMappings.js";
+import { getShopPickupCep } from "./storeAuth.js";
+
+(() => {
+  const api = new ApiService();
+
+  const gridSection = document.querySelector(".gridSection");
+  const ordersFilterButtons = document.querySelector(".ordersFilterButtons");
+  const openOrderWizard = document.querySelector("#openOrderWizard");
+
+  const wizardSection = document.querySelector("#orderWizard");
+  const wizardStepItems = document.querySelector("#orderWizardStepItems");
+  const wizardStepLocal = document.querySelector("#orderWizardStepLocal");
+  const wizardStepDetails = document.querySelector("#orderWizardStepDetails");
+  const wizardBack = document.querySelector("#orderWizardBack");
+  const wizardNext = document.querySelector("#orderWizardNext");
+  const wizardCancel = document.querySelector("#orderWizardCancel");
+
+  const orderType = document.querySelector("#orderType");
+  const orderCustomerGroup = document.querySelector("#orderCustomerGroup");
+  const orderTableGroup = document.querySelector("#orderTableGroup");
+
+  const orderPayment = document.querySelector("#orderPayment");
+  const orderProduct = document.querySelector("#orderProduct");
+  const orderQuantity = document.querySelector("#orderQuantity");
+  const addOrderItem = document.querySelector("#addOrderItem");
+  const orderCart = document.querySelector("#orderCart");
+  const orderSubtotal = document.querySelector("#orderSubtotal");
+  const orderCustomer = document.querySelector("#orderCustomer");
+  const orderTable = document.querySelector("#orderTable");
+  const orderCustomerInfo = document.querySelector("#orderCustomerInfo");
+
+  let currentStep = 1;
+  let products = [];
+  let customers = [];
+  let cartItems = [];
+  let orders = [];
+  let currentOrderFilter = "all";
+
+  const ORDER_FILTER_OPTIONS = [
+    {
+      id: "all",
+      label: "Todos",
+      matches: () => true,
+    },
+    {
+      id: "progress",
+      label: "Em andamento",
+      matches: (status) =>
+        status?.value === ORDER_STATUS_OPTIONS[0].value ||
+        status?.value === ORDER_STATUS_OPTIONS[1].value,
+    },
+    {
+      id: "done",
+      label: "Concluídos",
+      matches: (status) => status?.value === ORDER_STATUS_OPTIONS[2].value,
+    },
+    {
+      id: "canceled",
+      label: "Cancelados",
+      matches: (status) => status?.value === ORDER_STATUS_OPTIONS[3].value,
+    },
+  ];
+
+  function formatCurrency(value) {
+    return Number(value).toFixed(2);
+  }
+
+  function formatLocalDateTime(dateValue) {
+    if (!dateValue) return "";
+
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) {
+      return String(dateValue);
+    }
+
+    return new Intl.DateTimeFormat("pt-BR", {
+      dateStyle: "short",
+      timeStyle: "short",
+    }).format(date);
+  }
+
+  function showWizardStep(step) {
+    currentStep = step;
+    wizardStepItems.classList.toggle("hidden", step !== 1);
+    wizardStepLocal.classList.toggle("hidden", step !== 2);
+    wizardStepDetails.classList.toggle("hidden", step !== 3);
+    wizardBack.disabled = step === 1;
+    wizardNext.textContent = step === 3 ? "Criar Comanda" : "Próximo";
+  }
+
+  function renderCart() {
+    orderCart.innerHTML = "";
+    let subtotal = 0;
+
+    cartItems.forEach((item) => {
+      subtotal += item.precoUnitario * item.quantidade;
+
+      const cartItem = document.createElement("div");
+      cartItem.className = "orderCartItem";
+
+      const text = document.createElement("span");
+      text.textContent = `${item.produtoNome} (${item.quantidade}x) - R$${formatCurrency(item.precoUnitario * item.quantidade)}`;
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "Remover";
+      remove.addEventListener("click", () => {
+        cartItems = cartItems.filter((cartEntry) => cartEntry.uid !== item.uid);
+        renderCart();
+      });
+
+      cartItem.appendChild(text);
+      cartItem.appendChild(remove);
+      orderCart.appendChild(cartItem);
+    });
+
+    orderSubtotal.textContent = `Subtotal: R$${formatCurrency(subtotal)}`;
+  }
+
+  function resetWizardForm() {
+    orderType.value = "";
+    orderPayment.value = "";
+    orderProduct.value = "";
+    orderQuantity.value = 1;
+    if (orderTable) {
+      orderTable.value = "";
+    }
+    if (orderCustomer) {
+      orderCustomer.value = "";
+    }
+    if (orderCustomerInfo) {
+      orderCustomerInfo.textContent =
+        "Selecione um cliente já cadastrado para continuar.";
+    }
+    cartItems = [];
+    renderCart();
+    updateAttendanceFields();
+    showWizardStep(1);
+  }
+
+  function openWizard() {
+    wizardSection.classList.add("is-open");
+    resetWizardForm();
+  }
+
+  function closeWizard() {
+    wizardSection.classList.remove("is-open");
+    resetWizardForm();
+  }
+
+  function resolveComandaId(comanda) {
+    return comanda?.comandaId ?? comanda?.id ?? comanda?.ComandaId ?? null;
+  }
+
+  function resolveOrderStatus(order) {
+    return getEnumByValue(ORDER_STATUS_OPTIONS, order?.status ?? order?.Status);
+  }
+
+  function getOrderStatusPresentation(status) {
+    return status ?? ORDER_STATUS_OPTIONS[0];
+  }
+
+  function getOrderTypePresentation(order) {
+    return (
+      getEnumByValue(
+        ORDER_TYPE_OPTIONS,
+        order?.tipoAtendimento ?? order?.TipoAtendimento,
+      ) ?? ORDER_TYPE_OPTIONS[0]
+    );
+  }
+
+  function getOrderIdentificationLabel(order) {
+    return getOrderTypePresentation(order)?.value === 1 ? "Mesa" : "Cliente";
+  }
+
+  function getOrderIdentificationValue(order) {
+    if (getOrderTypePresentation(order)?.value === 1) {
+      const tableNumber = Number(order?.numeroMesa ?? order?.NumeroMesa);
+      return Number.isInteger(tableNumber) && tableNumber > 0
+        ? `Mesa ${String(tableNumber).padStart(2, "0")}`
+        : "Mesa";
+    }
+
+    return resolveCustomerName(order);
+  }
+
+  function getFallbackCustomerId() {
+    return resolveCustomerId(customers[0]) ?? null;
+  }
+
+  function getOrderFilterStatus(order) {
+    return resolveOrderStatus(order);
+  }
+
+  function matchesSelectedOrderFilter(order) {
+    const filterOption = ORDER_FILTER_OPTIONS.find(
+      (option) => option.id === currentOrderFilter,
+    );
+
+    if (!filterOption) {
+      return true;
+    }
+
+    return filterOption.matches(getOrderFilterStatus(order));
+  }
+
+  function getVisibleOrders() {
+    return orders.filter((order) => matchesSelectedOrderFilter(order));
+  }
+
+  function renderOrderFilters() {
+    if (!ordersFilterButtons) {
+      return;
+    }
+
+    ordersFilterButtons.innerHTML = "";
+
+    ORDER_FILTER_OPTIONS.forEach((option) => {
+      const button = document.createElement("button");
+      const count = orders.filter((order) =>
+        option.matches(getOrderFilterStatus(order)),
+      ).length;
+
+      button.type = "button";
+      button.className = "ordersFilterButton";
+
+      if (option.id === currentOrderFilter) {
+        button.classList.add("is-active");
+      }
+
+      button.innerHTML = `
+        <span>${option.label}</span>
+        <strong>${count}</strong>
+      `;
+
+      button.addEventListener("click", () => {
+        currentOrderFilter = option.id;
+        renderOrders();
+      });
+
+      ordersFilterButtons.appendChild(button);
+    });
+  }
+
+  function fillTableOptions() {
+    if (!orderTable || orderTable.options.length > 1) {
+      return;
+    }
+
+    for (let tableNumber = 1; tableNumber <= 10; tableNumber += 1) {
+      const option = document.createElement("option");
+      option.value = String(tableNumber);
+      option.textContent = String(tableNumber).padStart(2, "0");
+      orderTable.appendChild(option);
+    }
+  }
+
+  function updateAttendanceFields() {
+    const isLocalOrder =
+      Number(orderType?.value) === ORDER_TYPE_OPTIONS[1].value;
+
+    orderCustomerGroup?.classList.toggle("hidden", isLocalOrder);
+    orderTableGroup?.classList.toggle("hidden", !isLocalOrder);
+
+    if (orderCustomerGroup) {
+      orderCustomerGroup.hidden = isLocalOrder;
+      orderCustomerGroup.style.display = isLocalOrder ? "none" : "";
+    }
+
+    if (orderTableGroup) {
+      orderTableGroup.hidden = !isLocalOrder;
+      orderTableGroup.style.display = !isLocalOrder ? "none" : "";
+    }
+
+    if (orderCustomer) {
+      orderCustomer.required = !isLocalOrder;
+      if (isLocalOrder) {
+        orderCustomer.value = "";
+        updateSelectedCustomerInfo("");
+      }
+    }
+
+    if (orderTable) {
+      orderTable.required = isLocalOrder;
+      if (!isLocalOrder) {
+        orderTable.value = "";
+      }
+    }
+  }
+
+  function resolveCustomerName(order) {
+    return (
+      order?.cliente?.nome ??
+      order?.clienteNome ??
+      order?.nomeCliente ??
+      order?.Cliente?.nome ??
+      "Cliente"
+    );
+  }
+
+  function resolveCustomerId(customer) {
+    return customer?.clienteId ?? customer?.id ?? customer?.ClienteId ?? null;
+  }
+
+  function resolveCustomerLabel(customer) {
+    const name = customer?.nome ?? customer?.Nome ?? "Cliente";
+    const phone = customer?.telefone ?? customer?.Telefone ?? "";
+
+    return phone ? `${name} - ${phone}` : name;
+  }
+
+  function updateSelectedCustomerInfo(customerId) {
+    const selectedCustomer = customers.find(
+      (customer) => String(resolveCustomerId(customer)) === String(customerId),
+    );
+
+    if (orderCustomerInfo) {
+      if (!selectedCustomer) {
+        orderCustomerInfo.textContent =
+          "Selecione um cliente já cadastrado para continuar.";
+        return;
+      }
+
+      const email = selectedCustomer?.email ?? selectedCustomer?.Email ?? "";
+      const phone =
+        selectedCustomer?.telefone ?? selectedCustomer?.Telefone ?? "";
+      orderCustomerInfo.textContent =
+        [email, phone].filter(Boolean).join(" | ") || "Cliente selecionado.";
+    }
+  }
+
+  async function fillProductOptions() {
+    if (products.length) return;
+
+    try {
+      const loadedProducts = await api.getProdutos();
+      products = Array.isArray(loadedProducts) ? loadedProducts : [];
+
+      products.forEach((product) => {
+        const option = document.createElement("option");
+        option.value = String(product.id ?? product.produtoId ?? "");
+        option.textContent = `${product.nome} - R$${formatCurrency(product.preco)}`;
+        orderProduct.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Erro ao carregar produtos:", error);
+      snackbar.error(error.message || "Não foi possível carregar os produtos.");
+      throw error;
+    }
+  }
+
+  async function fillCustomerOptions() {
+    if (customers.length) return;
+
+    try {
+      const loadedCustomers = await api.getClientes();
+      customers = Array.isArray(loadedCustomers) ? loadedCustomers : [];
+
+      if (orderCustomer) {
+        orderCustomer.innerHTML =
+          '<option value="" hidden>--- Selecione ---</option>';
+
+        if (!customers.length) {
+          const emptyOption = document.createElement("option");
+          emptyOption.value = "";
+          emptyOption.textContent = "Nenhum cliente cadastrado";
+          emptyOption.disabled = true;
+          orderCustomer.appendChild(emptyOption);
+          return;
+        }
+
+        customers.forEach((customer) => {
+          const option = document.createElement("option");
+          option.value = String(resolveCustomerId(customer) ?? "");
+          option.textContent = resolveCustomerLabel(customer);
+          orderCustomer.appendChild(option);
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao carregar clientes:", error);
+      snackbar.error(error.message || "Não foi possível carregar os clientes.");
+      throw error;
+    }
+  }
+
+  async function createOrderFromWizard() {
+    const orderTypeValue = Number(orderType?.value);
+    const isLocalOrder = orderTypeValue === ORDER_TYPE_OPTIONS[1].value;
+    const customerId = Number(orderCustomer?.value);
+    const tableNumber = Number(orderTable?.value);
+    const fallbackCustomerId = getFallbackCustomerId();
+
+    if (isLocalOrder) {
+      if (!tableNumber) {
+        snackbar.warning("Selecione uma mesa para criar a comanda.");
+        return;
+      }
+
+      if (!fallbackCustomerId) {
+        snackbar.warning(
+          "Cadastre ao menos um cliente para permitir comandas no local.",
+        );
+        return;
+      }
+    } else if (!customerId) {
+      snackbar.warning("Selecione um cliente cadastrado para criar a comanda.");
+      return;
+    }
+
+    if (!orderPayment.value) {
+      snackbar.warning("Selecione o método de pagamento.");
+      return;
+    }
+
+    if (!cartItems.length) {
+      snackbar.warning("Adicione pelo menos um item à comanda.");
+      return;
+    }
+
+    try {
+      const createdComanda = await api.createComanda({
+        clienteId: isLocalOrder ? fallbackCustomerId : customerId,
+        tipoAtendimento: orderTypeValue,
+        numeroMesa: isLocalOrder ? tableNumber : null,
+      });
+      let comandaId = resolveComandaId(createdComanda);
+
+      if (!comandaId) {
+        const comandas = await api.getComandas();
+        const lastComanda = Array.isArray(comandas) ? comandas.at(-1) : null;
+        comandaId = resolveComandaId(lastComanda);
+      }
+
+      if (!comandaId) {
+        snackbar.error("Não foi possível identificar a nova comanda criada.");
+        return;
+      }
+
+      for (const item of cartItems) {
+        await api.addItemComanda({
+          comandaId,
+          produtoId: item.produtoId,
+          observacao: "",
+          quantidade: item.quantidade,
+        });
+      }
+
+      await api.updateComanda(comandaId, {
+        status: ORDER_STATUS_OPTIONS[0].value,
+        metodoDePagamento: Number(orderPayment.value),
+      });
+
+      snackbar.success("Comanda criada com sucesso.");
+      closeWizard();
+      await window.loadPage("comandas");
+    } catch (error) {
+      console.error("Erro ao criar comanda:", error);
+      snackbar.error(error.message || "Não foi possível criar a comanda.");
+    }
+  }
+
+  async function loadOrders() {
+    try {
+      const data = await api.getComandas();
+      orders = Array.isArray(data) ? data : [];
+      renderOrders();
+    } catch (error) {
+      console.error("Erro ao carregar comandas:", error);
+      snackbar.error(error.message || "Não foi possível carregar as comandas.");
+    }
+  }
+
+  async function handlePendingAction() {
+    if (window.__streetbitePendingAction !== "open-order-wizard") {
+      return;
+    }
+
+    window.__streetbitePendingAction = null;
+    fillTableOptions();
+    await Promise.all([fillProductOptions(), fillCustomerOptions()]);
+    openWizard();
+  }
+
+  function renderOrders() {
+    gridSection.innerHTML = "";
+
+    renderOrderFilters();
+
+    const visibleOrders = getVisibleOrders();
+
+    if (visibleOrders.length === 0) {
+      const emptyState = document.createElement("p");
+      emptyState.className = "gridSectionEmpty";
+      emptyState.textContent =
+        currentOrderFilter === "all"
+          ? "Nenhuma comanda cadastrada."
+          : "Nenhuma comanda encontrada para este filtro.";
+      gridSection.appendChild(emptyState);
+      return;
+    }
+
+    visibleOrders.forEach((order) => {
+      const orderId = resolveComandaId(order);
+      const statusInfo = getOrderStatusPresentation(resolveOrderStatus(order));
+      const orderTypeInfo = getOrderTypePresentation(order);
+      const orderIdentificationLabel = getOrderIdentificationLabel(order);
+      const orderIdentificationValue = getOrderIdentificationValue(order);
+
+      const card = document.createElement("article");
+      card.className = "grid orderCard";
+
+      const header = document.createElement("header");
+      header.className = "orderCardHeader";
+
+      const headerCustomer = document.createElement("div");
+      headerCustomer.className = "orderHeaderField";
+      headerCustomer.innerHTML = `<span class="orderHeaderLabel">${orderIdentificationLabel}</span><strong>${orderIdentificationValue}</strong>`;
+
+      const headerDate = document.createElement("div");
+      headerDate.className = "orderHeaderField";
+      headerDate.innerHTML = `<span class="orderHeaderLabel">Comanda Realizada</span><strong>${formatLocalDateTime(
+        order.pedidoCriadoEm,
+      )}</strong>`;
+
+      const headerTotal = document.createElement("div");
+      headerTotal.className = "orderHeaderField";
+      headerTotal.innerHTML = `<span class="orderHeaderLabel">Total</span><strong>R$${order.subtotal}</strong>`;
+
+      const headerPayment = document.createElement("div");
+      headerPayment.className = "orderHeaderField";
+      headerPayment.innerHTML = `<span class="orderHeaderLabel">Pagamento</span><strong>${
+        getEnumByValue(
+          PAYMENT_METHOD_OPTIONS,
+          order.metodoDePagamento,
+        )?.getDescription() ?? ""
+      }</strong>`;
+
+      const headerType = document.createElement("div");
+      headerType.className = "orderHeaderField orderHeaderFieldType";
+      headerType.innerHTML = `<span class="orderHeaderLabel">Atendimento</span><strong>${orderTypeInfo.getDescription()}</strong>`;
+
+      const headerCode = document.createElement("div");
+      headerCode.className = "orderHeaderField orderHeaderFieldCode";
+      headerCode.innerHTML = `<span class="orderHeaderLabel">Comanda Nº</span><strong>${order.codigoDoPedido}</strong>`;
+
+      const expandButton = document.createElement("button");
+      expandButton.className = "orderExpandButton";
+      expandButton.type = "button";
+      expandButton.setAttribute("aria-expanded", "false");
+      expandButton.innerHTML = `
+        <span class="orderExpandLabel">Ver detalhes</span>
+        <span class="orderExpandIcon" aria-hidden="true">▾</span>
+      `;
+
+      header.appendChild(headerCustomer);
+      header.appendChild(headerDate);
+      header.appendChild(headerTotal);
+      header.appendChild(headerPayment);
+      header.appendChild(headerType);
+      header.appendChild(headerCode);
+      header.appendChild(expandButton);
+
+      const body = document.createElement("div");
+      body.className = "orderCardBody";
+
+      const itemsPanel = document.createElement("section");
+      itemsPanel.className = "orderItemsPanel";
+
+      const itemsTitle = document.createElement("h3");
+      itemsTitle.className = "orderItemsTitle";
+      itemsTitle.textContent = "Itens da comanda";
+      itemsPanel.appendChild(itemsTitle);
+
+      const itemsScroll = document.createElement("div");
+      itemsScroll.className = "orderItemsScroll";
+
+      const orderItems = order.items ?? order.itens ?? [];
+
+      orderItems.forEach((item) => {
+        const itemRow = document.createElement("div");
+        itemRow.className = "orderItemRow";
+
+        const itemImage = document.createElement("img");
+        itemImage.className = "orderItemImage";
+        itemImage.src = getProductCategoryImage(
+          item.categoria,
+          item.produtoNome,
+        );
+        itemImage.alt = `Imagem do item ${item.produtoNome}`;
+
+        const itemInfo = document.createElement("div");
+        itemInfo.className = "orderItemInfo";
+        itemInfo.innerHTML = `
+          <h4>${item.produtoNome}</h4>
+          <p>Categoria: ${normalizeProductCategory(item.categoria)}</p>
+          <p>Valor: R$${item.precoUnitario}</p>
+          <p>Quantidade: ${item.quantidade}</p>
+        `;
+
+        itemRow.appendChild(itemImage);
+        itemRow.appendChild(itemInfo);
+        itemsScroll.appendChild(itemRow);
+      });
+
+      itemsPanel.appendChild(itemsScroll);
+
+      const actionsPanel = document.createElement("aside");
+      actionsPanel.className = "orderActionsPanel";
+
+      const status = document.createElement("h2");
+      status.className = "preparingOrder";
+      status.textContent = statusInfo.getDescription();
+      if (statusInfo.className) {
+        status.classList.add(statusInfo.className);
+      }
+
+      actionsPanel.appendChild(status);
+
+      if (statusInfo.showActions) {
+        const actions = document.createElement("div");
+        actions.className = "orderPreparingButtonsDiv";
+
+        const orderDeleteButton = document.createElement("button");
+        orderDeleteButton.className = "orderPreparingButtons is-secondary";
+        orderDeleteButton.type = "button";
+        orderDeleteButton.setAttribute("aria-label", "Cancelar comanda");
+        orderDeleteButton.textContent = "Cancelar";
+
+        const orderDoneButton = document.createElement("button");
+        orderDoneButton.className = "orderPreparingButtons is-primary";
+        orderDoneButton.type = "button";
+        orderDoneButton.setAttribute(
+          "aria-label",
+          "Marcar comanda como concluída",
+        );
+        orderDoneButton.textContent = "Confirmar";
+
+        orderDoneButton.addEventListener("click", async () => {
+          if (!orderId) {
+            snackbar.error("Não foi possível identificar a comanda.");
+            return;
+          }
+
+          orderDoneButton.disabled = true;
+          orderDeleteButton.disabled = true;
+
+          try {
+            await api.confirmComanda(orderId);
+            order.status = ORDER_STATUS_OPTIONS[2].value;
+            order.Status = ORDER_STATUS_OPTIONS[2].value;
+            renderOrders();
+            snackbar.success("Comanda marcada como concluída.");
+          } catch (error) {
+            console.error("Erro ao confirmar comanda:", error);
+            snackbar.error(
+              error.message || "Não foi possível confirmar a comanda.",
+            );
+            orderDoneButton.disabled = false;
+            orderDeleteButton.disabled = false;
+          }
+        });
+
+        orderDeleteButton.addEventListener("click", async () => {
+          if (!orderId) {
+            snackbar.error("Não foi possível identificar a comanda.");
+            return;
+          }
+
+          orderDoneButton.disabled = true;
+          orderDeleteButton.disabled = true;
+
+          try {
+            await api.updateComanda(orderId, {
+              status: ORDER_STATUS_OPTIONS[3].value,
+              metodoDePagamento: order.metodoDePagamento,
+            });
+            order.status = ORDER_STATUS_OPTIONS[3].value;
+            order.Status = ORDER_STATUS_OPTIONS[3].value;
+            renderOrders();
+            snackbar.warning("Comanda cancelada.");
+          } catch (error) {
+            console.error("Erro ao cancelar comanda:", error);
+            snackbar.error(
+              error.message || "Não foi possível cancelar a comanda.",
+            );
+            orderDoneButton.disabled = false;
+            orderDeleteButton.disabled = false;
+          }
+        });
+
+        actions.appendChild(orderDeleteButton);
+        actions.appendChild(orderDoneButton);
+        actionsPanel.appendChild(actions);
+      }
+
+      body.appendChild(itemsPanel);
+      body.appendChild(actionsPanel);
+
+      card.appendChild(header);
+      card.appendChild(body);
+      card.classList.add("is-collapsed");
+
+      expandButton.addEventListener("click", () => {
+        const isCollapsed = card.classList.toggle("is-collapsed");
+        const isExpanded = !isCollapsed;
+        expandButton.setAttribute("aria-expanded", String(isExpanded));
+
+        const buttonLabel = expandButton.querySelector(".orderExpandLabel");
+        if (buttonLabel) {
+          buttonLabel.textContent = isExpanded
+            ? "Ocultar detalhes"
+            : "Ver detalhes";
+        }
+      });
+
+      gridSection.appendChild(card);
+    });
+  }
+
+  openOrderWizard.addEventListener("click", async () => {
+    fillTableOptions();
+    await Promise.all([fillProductOptions(), fillCustomerOptions()]);
+    openWizard();
+  });
+
+  wizardCancel.addEventListener("click", closeWizard);
+
+  wizardSection.addEventListener("click", (e) => {
+    if (e.target === wizardSection) {
+      closeWizard();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && wizardSection.classList.contains("is-open")) {
+      closeWizard();
+    }
+  });
+
+  wizardBack.addEventListener("click", () => {
+    if (currentStep > 1) {
+      showWizardStep(currentStep - 1);
+    }
+  });
+
+  wizardNext.addEventListener("click", () => {
+    if (currentStep === 1) {
+      if (!cartItems.length) {
+        snackbar.warning("Adicione pelo menos um item para continuar.");
+        return;
+      }
+      showWizardStep(2);
+      return;
+    }
+
+    if (currentStep === 2) {
+      if (!orderType.value) {
+        snackbar.warning("Selecione o tipo de atendimento para continuar.");
+        return;
+      }
+      showWizardStep(3);
+      return;
+    }
+
+    createOrderFromWizard();
+  });
+
+  orderType.addEventListener("change", () => {
+    updateAttendanceFields();
+  });
+
+  if (orderCustomer) {
+    orderCustomer.addEventListener("change", () => {
+      updateSelectedCustomerInfo(orderCustomer.value);
+    });
+  }
+
+  addOrderItem.addEventListener("click", () => {
+    const productId = Number(orderProduct.value);
+    const quantity = Number(orderQuantity.value || 1);
+
+    if (!productId) {
+      snackbar.warning("Selecione um item do cardápio.");
+      return;
+    }
+
+    if (quantity < 1) {
+      snackbar.warning("A quantidade deve ser maior que zero.");
+      return;
+    }
+
+    const selectedProduct = products.find(
+      (product) => Number(product.id ?? product.produtoId) === productId,
+    );
+    if (!selectedProduct) return;
+
+    cartItems.push({
+      uid: `${Date.now()}-${Math.random()}`,
+      produtoId: productId,
+      produtoNome: selectedProduct.nome,
+      categoria: selectedProduct.categoria,
+      quantidade: quantity,
+      precoUnitario: Number(selectedProduct.preco),
+      image: getProductCategoryImage(
+        selectedProduct.categoria,
+        selectedProduct.nome,
+      ),
+    });
+
+    renderCart();
+    snackbar.info("Item adicionado ao pedido.");
+  });
+
+  loadOrders();
+  handlePendingAction();
+})();
