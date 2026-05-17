@@ -254,7 +254,11 @@ class ApiService {
   }
 
   async authenticateFoodtruck(data) {
-    return this.request("/api/v1/cadastros/foodtrucks/autenticar", "POST", data);
+    return this.request(
+      "/api/v1/cadastros/foodtrucks/autenticar",
+      "POST",
+      data,
+    );
   }
 
   async verifyFoodtruckEmail(data) {

@@ -177,7 +177,10 @@ async function migrateLegacyStoredAccounts() {
 
     localStorage.removeItem(STORAGE_KEYS.account);
   } catch (error) {
-    console.warn("Não foi possível migrar contas antigas para o backend.", error);
+    console.warn(
+      "Não foi possível migrar contas antigas para o backend.",
+      error,
+    );
   }
 }
 
@@ -529,11 +532,7 @@ export function initializeLandingAuth() {
       window.location.href = redirectUrl;
     } catch (error) {
       loginSubmitting = false;
-      setStatus(
-        authStatus,
-        error.message || "Credenciais inválidas.",
-        "error",
-      );
+      setStatus(authStatus, error.message || "Credenciais inválidas.", "error");
     }
   });
 
@@ -747,10 +746,7 @@ export function initializeRecoveryPage() {
     );
   }
 
-  if (
-    emailToResume &&
-    emailToResume
-  ) {
+  if (emailToResume && emailToResume) {
     setRecoveryEmail(emailToResume);
     showResetStage(emailToResume);
   }
@@ -796,9 +792,7 @@ export function initializeRecoveryPage() {
     const newPassword = normalizeText(passwordInput?.value);
     const confirmPassword = normalizeText(confirmPasswordInput?.value);
 
-    if (
-      !emailValue
-    ) {
+    if (!emailValue) {
       setStatus(
         authStatus,
         "Nenhuma solicitação válida de recuperação foi encontrada.",
