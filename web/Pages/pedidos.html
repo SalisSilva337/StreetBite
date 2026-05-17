@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Comandas</title>
     <link rel="stylesheet" href="../Styles/pedidos.css" />
     <script src="../Scripts/pedidos.js" type="module"></script>
   </head>
@@ -11,8 +11,8 @@
     <main class="main">
       <section class="labelSection">
         <div>
-          <h1>Pedidos</h1>
-          <h2>Lista de Pedidos</h2>
+          <h1>Comandas</h1>
+          <h2>Lista de Comandas</h2>
         </div>
         <nav>
           <button
@@ -28,21 +28,21 @@
           </a>
         </nav>
       </section>
+      <section class="ordersFilterSection" aria-label="Filtrar comandas">
+        <div class="ordersFilterButtons"></div>
+      </section>
       <section class="gridSection"></section>
 
       <section
         class="wizardSection"
         id="orderWizard"
-        aria-label="Assistente de criação de pedido"
+        aria-label="Assistente de criação de comanda"
       >
         <div class="wizardContainer">
           <aside class="wizardVisual" aria-hidden="true">
             <div>
               <h3 class="wizardVisualTitle">StreetBite Orders</h3>
-              <p>
-                Crie um novo pedido em um fluxo guiado sem sair da tela de
-                pedidos.
-              </p>
+              <p>Crie uma nova comanda em um fluxo guiado sem sair da tela.</p>
             </div>
             <p class="wizardVisualStep">3 passos para concluir</p>
           </aside>
@@ -50,7 +50,7 @@
           <div class="wizardMain">
             <header class="wizardHeader">
               <h2 class="wizardTitle" id="orderWizardTitle">
-                Assistente de Criação de Pedido
+                Assistente de Criação de Comanda
               </h2>
               <p class="wizardSubtitle" id="orderWizardSubtitle">
                 Monte os itens, informe o atendimento e finalize os dados.

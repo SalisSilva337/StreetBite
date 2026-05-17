@@ -23,7 +23,7 @@ FrontEnd/
 │   └── Iframes/
 │       ├── home.html
 │       ├── menu.html
-│       ├── pedidos.html
+│       ├── comandas.html
 │       └── settings.html
 ├── Scripts/
 ├── Styles/
@@ -57,7 +57,7 @@ FrontEnd/
 - remove o script anterior e injeta o novo script;
 - mantém o estado do tema no `localStorage`.
 
-As telas `menu.js` e `pedidos.js` são carregadas como **module scripts** porque importam helpers compartilhados.
+As telas `menu.js` e `comandas.js` são carregadas como **module scripts** porque importam helpers compartilhados.
 
 ### 4. Comunicação com a API
 
@@ -73,12 +73,21 @@ Ele:
 
 ## Telas principais
 
+<<<<<<< Updated upstream
 | Tela | Responsabilidade |
 |---|---|
 | Home | Visão geral da operação |
 | Menu | CRUD de produtos |
 | Pedidos | CRUD de comandas e itens |
 | Settings | Tema e configurações |
+=======
+| Tela     | Responsabilidade         |
+| -------- | ------------------------ |
+| Home     | Visão geral da operação  |
+| Menu     | CRUD de produtos         |
+| Comandas | CRUD de comandas e itens |
+| Settings | Tema e configurações     |
+>>>>>>> Stashed changes
 
 ## Arquitetura visual e UX
 

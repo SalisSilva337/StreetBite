@@ -16,6 +16,7 @@ import { getShopPickupCep } from "./storeAuth.js";
   const api = new ApiService();
 
   const gridSection = document.querySelector(".gridSection");
+  const ordersFilterButtons = document.querySelector(".ordersFilterButtons");
   const openOrderWizard = document.querySelector("#openOrderWizard");
 
   const wizardSection = document.querySelector("#orderWizard");
@@ -42,6 +43,32 @@ import { getShopPickupCep } from "./storeAuth.js";
   let customers = [];
   let cartItems = [];
   let orders = [];
+  let currentOrderFilter = "all";
+
+  const ORDER_FILTER_OPTIONS = [
+    {
+      id: "all",
+      label: "Todos",
+      matches: () => true,
+    },
+    {
+      id: "progress",
+      label: "Em andamento",
+      matches: (status) =>
+        status?.value === ORDER_STATUS_OPTIONS[0].value ||
+        status?.value === ORDER_STATUS_OPTIONS[1].value,
+    },
+    {
+      id: "done",
+      label: "Concluídos",
+      matches: (status) => status?.value === ORDER_STATUS_OPTIONS[2].value,
+    },
+    {
+      id: "canceled",
+      label: "Cancelados",
+      matches: (status) => status?.value === ORDER_STATUS_OPTIONS[3].value,
+    },
+  ];
 
   function formatCurrency(value) {
     return Number(value).toFixed(2);
@@ -136,6 +163,60 @@ import { getShopPickupCep } from "./storeAuth.js";
 
   function getOrderStatusPresentation(status) {
     return status ?? ORDER_STATUS_OPTIONS[0];
+  }
+
+  function getOrderFilterStatus(order) {
+    return resolveOrderStatus(order);
+  }
+
+  function matchesSelectedOrderFilter(order) {
+    const filterOption = ORDER_FILTER_OPTIONS.find(
+      (option) => option.id === currentOrderFilter,
+    );
+
+    if (!filterOption) {
+      return true;
+    }
+
+    return filterOption.matches(getOrderFilterStatus(order));
+  }
+
+  function getVisibleOrders() {
+    return orders.filter((order) => matchesSelectedOrderFilter(order));
+  }
+
+  function renderOrderFilters() {
+    if (!ordersFilterButtons) {
+      return;
+    }
+
+    ordersFilterButtons.innerHTML = "";
+
+    ORDER_FILTER_OPTIONS.forEach((option) => {
+      const button = document.createElement("button");
+      const count = orders.filter((order) =>
+        option.matches(getOrderFilterStatus(order)),
+      ).length;
+
+      button.type = "button";
+      button.className = "ordersFilterButton";
+
+      if (option.id === currentOrderFilter) {
+        button.classList.add("is-active");
+      }
+
+      button.innerHTML = `
+        <span>${option.label}</span>
+        <strong>${count}</strong>
+      `;
+
+      button.addEventListener("click", () => {
+        currentOrderFilter = option.id;
+        renderOrders();
+      });
+
+      ordersFilterButtons.appendChild(button);
+    });
   }
 
   function resolveCustomerName(order) {
@@ -284,7 +365,7 @@ import { getShopPickupCep } from "./storeAuth.js";
 
       snackbar.success("Pedido criado com sucesso.");
       closeWizard();
-      await window.loadPage("requests");
+      await window.loadPage("comandas");
     } catch (error) {
       console.error("Erro ao criar pedido:", error);
       snackbar.error(error.message || "Não foi possível criar o pedido.");
@@ -315,7 +396,22 @@ import { getShopPickupCep } from "./storeAuth.js";
   function renderOrders() {
     gridSection.innerHTML = "";
 
-    orders.forEach((order) => {
+    renderOrderFilters();
+
+    const visibleOrders = getVisibleOrders();
+
+    if (visibleOrders.length === 0) {
+      const emptyState = document.createElement("p");
+      emptyState.className = "gridSectionEmpty";
+      emptyState.textContent =
+        currentOrderFilter === "all"
+          ? "Nenhum pedido cadastrado."
+          : "Nenhum pedido encontrado para este filtro.";
+      gridSection.appendChild(emptyState);
+      return;
+    }
+
+    visibleOrders.forEach((order) => {
       const orderId = resolveComandaId(order);
       const statusInfo = getOrderStatusPresentation(resolveOrderStatus(order));
       const customerName = resolveCustomerName(order);
@@ -479,10 +575,12 @@ import { getShopPickupCep } from "./storeAuth.js";
           orderDeleteButton.disabled = true;
 
           try {
-            await api.deleteComanda(orderId);
-            orders = orders.filter(
-              (currentOrder) => resolveComandaId(currentOrder) !== orderId,
-            );
+            await api.updateComanda(orderId, {
+              status: ORDER_STATUS_OPTIONS[3].value,
+              metodoDePagamento: order.metodoDePagamento,
+            });
+            order.status = ORDER_STATUS_OPTIONS[3].value;
+            order.Status = ORDER_STATUS_OPTIONS[3].value;
             renderOrders();
             snackbar.warning("Pedido cancelado.");
           } catch (error) {
