@@ -102,6 +102,48 @@ npm run dev
 
 CESMAC AL — Sistemas de Informação
 
+## Resultados dos testes de usabilidade
+
+Resultados avaliados com base nos casos de teste definidos na [especificação funcional](./documentacaoNova.md).
+
+### CT01 — Fluxo de Onboarding e Criação de Negócio
+
+**Status:** Aprovado com ressalvas.
+
+- A validação dos campos desrespeita a WCAG 2, pois a indicação de erro ocorre apenas por uma mudança sutil de cor do campo, de verde para vermelho.
+- A validação de duplicidade de CNPJ/CPF não aponta para o campo específico; o sistema exibe apenas o texto genérico "foodtruck ja cadastrado".
+- Após o cadastro, o sistema não redireciona diretamente para a página inicial, mas para a tela de login.
+- A autenticação é feita em `localStorage`, causando erro ao cadastrar um segundo usuário: o comportamento impede completamente a autenticação do cadastro anterior.
+
+### CT02 — Manutenção de Cardápio e Exclusão Lógica
+
+**Status:** Reprovado.
+
+- O cadastro de item está funcionando corretamente.
+- O cadastro de pedido está funcionando quase corretamente, porém não deveria exigir cadastro de cliente exceto em pedidos do tipo delivery.
+- A exclusão de item não está adequada, pois o sistema não permite excluir itens já presentes em pedido.
+
+### CT03 — Ciclo de Vida da Comanda e Adição Tardia
+
+**Status:** Reprovado.
+
+- O fluxo inicial de pedido está funcionando corretamente, com as ressalvas já citadas no CT02.
+- Não é possível editar um pedido: após criado, o pedido permanece inalterado até ser fechado.
+
+### CT04 — Finalização e Pagamento Manual
+
+**Status:** Aprovado.
+
+- A forma de pagamento já é selecionada no início, na tela de criação do pedido.
+- É possível confirmar e finalizar o pedido corretamente.
+- A filtragem de lista ainda não está presente, mas o fluxo principal não fica comprometido.
+
+### CT05 — Loop de Cadastro de Produtos
+
+**Status:** Aprovado.
+
+- O loop de cadastro de produtos está presente e funcional.
+
 ## Status
 
 Projeto acadêmico em evolução.
