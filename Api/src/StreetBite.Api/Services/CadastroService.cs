@@ -67,12 +67,12 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
     public async Task<Result<FoodtruckViewDTO>> CreateFoodtruckAsync(FoodtruckCadastroRequest request, CancellationToken cancellationToken = default)
     {
         var normalizedName = request.Nome.Trim();
-        var normalizedEmail = request.Email.Trim();
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
         var normalizedPhone = string.IsNullOrWhiteSpace(request.Telefone) ? null : request.Telefone.Trim();
         var normalizedDocument = request.Documento.Trim();
 
         var truckExists = await dbContext.Foodtrucks.AnyAsync(
-            x => x.Documento == normalizedDocument || x.Email == normalizedEmail,
+            x => x.Documento == normalizedDocument || EF.Functions.ILike(x.Email, normalizedEmail),
             cancellationToken);
 
         if (truckExists)
@@ -95,6 +95,63 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return Result<FoodtruckViewDTO>.Ok(MapFoodtruck(foodtruck));
+    }
+
+    public async Task<Result<FoodtruckViewDTO>> AuthenticateFoodtruckAsync(FoodtruckLoginRequest request, CancellationToken cancellationToken = default)
+    {
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        var normalizedPassword = request.Senha.Trim();
+
+        var foodtruck = await dbContext.Foodtrucks
+            .AsNoTracking()
+            .Where(x => EF.Functions.ILike(x.Email, normalizedEmail))
+            .OrderByDescending(x => x.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (foodtruck is null)
+        {
+            return Result<FoodtruckViewDTO>.Fail("E-mail não encontrado.", HttpStatusCode.NotFound);
+        }
+
+        if (foodtruck.Senha != normalizedPassword)
+        {
+            return Result<FoodtruckViewDTO>.Fail("Senha incorreta.", HttpStatusCode.Unauthorized);
+        }
+
+        return Result<FoodtruckViewDTO>.Ok(MapFoodtruck(foodtruck));
+    }
+
+    public async Task<Result> VerifyFoodtruckEmailAsync(FoodtruckEmailRequest request, CancellationToken cancellationToken = default)
+    {
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+
+        var exists = await dbContext.Foodtrucks.AnyAsync(
+            x => EF.Functions.ILike(x.Email, normalizedEmail),
+            cancellationToken);
+
+        return exists
+            ? Result.Ok()
+            : Result.Fail("E-mail não encontrado.", HttpStatusCode.NotFound);
+    }
+
+    public async Task<Result> UpdateFoodtruckPasswordAsync(FoodtruckUpdatePasswordRequest request, CancellationToken cancellationToken = default)
+    {
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        var normalizedPassword = request.NovaSenha.Trim();
+
+        var foodtruck = await dbContext.Foodtrucks.FirstOrDefaultAsync(
+            x => EF.Functions.ILike(x.Email, normalizedEmail),
+            cancellationToken);
+
+        if (foodtruck is null)
+        {
+            return Result.Fail("Foodtruck não encontrado.", HttpStatusCode.NotFound);
+        }
+
+        foodtruck.Senha = normalizedPassword;
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Result.Ok();
     }
 
     private static ClienteViewDTO MapCliente(Cliente cliente)

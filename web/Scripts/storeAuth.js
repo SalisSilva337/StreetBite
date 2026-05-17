@@ -96,16 +96,121 @@ function focusLoginForm(rootElement, loginIdentityInput) {
   }
 }
 
-function getAccountStorageValue() {
-  return readJson(localStorage, STORAGE_KEYS.account);
+function normalizeLegacyStoredAccount(account) {
+  if (!account || typeof account !== "object") {
+    return null;
+  }
+
+  const shopName = normalizeText(account.shopName ?? account.Nome);
+  const email = normalizeText(account.email ?? account.Email);
+  const password = normalizeText(account.password ?? account.Senha);
+  const document = normalizeText(account.document ?? account.Documento);
+  const cep = normalizeDigits(account.cep ?? account.Cep);
+  const contact = normalizeDigits(account.contact ?? account.Telefone);
+  const paymentMethod = normalizeText(
+    account.paymentMethod ?? account.FormaPagamento,
+  );
+
+  if (!shopName || !email || !password || !document) {
+    return null;
+  }
+
+  return {
+    shopName,
+    email,
+    password,
+    document,
+    cep,
+    contact,
+    paymentMethod,
+  };
 }
 
-function saveAccount(account) {
-  writeJson(localStorage, STORAGE_KEYS.account, account);
+function readLegacyStoredAccounts() {
+  const storedAccounts = readJson(localStorage, STORAGE_KEYS.account);
+
+  if (Array.isArray(storedAccounts)) {
+    return storedAccounts
+      .map((account) => normalizeLegacyStoredAccount(account))
+      .filter(Boolean);
+  }
+
+  const storedAccount = normalizeLegacyStoredAccount(storedAccounts);
+  return storedAccount ? [storedAccount] : [];
+}
+
+async function migrateLegacyStoredAccounts() {
+  const legacyAccounts = readLegacyStoredAccounts();
+
+  if (!legacyAccounts.length) {
+    return;
+  }
+
+  try {
+    for (const account of legacyAccounts) {
+      const paymentMethod = normalizeEnumValue(
+        account.paymentMethod,
+        PAYMENT_METHOD_OPTIONS,
+      );
+
+      if (!paymentMethod) {
+        continue;
+      }
+
+      try {
+        await api.createFoodtruck({
+          nome: account.shopName,
+          email: account.email,
+          telefone: account.contact || null,
+          documento: account.document,
+          cep: account.cep || null,
+          formaPagamento: paymentMethod,
+          senha: account.password,
+        });
+      } catch (error) {
+        const message = String(error?.message ?? "");
+        if (!/já cadastrado|duplicate|conflict/i.test(message)) {
+          throw error;
+        }
+      }
+    }
+
+    localStorage.removeItem(STORAGE_KEYS.account);
+  } catch (error) {
+    console.warn("Não foi possível migrar contas antigas para o backend.", error);
+  }
+}
+
+const legacyAccountsMigrationPromise = migrateLegacyStoredAccounts();
+
+function normalizeFoodtruckAccount(foodtruck) {
+  if (!foodtruck || typeof foodtruck !== "object") {
+    return null;
+  }
+
+  const shopName = normalizeText(
+    foodtruck.shopName ?? foodtruck.nome ?? foodtruck.Nome,
+  );
+  const email = normalizeText(foodtruck.email ?? foodtruck.Email);
+  const cep = normalizeDigits(foodtruck.cep ?? foodtruck.Cep);
+
+  if (!shopName || !email) {
+    return null;
+  }
+
+  return {
+    shopName,
+    email,
+    cep,
+  };
+}
+
+function getCurrentSessionAccount() {
+  return readJson(localStorage, STORAGE_KEYS.session);
 }
 
 function saveSession(account) {
-  writeJson(sessionStorage, STORAGE_KEYS.session, {
+  writeJson(localStorage, STORAGE_KEYS.session, {
     shopName: account.shopName,
     email: account.email,
     cep: account.cep,
@@ -164,21 +269,21 @@ function maskEmail(email) {
 }
 
 export function getStoredShopAccount() {
-  const account = getAccountStorageValue();
+  const session = getCurrentSessionAccount();
 
-  if (!account) {
+  if (!session) {
     return null;
   }
 
   return {
-    id: Number(account.id ?? 0),
-    shopName: normalizeText(account.shopName),
-    email: normalizeText(account.email),
-    password: normalizeText(account.password),
-    cep: normalizeDigits(account.cep),
-    contact: normalizeDigits(account.contact),
-    document: normalizeText(account.document),
-    paymentMethod: normalizeText(account.paymentMethod),
+    id: 0,
+    shopName: normalizeText(session.shopName),
+    email: normalizeText(session.email),
+    password: "",
+    cep: normalizeDigits(session.cep),
+    contact: "",
+    document: "",
+    paymentMethod: "",
   };
 }
 
@@ -192,6 +297,8 @@ export function initializeLandingAuth() {
   if (!rootElement) {
     return;
   }
+
+  migrateLegacyStoredAccounts();
 
   const authStatus = rootElement.querySelector("[data-auth-status]");
   const tabButtons = rootElement.querySelectorAll("[data-auth-tab]");
@@ -368,7 +475,7 @@ export function initializeLandingAuth() {
     });
   });
 
-  loginView?.addEventListener("submit", (event) => {
+  loginView?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (loginSubmitting) {
@@ -384,33 +491,50 @@ export function initializeLandingAuth() {
 
     const identity = normalizeText(loginIdentityInput?.value);
     const password = normalizeText(loginPasswordInput?.value);
-    const account = getStoredShopAccount();
-
-    if (!account) {
-      setStatus(authStatus, "Cadastre a loja antes de tentar entrar.", "error");
-      return;
-    }
-
-    const identityMatches =
-      identity.toLowerCase() === account.email.toLowerCase();
-
-    if (!identityMatches || password !== account.password) {
-      setStatus(authStatus, "Credenciais inválidas.", "error");
-      return;
-    }
-
+    const email = identity.toLowerCase();
     loginSubmitting = true;
-    saveSession(account);
-    setStatus(
-      authStatus,
-      "Login realizado com sucesso. Abrindo o painel...",
-      "success",
-    );
-    const redirectParam = new URLSearchParams(window.location.search).get(
-      "redirect",
-    );
-    const redirectUrl = redirectParam || "../Pages/streetBite.html";
-    window.location.href = redirectUrl;
+
+    try {
+      await legacyAccountsMigrationPromise;
+
+      const authenticatedFoodtruck = await api.authenticateFoodtruck({
+        email,
+        senha: password,
+      });
+
+      const sessionAccount = normalizeFoodtruckAccount(authenticatedFoodtruck);
+
+      if (!sessionAccount) {
+        loginSubmitting = false;
+        setStatus(
+          authStatus,
+          "Não foi possível ler os dados da conta autenticada.",
+          "error",
+        );
+        return;
+      }
+
+      loginSubmitting = true;
+      saveSession(sessionAccount);
+      setStatus(
+        authStatus,
+        "Login realizado com sucesso. Abrindo o painel...",
+        "success",
+      );
+
+      const redirectParam = new URLSearchParams(window.location.search).get(
+        "redirect",
+      );
+      const redirectUrl = redirectParam || "../Pages/streetBite.html";
+      window.location.href = redirectUrl;
+    } catch (error) {
+      loginSubmitting = false;
+      setStatus(
+        authStatus,
+        error.message || "Credenciais inválidas.",
+        "error",
+      );
+    }
   });
 
   const registerSubmitButton = registerView?.querySelector(
@@ -461,29 +585,6 @@ export function initializeLandingAuth() {
         senha: password,
       })
       .then((createdFoodtruck) => {
-        const account = {
-          id: Number(
-            createdFoodtruck?.foodtruckId ??
-              createdFoodtruck?.FoodtruckId ??
-              createdFoodtruck?.id ??
-              0,
-          ),
-          shopName,
-          email,
-          password,
-          document: documentValue,
-          cep,
-          contact,
-          paymentMethod,
-          paymentMethodLabel: getEnumDescription(
-            PAYMENT_METHOD_OPTIONS,
-            paymentMethod,
-          ),
-          updatedAt: new Date().toISOString(),
-        };
-
-        saveAccount(account);
-        saveSession(account);
         setStatus(
           authStatus,
           "Foodtruck cadastrado com sucesso. Redirecionando para login...",
@@ -522,6 +623,8 @@ export function initializeRecoveryPage() {
   if (!rootElement) {
     return;
   }
+
+  migrateLegacyStoredAccounts();
 
   stripSensitiveQueryParams(["email"]);
 
@@ -614,7 +717,6 @@ export function initializeRecoveryPage() {
   attachPasswordToggle(confirmPasswordInput);
 
   const storedEmail = getRecoveryEmail();
-  const account = getStoredShopAccount();
   const emailToResume = storedEmail;
 
   if (emailInput && emailToResume) {
@@ -647,14 +749,13 @@ export function initializeRecoveryPage() {
 
   if (
     emailToResume &&
-    account &&
-    emailToResume.toLowerCase() === account.email.toLowerCase()
+    emailToResume
   ) {
     setRecoveryEmail(emailToResume);
     showResetStage(emailToResume);
   }
 
-  lookupForm?.addEventListener("submit", (event) => {
+  lookupForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const areFieldsValid = validateAllRecoveryFields(lookupFieldBindings);
@@ -665,21 +766,19 @@ export function initializeRecoveryPage() {
     }
 
     const emailValue = normalizeText(emailInput?.value);
-    const currentAccount = getStoredShopAccount();
 
-    if (
-      !currentAccount ||
-      currentAccount.email.toLowerCase() !== emailValue.toLowerCase()
-    ) {
-      setStatus(authStatus, "E-mail não encontrado.", "error");
-      return;
+    try {
+      await legacyAccountsMigrationPromise;
+
+      await api.verifyFoodtruckEmail({ email: emailValue });
+      setRecoveryEmail(emailValue);
+      showResetStage(emailValue);
+    } catch (error) {
+      setStatus(authStatus, error.message || "E-mail não encontrado.", "error");
     }
-
-    setRecoveryEmail(emailValue);
-    showResetStage(emailValue);
   });
 
-  resetForm?.addEventListener("submit", (event) => {
+  resetForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (recoverySubmitting) {
@@ -696,12 +795,9 @@ export function initializeRecoveryPage() {
     const emailValue = getRecoveryEmail();
     const newPassword = normalizeText(passwordInput?.value);
     const confirmPassword = normalizeText(confirmPasswordInput?.value);
-    const currentAccount = getStoredShopAccount();
 
     if (
-      !emailValue ||
-      !currentAccount ||
-      currentAccount.email.toLowerCase() !== emailValue.toLowerCase()
+      !emailValue
     ) {
       setStatus(
         authStatus,
@@ -718,18 +814,28 @@ export function initializeRecoveryPage() {
 
     recoverySubmitting = true;
 
-    saveAccount({
-      ...currentAccount,
-      password: newPassword,
-      updatedAt: new Date().toISOString(),
-    });
+    try {
+      await legacyAccountsMigrationPromise;
 
-    clearRecoveryEmail();
-    setStatus(
-      authStatus,
-      "Senha atualizada com sucesso. Redirecionando para o login...",
-      "success",
-    );
-    window.location.href = "./store-auth.html?tab=login";
+      await api.updateFoodtruckPassword({
+        email: emailValue,
+        novaSenha: newPassword,
+      });
+
+      clearRecoveryEmail();
+      setStatus(
+        authStatus,
+        "Senha atualizada com sucesso. Redirecionando para o login...",
+        "success",
+      );
+      window.location.href = "./store-auth.html?tab=login";
+    } catch (error) {
+      recoverySubmitting = false;
+      setStatus(
+        authStatus,
+        error.message || "Não foi possível atualizar a senha.",
+        "error",
+      );
+    }
   });
 }

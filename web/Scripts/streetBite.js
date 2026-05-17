@@ -38,7 +38,7 @@ const PAGE_SCRIPT_CACHE_PARAM = "sb_page_load";
 
 function readSidebarSession() {
   try {
-    const rawSession = sessionStorage.getItem("streetbite-store-session");
+    const rawSession = localStorage.getItem("streetbite-store-session");
     if (!rawSession) {
       return null;
     }
@@ -165,7 +165,7 @@ function syncAccessibilityButtonIntoStack() {
 }
 
 function handleLogout() {
-  sessionStorage.removeItem("streetbite-store-session");
+  localStorage.removeItem("streetbite-store-session");
   updateSidebarProfile();
   window.location.href = "../index.html";
 }

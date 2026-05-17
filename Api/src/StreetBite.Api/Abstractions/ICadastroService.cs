@@ -11,4 +11,10 @@ public interface ICadastroService
     Task<Result<ClienteViewDTO>> CreateClienteAsync(ClienteCadastroRequest request, CancellationToken cancellationToken = default);
 
     Task<Result<FoodtruckViewDTO>> CreateFoodtruckAsync(FoodtruckCadastroRequest request, CancellationToken cancellationToken = default);
+
+    Task<Result<FoodtruckViewDTO>> AuthenticateFoodtruckAsync(FoodtruckLoginRequest request, CancellationToken cancellationToken = default);
+
+    Task<Result> VerifyFoodtruckEmailAsync(FoodtruckEmailRequest request, CancellationToken cancellationToken = default);
+
+    Task<Result> UpdateFoodtruckPasswordAsync(FoodtruckUpdatePasswordRequest request, CancellationToken cancellationToken = default);
 }

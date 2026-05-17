@@ -252,6 +252,26 @@ class ApiService {
   async createFoodtruck(data) {
     return this.request("/api/v1/cadastros/foodtrucks", "POST", data);
   }
+
+  async authenticateFoodtruck(data) {
+    return this.request("/api/v1/cadastros/foodtrucks/autenticar", "POST", data);
+  }
+
+  async verifyFoodtruckEmail(data) {
+    return this.request(
+      "/api/v1/cadastros/foodtrucks/recuperacao/validar",
+      "POST",
+      data,
+    );
+  }
+
+  async updateFoodtruckPassword(data) {
+    return this.request(
+      "/api/v1/cadastros/foodtrucks/recuperacao/senha",
+      "PATCH",
+      data,
+    );
+  }
 }
 
 // Exemplo de uso:

@@ -2,7 +2,7 @@ const SESSION_KEY = "streetbite-store-session";
 
 export function requireAuth() {
   try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
+    const raw = localStorage.getItem(SESSION_KEY);
     if (!raw) return false;
     const session = JSON.parse(raw);
     return Boolean(session?.shopName);
