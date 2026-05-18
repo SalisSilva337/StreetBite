@@ -1,0 +1,47 @@
+Foodtrucks:
+
+Burguer na Brasa
+contato@burguernabrasa.com
+Brasa2026
+529.982.247-25
+57038-220
+(82) 9 9123-4455
+
+Taco Street Maceió
+atendimento@tacostreet.com
+TacoMix88
+168.995.350-09
+57035-160
+(82) 9 9876-2211
+
+Açaí Turbo
+suporte@acaiturbo.com
+TurboAcai55
+453.178.287-91
+57037-540
+(82) 9 9555-7788
+
+
+
+Clientes:
+
+Lucas Andrade
+lucas.andrade@email.com
+(82) 9 9811-2233
+57035-480
+145
+Rua das Palmeiras
+
+Marina Souza
+marina.souza@email.com
+(82) 9 9777-6644
+57038-120
+87
+Avenida Beira Mar
+
+Carlos Henrique
+carlosh@email.com
+(82) 9 9888-1122
+57037-300
+421
+Travessa São Jorge
