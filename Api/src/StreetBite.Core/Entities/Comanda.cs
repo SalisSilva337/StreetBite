@@ -9,6 +9,10 @@ public sealed class Comanda : BaseEntity
 
     public string ClienteNome { get; set; } = string.Empty;
 
+    public ETipoAtendimento TipoAtendimento { get; set; } = ETipoAtendimento.DeliveryRetirada;
+
+    public int? NumeroMesa { get; set; }
+
     public string CodigoPedido { get; set; } = string.Empty;
 
     public EComandaStatus Status { get; set; }

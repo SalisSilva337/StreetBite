@@ -1,35 +1,38 @@
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace StreetBite.Infra.Data.Migrations
 {
+    /// <inheritdoc />
     public partial class AddAtendimentoAndMesaToComandas : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "TipoAtendimento",
-                table: "comandas",
-                type: "text",
-                nullable: false,
-                defaultValue: "DeliveryRetirada");
-
             migrationBuilder.AddColumn<int>(
                 name: "NumeroMesa",
                 table: "comandas",
                 type: "integer",
                 nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "TipoAtendimento",
+                table: "comandas",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0);
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "TipoAtendimento",
+                name: "NumeroMesa",
                 table: "comandas");
 
             migrationBuilder.DropColumn(
-                name: "NumeroMesa",
+                name: "TipoAtendimento",
                 table: "comandas");
         }
     }
