@@ -193,8 +193,8 @@ const pages = {
   menu: {
     html: "menu.html",
   },
-  requests: {
-    html: "pedidos.html",
+  comandas: {
+    html: "comandas.html",
   },
 };
 
@@ -202,13 +202,13 @@ const pages = {
 const hrefToPageKey = {
   "home.html": "home",
   "menu.html": "menu",
-  "pedidos.html": "requests",
+  "comandas.html": "comandas",
 };
 
 const pageToSidebarButton = {
   home: homeButton,
   menu: menuButton,
-  requests: ordersButton,
+  comandas: ordersButton,
 };
 
 let currentPageAssets = [];
@@ -240,7 +240,7 @@ async function triggerMobileQuickAction(actionType) {
 
   if (actionType === "create-order") {
     window.__streetbitePendingAction = "open-order-wizard";
-    await loadPage("requests");
+    await loadPage("comandas");
   }
 
   closeMobileQuickActions();
@@ -420,7 +420,7 @@ menuButton.addEventListener("click", (e) => {
 });
 ordersButton.addEventListener("click", (e) => {
   e.preventDefault();
-  loadPage("requests");
+  loadPage("comandas");
 });
 
 if (mobileActionButton) {

@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Comandas</title>
-    <link rel="stylesheet" href="../Styles/pedidos.css" />
-    <script src="../Scripts/pedidos.js" type="module"></script>
+    <link rel="stylesheet" href="../Styles/comandas.css" />
+    <script src="../Scripts/comandas.js" type="module"></script>
   </head>
   <body>
     <main class="main">
@@ -19,9 +19,9 @@
             class="createOrder"
             id="openOrderWizard"
             type="button"
-            aria-label="Criar novo pedido"
+            aria-label="Criar nova comanda"
           >
-            Criar novo Pedido
+            Criar nova comanda
           </button>
           <a class="createOrder createCustomer" href="customer-auth.html">
             Cadastrar novo Cliente
@@ -53,7 +53,8 @@
                 Assistente de Criação de Comanda
               </h2>
               <p class="wizardSubtitle" id="orderWizardSubtitle">
-                Monte os itens, informe o atendimento e finalize os dados.
+                Monte os itens, informe o atendimento e finalize os dados da
+                comanda.
               </p>
             </header>
 
@@ -81,8 +82,8 @@
                       <option value="" hidden>--- Selecione ---</option>
                     </select>
                     <span id="orderProductHelp" class="field-help"
-                      >Escolha um item do cardápio para adicionar ao
-                      pedido.</span
+                      >Escolha um item do cardápio para adicionar à
+                      comanda.</span
                     >
                   </div>
 
@@ -115,7 +116,7 @@
                   </div>
 
                   <div class="wizardFieldGroup">
-                    <label class="wizardFieldLabel">Resumo do pedido</label>
+                    <label class="wizardFieldLabel">Resumo da comanda</label>
                     <div class="orderCart" id="orderCart"></div>
                     <div class="orderSubtotal" id="orderSubtotal">
                       Subtotal: R$0.00
@@ -128,7 +129,7 @@
                 <h3 class="wizardStepTitle">Passo 2: Tipo de Atendimento</h3>
 
                 <fieldset class="wizardFieldset">
-                  <legend class="wizardLegend">Modalidade do pedido</legend>
+                  <legend class="wizardLegend">Modalidade da comanda</legend>
 
                   <div class="wizardFieldGroup">
                     <label class="wizardFieldLabel" for="orderType"
@@ -145,26 +146,27 @@
                       aria-describedby="orderTypeHelp"
                     >
                       <option value="" hidden>--- Selecione ---</option>
-                      <option value="delivery">Delivery</option>
-                      <option value="retirada">Retirada/Comer no Local</option>
+                      <option value="0">Delivery/Retirada</option>
+                      <option value="1">Comer no local</option>
                     </select>
                     <span id="orderTypeHelp" class="field-help"
-                      >Escolha se o pedido será entregue ou retirado no
-                      local.</span
+                      >Escolha o tipo de atendimento da comanda.</span
                     >
                   </div>
                 </fieldset>
               </div>
 
               <div class="wizardStep hidden" id="orderWizardStepDetails">
-                <h3 class="wizardStepTitle">Passo 3: Dados do Cliente</h3>
+                <h3 class="wizardStepTitle">Passo 3: Dados da Comanda</h3>
 
                 <fieldset class="wizardFieldset">
-                  <legend class="wizardLegend">Cliente e pagamento</legend>
+                  <legend class="wizardLegend">
+                    Identificação e pagamento
+                  </legend>
 
                   <div class="wizardGrid">
                     <div>
-                      <div class="wizardFieldGroup">
+                      <div class="wizardFieldGroup" id="orderCustomerGroup">
                         <label class="wizardFieldLabel" for="orderCustomer"
                           >Cliente cadastrado
                           <span class="field-required" aria-hidden="true"
@@ -183,6 +185,28 @@
                         <small class="wizardFieldHint" id="orderCustomerInfo"
                           >Selecione um cliente já cadastrado para
                           continuar.</small
+                        >
+                      </div>
+
+                      <div class="wizardFieldGroup hidden" id="orderTableGroup">
+                        <label class="wizardFieldLabel" for="orderTable"
+                          >Mesa
+                          <span class="field-required" aria-hidden="true"
+                            >*</span
+                          ></label
+                        >
+                        <select
+                          class="wizardField"
+                          id="orderTable"
+                          required
+                          aria-required="true"
+                          aria-describedby="orderTableHelp"
+                        >
+                          <option value="" hidden>--- Selecione ---</option>
+                        </select>
+                        <small class="wizardFieldHint" id="orderTableHelp"
+                          >Selecione uma mesa de 01 a 10 para o atendimento no
+                          local.</small
                         >
                       </div>
 
@@ -223,7 +247,7 @@
                   class="wizardButton is-secondary"
                   id="orderWizardCancel"
                   type="button"
-                  aria-label="Cancelar criação do pedido"
+                  aria-label="Cancelar criação da comanda"
                 >
                   Cancelar
                 </button>

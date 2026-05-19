@@ -127,7 +127,7 @@ export function initializeCustomerAuth() {
       return;
     }
 
-    window.location.href = "pedidos.html";
+    window.location.href = "comandas.html";
   }
 
   backButton?.addEventListener("click", goBackToPreviousPage);

@@ -16,12 +16,24 @@ public sealed class ComandaService(
 {
     public async Task<Result<ComandaViewDTO>> AddComandaAsync(ComandaCreateRequest request, CancellationToken cancellationToken = default)
     {
-        var cliente = await dbContext.Clientes
-            .FirstOrDefaultAsync(x => x.Id == request.ClienteId, cancellationToken);
+        Cliente? cliente = null;
+        var clienteNome = string.Empty;
 
-        if (cliente is null)
+        if (request.TipoAtendimento == ETipoAtendimento.DeliveryRetirada)
         {
-            return Result<ComandaViewDTO>.Fail("Cliente não encontrado.", HttpStatusCode.NotFound);
+            cliente = await dbContext.Clientes
+                .FirstOrDefaultAsync(x => x.Id == request.ClienteId, cancellationToken);
+
+            if (cliente is null)
+            {
+                return Result<ComandaViewDTO>.Fail("Cliente não encontrado.", HttpStatusCode.NotFound);
+            }
+
+            clienteNome = cliente.Nome;
+        }
+        else
+        {
+            clienteNome = $"Mesa {request.NumeroMesa:00}";
         }
 
         var codigoPedido = await GenerateCodigoPedidoAsync(cancellationToken);
@@ -35,7 +47,7 @@ public sealed class ComandaService(
         var comanda = new Comanda
         {
             Cliente = cliente,
-            ClienteNome = cliente.Nome,
+            ClienteNome = clienteNome,
             CodigoPedido = codigoPedido,
             Status = EComandaStatus.Pendente,
             Subtotal = decimal.Zero,
@@ -129,16 +141,19 @@ public sealed class ComandaService(
 
     public async Task<Result> DeleteComandaAsync(long id, CancellationToken cancellationToken = default)
     {
-        if (!await dbContext.Comandas.AnyAsync(x => x.Id == id, cancellationToken))
+        var rowsAffected = await dbContext.Comandas
+            .Where(x => x.Id == id)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(c => c.Status, EComandaStatus.Cancelado)
+                .SetProperty(c => c.ModifiedAt, DateTime.UtcNow),
+                cancellationToken);
+
+        if (rowsAffected == 0)
         {
             return Result.Fail("Comanda não encontrada.", HttpStatusCode.NotFound);
         }
 
-        await dbContext.Comandas
-            .Where(x => x.Id == id)
-            .ExecuteDeleteAsync(cancellationToken);
-
-        return Result.Ok("Comanda removida com sucesso.");
+        return Result.Ok("Comanda cancelada com sucesso.");
     }
 
     public async Task<Result<ItemViewDTO>> AddItemAsync(ItemRequest request, CancellationToken cancellationToken = default)
@@ -262,10 +277,25 @@ public sealed class ComandaService(
             .Select(MapItem)
             .ToList();
 
+        var isLocalOrder = comanda.ClienteNome.StartsWith("Mesa ", StringComparison.OrdinalIgnoreCase);
+        var tipoAtendimento = isLocalOrder ? ETipoAtendimento.ComerNoLocal : ETipoAtendimento.DeliveryRetirada;
+        int? numeroMesa = null;
+
+        if (isLocalOrder && comanda.ClienteNome.Length >= 7)
+        {
+            var mesaTexto = comanda.ClienteNome[5..].Trim();
+            if (int.TryParse(mesaTexto, out var mesaNumero))
+            {
+                numeroMesa = mesaNumero;
+            }
+        }
+
         return new ComandaViewDTO(
             comanda.Id,
             items,
             comanda.ClienteNome ?? comanda.Cliente?.Nome ?? string.Empty,
+            tipoAtendimento,
+            numeroMesa,
             comanda.CodigoPedido,
             comanda.Subtotal,
             comanda.Status,

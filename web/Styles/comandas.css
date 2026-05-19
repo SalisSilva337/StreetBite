@@ -247,7 +247,7 @@ h6 {
 .orderCardHeader {
   background: var(--order-grid-accent);
   display: grid;
-  grid-template-columns: 1.1fr 1.25fr 0.9fr 0.95fr 1.1fr auto;
+  grid-template-columns: 1.05fr 1.15fr 0.9fr 0.95fr 1fr 0.95fr 1.05fr auto;
   gap: 12px;
   padding: 14px 18px;
   border-bottom: 1px solid rgb(255 255 255 / 18%);
@@ -271,6 +271,7 @@ h6 {
   color: #fff;
   font-size: 16px;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .orderHeaderFieldCode {

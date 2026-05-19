@@ -7,6 +7,7 @@ import {
 } from "./productCategories.js";
 import {
   getEnumByValue,
+  ORDER_TYPE_OPTIONS,
   ORDER_STATUS_OPTIONS,
   PAYMENT_METHOD_OPTIONS,
 } from "./enumMappings.js";
@@ -28,6 +29,8 @@ import { getShopPickupCep } from "./storeAuth.js";
   const wizardCancel = document.querySelector("#orderWizardCancel");
 
   const orderType = document.querySelector("#orderType");
+  const orderCustomerGroup = document.querySelector("#orderCustomerGroup");
+  const orderTableGroup = document.querySelector("#orderTableGroup");
 
   const orderPayment = document.querySelector("#orderPayment");
   const orderProduct = document.querySelector("#orderProduct");
@@ -36,6 +39,7 @@ import { getShopPickupCep } from "./storeAuth.js";
   const orderCart = document.querySelector("#orderCart");
   const orderSubtotal = document.querySelector("#orderSubtotal");
   const orderCustomer = document.querySelector("#orderCustomer");
+  const orderTable = document.querySelector("#orderTable");
   const orderCustomerInfo = document.querySelector("#orderCustomerInfo");
 
   let currentStep = 1;
@@ -94,7 +98,7 @@ import { getShopPickupCep } from "./storeAuth.js";
     wizardStepLocal.classList.toggle("hidden", step !== 2);
     wizardStepDetails.classList.toggle("hidden", step !== 3);
     wizardBack.disabled = step === 1;
-    wizardNext.textContent = step === 3 ? "Criar Pedido" : "Próximo";
+    wizardNext.textContent = step === 3 ? "Criar Comanda" : "Próximo";
   }
 
   function renderCart() {
@@ -131,6 +135,9 @@ import { getShopPickupCep } from "./storeAuth.js";
     orderPayment.value = "";
     orderProduct.value = "";
     orderQuantity.value = 1;
+    if (orderTable) {
+      orderTable.value = "";
+    }
     if (orderCustomer) {
       orderCustomer.value = "";
     }
@@ -140,6 +147,7 @@ import { getShopPickupCep } from "./storeAuth.js";
     }
     cartItems = [];
     renderCart();
+    updateAttendanceFields();
     showWizardStep(1);
   }
 
@@ -163,6 +171,34 @@ import { getShopPickupCep } from "./storeAuth.js";
 
   function getOrderStatusPresentation(status) {
     return status ?? ORDER_STATUS_OPTIONS[0];
+  }
+
+  function getOrderTypePresentation(order) {
+    return (
+      getEnumByValue(
+        ORDER_TYPE_OPTIONS,
+        order?.tipoAtendimento ?? order?.TipoAtendimento,
+      ) ?? ORDER_TYPE_OPTIONS[0]
+    );
+  }
+
+  function getOrderIdentificationLabel(order) {
+    return getOrderTypePresentation(order)?.value === 1 ? "Mesa" : "Cliente";
+  }
+
+  function getOrderIdentificationValue(order) {
+    if (getOrderTypePresentation(order)?.value === 1) {
+      const tableNumber = Number(order?.numeroMesa ?? order?.NumeroMesa);
+      return Number.isInteger(tableNumber) && tableNumber > 0
+        ? `Mesa ${String(tableNumber).padStart(2, "0")}`
+        : "Mesa";
+    }
+
+    return resolveCustomerName(order);
+  }
+
+  function getFallbackCustomerId() {
+    return resolveCustomerId(customers[0]) ?? null;
   }
 
   function getOrderFilterStatus(order) {
@@ -217,6 +253,52 @@ import { getShopPickupCep } from "./storeAuth.js";
 
       ordersFilterButtons.appendChild(button);
     });
+  }
+
+  function fillTableOptions() {
+    if (!orderTable || orderTable.options.length > 1) {
+      return;
+    }
+
+    for (let tableNumber = 1; tableNumber <= 10; tableNumber += 1) {
+      const option = document.createElement("option");
+      option.value = String(tableNumber);
+      option.textContent = String(tableNumber).padStart(2, "0");
+      orderTable.appendChild(option);
+    }
+  }
+
+  function updateAttendanceFields() {
+    const isLocalOrder =
+      Number(orderType?.value) === ORDER_TYPE_OPTIONS[1].value;
+
+    orderCustomerGroup?.classList.toggle("hidden", isLocalOrder);
+    orderTableGroup?.classList.toggle("hidden", !isLocalOrder);
+
+    if (orderCustomerGroup) {
+      orderCustomerGroup.hidden = isLocalOrder;
+      orderCustomerGroup.style.display = isLocalOrder ? "none" : "";
+    }
+
+    if (orderTableGroup) {
+      orderTableGroup.hidden = !isLocalOrder;
+      orderTableGroup.style.display = !isLocalOrder ? "none" : "";
+    }
+
+    if (orderCustomer) {
+      orderCustomer.required = !isLocalOrder;
+      if (isLocalOrder) {
+        orderCustomer.value = "";
+        updateSelectedCustomerInfo("");
+      }
+    }
+
+    if (orderTable) {
+      orderTable.required = isLocalOrder;
+      if (!isLocalOrder) {
+        orderTable.value = "";
+      }
+    }
   }
 
   function resolveCustomerName(order) {
@@ -315,9 +397,25 @@ import { getShopPickupCep } from "./storeAuth.js";
   }
 
   async function createOrderFromWizard() {
+    const orderTypeValue = Number(orderType?.value);
+    const isLocalOrder = orderTypeValue === ORDER_TYPE_OPTIONS[1].value;
     const customerId = Number(orderCustomer?.value);
+    const tableNumber = Number(orderTable?.value);
+    const fallbackCustomerId = getFallbackCustomerId();
 
-    if (!customerId) {
+    if (isLocalOrder) {
+      if (!tableNumber) {
+        snackbar.warning("Selecione uma mesa para criar a comanda.");
+        return;
+      }
+
+      if (!fallbackCustomerId) {
+        snackbar.warning(
+          "Cadastre ao menos um cliente para permitir comandas no local.",
+        );
+        return;
+      }
+    } else if (!customerId) {
       snackbar.warning("Selecione um cliente cadastrado para criar a comanda.");
       return;
     }
@@ -328,13 +426,15 @@ import { getShopPickupCep } from "./storeAuth.js";
     }
 
     if (!cartItems.length) {
-      snackbar.warning("Adicione pelo menos um item ao pedido.");
+      snackbar.warning("Adicione pelo menos um item à comanda.");
       return;
     }
 
     try {
       const createdComanda = await api.createComanda({
-        clienteId: customerId,
+        clienteId: isLocalOrder ? fallbackCustomerId : customerId,
+        tipoAtendimento: orderTypeValue,
+        numeroMesa: isLocalOrder ? tableNumber : null,
       });
       let comandaId = resolveComandaId(createdComanda);
 
@@ -363,12 +463,12 @@ import { getShopPickupCep } from "./storeAuth.js";
         metodoDePagamento: Number(orderPayment.value),
       });
 
-      snackbar.success("Pedido criado com sucesso.");
+      snackbar.success("Comanda criada com sucesso.");
       closeWizard();
       await window.loadPage("comandas");
     } catch (error) {
-      console.error("Erro ao criar pedido:", error);
-      snackbar.error(error.message || "Não foi possível criar o pedido.");
+      console.error("Erro ao criar comanda:", error);
+      snackbar.error(error.message || "Não foi possível criar a comanda.");
     }
   }
 
@@ -378,8 +478,8 @@ import { getShopPickupCep } from "./storeAuth.js";
       orders = Array.isArray(data) ? data : [];
       renderOrders();
     } catch (error) {
-      console.error("Erro ao carregar pedidos:", error);
-      snackbar.error(error.message || "Não foi possível carregar os pedidos.");
+      console.error("Erro ao carregar comandas:", error);
+      snackbar.error(error.message || "Não foi possível carregar as comandas.");
     }
   }
 
@@ -389,6 +489,7 @@ import { getShopPickupCep } from "./storeAuth.js";
     }
 
     window.__streetbitePendingAction = null;
+    fillTableOptions();
     await Promise.all([fillProductOptions(), fillCustomerOptions()]);
     openWizard();
   }
@@ -405,8 +506,8 @@ import { getShopPickupCep } from "./storeAuth.js";
       emptyState.className = "gridSectionEmpty";
       emptyState.textContent =
         currentOrderFilter === "all"
-          ? "Nenhum pedido cadastrado."
-          : "Nenhum pedido encontrado para este filtro.";
+          ? "Nenhuma comanda cadastrada."
+          : "Nenhuma comanda encontrada para este filtro.";
       gridSection.appendChild(emptyState);
       return;
     }
@@ -414,7 +515,9 @@ import { getShopPickupCep } from "./storeAuth.js";
     visibleOrders.forEach((order) => {
       const orderId = resolveComandaId(order);
       const statusInfo = getOrderStatusPresentation(resolveOrderStatus(order));
-      const customerName = resolveCustomerName(order);
+      const orderTypeInfo = getOrderTypePresentation(order);
+      const orderIdentificationLabel = getOrderIdentificationLabel(order);
+      const orderIdentificationValue = getOrderIdentificationValue(order);
 
       const card = document.createElement("article");
       card.className = "grid orderCard";
@@ -424,11 +527,11 @@ import { getShopPickupCep } from "./storeAuth.js";
 
       const headerCustomer = document.createElement("div");
       headerCustomer.className = "orderHeaderField";
-      headerCustomer.innerHTML = `<span class="orderHeaderLabel">Cliente</span><strong>${customerName}</strong>`;
+      headerCustomer.innerHTML = `<span class="orderHeaderLabel">${orderIdentificationLabel}</span><strong>${orderIdentificationValue}</strong>`;
 
       const headerDate = document.createElement("div");
       headerDate.className = "orderHeaderField";
-      headerDate.innerHTML = `<span class="orderHeaderLabel">Pedido Realizado</span><strong>${formatLocalDateTime(
+      headerDate.innerHTML = `<span class="orderHeaderLabel">Comanda Realizada</span><strong>${formatLocalDateTime(
         order.pedidoCriadoEm,
       )}</strong>`;
 
@@ -445,9 +548,13 @@ import { getShopPickupCep } from "./storeAuth.js";
         )?.getDescription() ?? ""
       }</strong>`;
 
+      const headerType = document.createElement("div");
+      headerType.className = "orderHeaderField orderHeaderFieldType";
+      headerType.innerHTML = `<span class="orderHeaderLabel">Atendimento</span><strong>${orderTypeInfo.getDescription()}</strong>`;
+
       const headerCode = document.createElement("div");
       headerCode.className = "orderHeaderField orderHeaderFieldCode";
-      headerCode.innerHTML = `<span class="orderHeaderLabel">Pedido Nº</span><strong>${order.codigoDoPedido}</strong>`;
+      headerCode.innerHTML = `<span class="orderHeaderLabel">Comanda Nº</span><strong>${order.codigoDoPedido}</strong>`;
 
       const expandButton = document.createElement("button");
       expandButton.className = "orderExpandButton";
@@ -462,6 +569,7 @@ import { getShopPickupCep } from "./storeAuth.js";
       header.appendChild(headerDate);
       header.appendChild(headerTotal);
       header.appendChild(headerPayment);
+      header.appendChild(headerType);
       header.appendChild(headerCode);
       header.appendChild(expandButton);
 
@@ -473,7 +581,7 @@ import { getShopPickupCep } from "./storeAuth.js";
 
       const itemsTitle = document.createElement("h3");
       itemsTitle.className = "orderItemsTitle";
-      itemsTitle.textContent = "Itens do pedido";
+      itemsTitle.textContent = "Itens da comanda";
       itemsPanel.appendChild(itemsTitle);
 
       const itemsScroll = document.createElement("div");
@@ -528,7 +636,7 @@ import { getShopPickupCep } from "./storeAuth.js";
         const orderDeleteButton = document.createElement("button");
         orderDeleteButton.className = "orderPreparingButtons is-secondary";
         orderDeleteButton.type = "button";
-        orderDeleteButton.setAttribute("aria-label", "Cancelar pedido");
+        orderDeleteButton.setAttribute("aria-label", "Cancelar comanda");
         orderDeleteButton.textContent = "Cancelar";
 
         const orderDoneButton = document.createElement("button");
@@ -536,13 +644,13 @@ import { getShopPickupCep } from "./storeAuth.js";
         orderDoneButton.type = "button";
         orderDoneButton.setAttribute(
           "aria-label",
-          "Marcar pedido como concluído",
+          "Marcar comanda como concluída",
         );
         orderDoneButton.textContent = "Confirmar";
 
         orderDoneButton.addEventListener("click", async () => {
           if (!orderId) {
-            snackbar.error("Não foi possível identificar o pedido.");
+            snackbar.error("Não foi possível identificar a comanda.");
             return;
           }
 
@@ -554,11 +662,11 @@ import { getShopPickupCep } from "./storeAuth.js";
             order.status = ORDER_STATUS_OPTIONS[2].value;
             order.Status = ORDER_STATUS_OPTIONS[2].value;
             renderOrders();
-            snackbar.success("Pedido marcado como concluído.");
+            snackbar.success("Comanda marcada como concluída.");
           } catch (error) {
-            console.error("Erro ao confirmar pedido:", error);
+            console.error("Erro ao confirmar comanda:", error);
             snackbar.error(
-              error.message || "Não foi possível confirmar o pedido.",
+              error.message || "Não foi possível confirmar a comanda.",
             );
             orderDoneButton.disabled = false;
             orderDeleteButton.disabled = false;
@@ -567,7 +675,7 @@ import { getShopPickupCep } from "./storeAuth.js";
 
         orderDeleteButton.addEventListener("click", async () => {
           if (!orderId) {
-            snackbar.error("Não foi possível identificar o pedido.");
+            snackbar.error("Não foi possível identificar a comanda.");
             return;
           }
 
@@ -582,11 +690,11 @@ import { getShopPickupCep } from "./storeAuth.js";
             order.status = ORDER_STATUS_OPTIONS[3].value;
             order.Status = ORDER_STATUS_OPTIONS[3].value;
             renderOrders();
-            snackbar.warning("Pedido cancelado.");
+            snackbar.warning("Comanda cancelada.");
           } catch (error) {
-            console.error("Erro ao cancelar pedido:", error);
+            console.error("Erro ao cancelar comanda:", error);
             snackbar.error(
-              error.message || "Não foi possível cancelar o pedido.",
+              error.message || "Não foi possível cancelar a comanda.",
             );
             orderDoneButton.disabled = false;
             orderDeleteButton.disabled = false;
@@ -623,6 +731,7 @@ import { getShopPickupCep } from "./storeAuth.js";
   }
 
   openOrderWizard.addEventListener("click", async () => {
+    fillTableOptions();
     await Promise.all([fillProductOptions(), fillCustomerOptions()]);
     openWizard();
   });
@@ -670,7 +779,7 @@ import { getShopPickupCep } from "./storeAuth.js";
   });
 
   orderType.addEventListener("change", () => {
-    void orderType.value;
+    updateAttendanceFields();
   });
 
   if (orderCustomer) {

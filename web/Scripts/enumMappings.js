@@ -44,6 +44,8 @@ class ProductCategory extends EnumValue {
 
 class PaymentMethod extends EnumValue {}
 
+class OrderType extends EnumValue {}
+
 class OrderStatus extends EnumValue {
   constructor(
     value,
@@ -97,6 +99,14 @@ const ORDER_STATUS_OPTIONS = [
     "Em_Produção",
   ]),
   new OrderStatus(2, "Pedido concluído", "statusDone", false, ["Finalizado"]),
+  new OrderStatus(3, "Pedido cancelado", "statusCanceled", false, [
+    "Cancelado",
+  ]),
+];
+
+const ORDER_TYPE_OPTIONS = [
+  new OrderType(0, "Delivery/Retirada", ["Delivery", "Retirada"]),
+  new OrderType(1, "Comer no local", ["Comer no Local", "Mesa"]),
 ];
 
 function normalizeText(value) {
@@ -135,9 +145,11 @@ function getEnumDescription(options, value, fallback = "") {
 export {
   EnumValue,
   OrderStatus,
+  OrderType,
   PaymentMethod,
   ProductCategory,
   ORDER_STATUS_OPTIONS,
+  ORDER_TYPE_OPTIONS,
   PAYMENT_METHOD_OPTIONS,
   PRODUCT_CATEGORY_OPTIONS,
   getEnumByValue,

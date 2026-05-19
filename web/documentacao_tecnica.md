@@ -37,7 +37,7 @@ O frontend opera como uma SPA leve baseada em HTML multipagina:
 - `Pages/streetBite.html`: shell com sidebar e area dinamica (`#contentArea`).
 - `Pages/Iframes/home.html`: dashboard inicial.
 - `Pages/Iframes/menu.html`: cardapio e CRUD de itens.
-- `Pages/Iframes/pedidos.html`: lista de pedidos e wizard de criacao.
+- `Pages/Iframes/comandas.html`: lista de comandas e wizard de criacao.
 - `Pages/Iframes/settings.html`: configuracoes visuais e dados do estabelecimento.
 - `Scripts/streetBite.js`: roteamento interno, tema, injecao de assets.
 - `Scripts/service.js`: cliente API centralizado.
@@ -85,7 +85,7 @@ No `streetBite.js`, o objeto `pages` define:
 
 - `home -> Iframes/home.html`
 - `menu -> Iframes/menu.html`
-- `requests -> Iframes/pedidos.html`
+- `comandas -> Iframes/comandas.html`
 - `settings -> Iframes/settings.html`
 
 ### 4.2 Interceptacao de navegacao
@@ -94,7 +94,7 @@ O shell trata 3 tipos de interacao dentro de `#contentArea`:
 
 - botao com `data-load-page`: navega sem recarregar a shell;
 - botao com `data-scroll-target`: rola para seletor interno da pagina ativa;
-- ancora `<a href>` apontando para `home.html`, `menu.html`, `pedidos.html`, `settings.html`: traduz para chave interna e chama `loadPage`.
+- ancora `<a href>` apontando para `home.html`, `menu.html`, `comandas.html`, `settings.html`: traduz para chave interna e chama `loadPage`.
 
 ### 4.3 Ativacao visual de menu
 
@@ -136,7 +136,7 @@ Funcionamento:
 - `start({ message })` cria token unico (Symbol).
 - Enquanto houver tokens ativos, componente permanece ativo.
 - Auto-progresso ate ~94%, finaliza em 100% quando ultimo token fecha.
-- Delay de exibicao evita flicker em requests muito rapidas.
+- Delay de exibicao evita flicker em carregamentos muito rapidos.
 - Aplica `aria-busy="true"` no `body` durante processamento.
 
 Uso principal:
@@ -414,6 +414,7 @@ Mapeamentos auxiliares:
 - categoria: `normalizeProductCategory` e `serializeProductCategory`.
 - imagem: `getProductCategoryImage` com prioridade por nome canonico.
 
+<<<<<<< Updated upstream
 ## 8.5 Pagina Pedidos
 
 Arquivos:
@@ -421,6 +422,15 @@ Arquivos:
 - HTML: `Pages/Iframes/pedidos.html`
 - CSS: `Styles/pedidos.css`
 - JS: `Scripts/pedidos.js`
+=======
+## 8.5 Pagina Comandas
+
+Arquivos:
+
+- HTML: `Pages/Iframes/comandas.html`
+- CSS: `Styles/comandas.css`
+- JS: `Scripts/comandas.js`
+>>>>>>> Stashed changes
 
 ### 8.5.1 Estrutura HTML
 
@@ -466,7 +476,9 @@ Fluxos principais:
    - cria comanda (`createComanda`);
    - adiciona itens (`addItemComanda`);
    - atualiza pagamento/status (`updateComanda`);
-   - recarrega pagina (`window.loadPage("requests")`).
+
+- recarrega pagina (`window.loadPage("comandas")`).
+
 3. Atualizar status pedido:
    - confirmar (`confirmComanda`)
    - cancelar (`deleteComanda`)
@@ -644,7 +656,7 @@ Pontos principais:
 2. O cache-buster e aplicado apenas a `<script src>` para garantir reexecucao.
 3. `settings.js` esta desacoplado do HTML atual (nao carregado e referencia seletor ausente).
 4. O upload de imagem no menu hoje e apenas preview local (nao enviado para API).
-5. Em `pedidos.js`, alguns campos de cliente/endereco ainda nao sao persistidos na API atual (fluxo concentra em comanda + itens + pagamento/status).
+5. Em `comandas.js`, alguns campos de cliente/endereco ainda nao sao persistidos na API atual (fluxo concentra em comanda + itens + pagamento/status).
 
 ## 15. Resumo operacional
 
