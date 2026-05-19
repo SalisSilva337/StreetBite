@@ -12,8 +12,8 @@ using StreetBite.Infra.Data;
 namespace StreetBite.Infra.Data.Migrations
 {
     [DbContext(typeof(StreetBiteDbContext))]
-    [Migration("20260514185315_MakeFoodtruckEmailRequired")]
-    partial class MakeFoodtruckEmailRequired
+    [Migration("20260517202550_AddAtendimentoAndMesaToComandas")]
+    partial class AddAtendimentoAndMesaToComandas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,6 +94,9 @@ namespace StreetBite.Infra.Data.Migrations
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("NumeroMesa")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
@@ -101,6 +104,9 @@ namespace StreetBite.Infra.Data.Migrations
                     b.Property<decimal>("Subtotal")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
+
+                    b.Property<int>("TipoAtendimento")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("cliente_id")
                         .HasColumnType("integer");
@@ -179,9 +185,8 @@ namespace StreetBite.Infra.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("FormaPagamento")
-                        .HasMaxLength(60)
-                        .HasColumnType("character varying(60)");
+                    b.Property<int>("FormaPagamento")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
