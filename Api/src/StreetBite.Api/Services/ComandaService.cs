@@ -48,6 +48,8 @@ public sealed class ComandaService(
         {
             Cliente = cliente,
             ClienteNome = clienteNome,
+            TipoAtendimento = request.TipoAtendimento,
+            NumeroMesa = request.TipoAtendimento == ETipoAtendimento.ComerNoLocal ? request.NumeroMesa : null,
             CodigoPedido = codigoPedido,
             Status = EComandaStatus.Pendente,
             Subtotal = decimal.Zero,
@@ -277,18 +279,8 @@ public sealed class ComandaService(
             .Select(MapItem)
             .ToList();
 
-        var isLocalOrder = comanda.ClienteNome.StartsWith("Mesa ", StringComparison.OrdinalIgnoreCase);
-        var tipoAtendimento = isLocalOrder ? ETipoAtendimento.ComerNoLocal : ETipoAtendimento.DeliveryRetirada;
-        int? numeroMesa = null;
-
-        if (isLocalOrder && comanda.ClienteNome.Length >= 7)
-        {
-            var mesaTexto = comanda.ClienteNome[5..].Trim();
-            if (int.TryParse(mesaTexto, out var mesaNumero))
-            {
-                numeroMesa = mesaNumero;
-            }
-        }
+        var tipoAtendimento = comanda.TipoAtendimento;
+        int? numeroMesa = comanda.NumeroMesa;
 
         return new ComandaViewDTO(
             comanda.Id,
