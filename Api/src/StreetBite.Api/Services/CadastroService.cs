@@ -1,3 +1,4 @@
+using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using StreetBite.Api.Abstractions;
 using StreetBite.Api.Views.DTOs;
@@ -72,7 +73,7 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
         var normalizedDocument = request.Documento.Trim();
 
         var truckExists = await dbContext.Foodtrucks.AnyAsync(
-            x => x.Documento == normalizedDocument || EF.Functions.ILike(x.Email, normalizedEmail),
+            x => x.Documento == normalizedDocument || x.Email == normalizedEmail,
             cancellationToken);
 
         if (truckExists)
@@ -88,7 +89,7 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
             Documento = normalizedDocument,
             Cep = string.IsNullOrWhiteSpace(request.Cep) ? null : request.Cep.Trim(),
             FormaPagamento = request.FormaPagamento,
-            Senha = request.Senha.Trim(),
+            Senha = BCrypt.Net.BCrypt.EnhancedHashPassword(request.Senha.Trim()),
         };
 
         dbContext.Foodtrucks.Add(foodtruck);
@@ -113,7 +114,7 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
             return Result<FoodtruckViewDTO>.Fail("E-mail não encontrado.", HttpStatusCode.NotFound);
         }
 
-        if (foodtruck.Senha != normalizedPassword)
+        if (!BCrypt.Net.BCrypt.EnhancedVerify(normalizedPassword, foodtruck.Senha))
         {
             return Result<FoodtruckViewDTO>.Fail("Senha incorreta.", HttpStatusCode.Unauthorized);
         }
@@ -148,7 +149,7 @@ public sealed class CadastroService(StreetBiteDbContext dbContext) : ICadastroSe
             return Result.Fail("Foodtruck não encontrado.", HttpStatusCode.NotFound);
         }
 
-        foodtruck.Senha = normalizedPassword;
+        foodtruck.Senha = BCrypt.Net.BCrypt.EnhancedHashPassword(normalizedPassword);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return Result.Ok();

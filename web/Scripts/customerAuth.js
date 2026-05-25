@@ -202,14 +202,20 @@ export function initializeCustomerAuth() {
         number,
       });
 
-      setStatus(authStatus, "Cliente cadastrado com sucesso.", "success");
+      setStatus(
+        authStatus,
+        "Cliente cadastrado com sucesso. Voltando...",
+        "success",
+      );
 
       if (submitButton) {
         submitButton.textContent = "Voltar para a página anterior";
-        submitButton.disabled = false;
+        submitButton.disabled = true;
       }
 
       customerRegistered = true;
+
+      setTimeout(goBackToPreviousPage, 1500);
     } catch (error) {
       setStatus(
         authStatus,

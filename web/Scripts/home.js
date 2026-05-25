@@ -1,5 +1,10 @@
 import ApiService from "./service.js";
-import { getEnumByValue, PAYMENT_METHOD_OPTIONS } from "./enumMappings.js";
+import {
+  getEnumByValue,
+  getEnumDescription,
+  ORDER_STATUS_OPTIONS,
+  PAYMENT_METHOD_OPTIONS,
+} from "./enumMappings.js";
 
 const api = new ApiService();
 
@@ -77,6 +82,17 @@ function resolvePaymentLabel(order) {
   );
 }
 
+function resolveOrderStatus(order) {
+  const raw = order?.status ?? order?.Status;
+  return getEnumDescription(ORDER_STATUS_OPTIONS, raw, String(raw ?? "Aberto"));
+}
+
+function isFinishedOrder(order) {
+  const raw = order?.status ?? order?.Status;
+  const normalized = typeof raw === "number" ? raw : Number(raw);
+  return normalized === 2;
+}
+
 function renderOrderCard(order) {
   const card = document.createElement("article");
   card.className = "dashboard-orderCard";
@@ -114,7 +130,8 @@ function renderOrderCard(order) {
   total.textContent = formatCurrency(resolveOrderTotal(order));
 
   const status = document.createElement("span");
-  status.textContent = String(order?.status ?? order?.Status ?? "Aberto");
+  status.className = "dashboard-orderCardStatus";
+  status.textContent = resolveOrderStatus(order);
 
   footer.appendChild(total);
   footer.appendChild(status);
@@ -151,13 +168,15 @@ async function initializeDashboard() {
       return !Number.isNaN(orderDate.getTime()) && orderDate >= weekStart;
     });
 
-    const weeklyRevenue = weeklyOrders.reduce(
+    const finishedWeeklyOrders = weeklyOrders.filter(isFinishedOrder);
+
+    const weeklyRevenue = finishedWeeklyOrders.reduce(
       (sum, order) => sum + resolveOrderTotal(order),
       0,
     );
 
-    const averageTicket = weeklyOrders.length
-      ? weeklyRevenue / weeklyOrders.length
+    const averageTicket = finishedWeeklyOrders.length
+      ? weeklyRevenue / finishedWeeklyOrders.length
       : 0;
 
     if (weeklyRevenueElement) {
@@ -207,7 +226,7 @@ async function initializeDashboard() {
     }
 
     if (paymentCountElement) {
-      paymentCountElement.textContent = String(weeklyOrders.length);
+      paymentCountElement.textContent = String(finishedWeeklyOrders.length);
     }
 
     dashboardOrdersElement.innerHTML = "";

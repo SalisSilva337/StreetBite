@@ -233,6 +233,14 @@ body {
   color: var(--primary);
 }
 
+.dashboard-orderCardStatus {
+  font-size: 0.85rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--border);
+  color: var(--text-light);
+}
+
 .dashboard-scope {
   display: grid;
   gap: 18px;
